@@ -1,4 +1,5 @@
 display.setStatusBar(display.HiddenStatusBar)
+system.activate( "multitouch" )
 local StickLib = require("lib_analog_stick")
 local physics = require ("physics")
 physics.start()
@@ -10,6 +11,7 @@ local screenH = display.contentHeight
 local posX = display.contentWidth/2
 local posY = display.contentHeight/2
 local speed = 3
+local bulletSpeed = 250
 local worldBorder = 20
 local mainGroup = display.newGroup()
 --Object controller
@@ -24,7 +26,7 @@ local powerCollisionFilter = { categoryBits = 4, maskBits = 5 }
 Joystick = StickLib.NewStick(
 	{
 		x             = 10,
-		y             = display.contentHeight-(52),
+		y             = screenH-(52),
 		thumbSize     = 16,
 		borderSize    = 32, 
 		snapBackSpeed = .2, 
@@ -36,6 +38,7 @@ Joystick = StickLib.NewStick(
 Joystick.alpha = 0.2
 
 local function main (event)
+	Joystick.y = display.contentHeight-(52)
 	player.rotation = 0
 	
 	--move player with joystick
@@ -71,16 +74,19 @@ end
 Runtime:addEventListener("enterFrame", main) 
 
 -- Bullets
-local bullets = {}
-local n = 0
+bullets = {}
+n = 0
 
 local function shoot (event)
 	if "began" == event.phase then
 		n = n + 1
 		bullets[n] = display.newImage("brick.png", player.x, player.y)
 		physics.addBody( bullets[n], { density=3.0, friction=0.5, bounce=0.05, filter=powerCollisionFilter } )
-		bullets[n].angularVelocity = 100
-		bullets[n]:applyForce( 1200, 0, bullets[n].x, bullets[n].y )
+		deltaX = event.x - player.x
+		deltaY = event.y - player.y
+		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		bullets[n]:setLinearVelocity( normDeltaX * bulletSpeed, normDeltaY * bulletSpeed )
 	end
 end
 
@@ -104,8 +110,6 @@ objects[1] = crate1
 objects[2] = crate2
 
 mainGroup:insert(bg)
-
-
 
 --[[local function onTouch( event )
 	if "began" == event.phase then
