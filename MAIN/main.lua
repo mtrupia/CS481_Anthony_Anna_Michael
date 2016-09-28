@@ -2,6 +2,7 @@ display.setStatusBar(display.HiddenStatusBar)
 system.activate( "multitouch" )
 local StickLib = require("lib_analog_stick")
 local physics = require ("physics")
+
 physics.start()
 physics.setGravity(0, 0)
 physics.setDrawMode( "hybrid" )
@@ -110,38 +111,3 @@ objects[1] = crate1
 objects[2] = crate2
 
 mainGroup:insert(bg)
-
---[[local function onTouch( event )
-	if "began" == event.phase then
-		player.isFocus = true 
-		player:setFillColor(0,1,0) 
-		player.x0 = event.x - player.x 
-		player.y0 = event.y - player.y 
-	elseif player.isFocus then
-		if "moved" == event.phase then
-			player.x = event.x - player.x0 
-			player.y = event.y - player.y0 
-		elseif "ended" == phase or "cancelled" == phase then
-			player.isFocus = false 
-		end
-	end
-
--- Return true if the touch event has been handled.
-	return true
-end
-
--- Only the background receives touches.
---background:addEventListener("touch", onTouch) 
-
-local function myTapListener(event)
-	-- Code executed when the button is tapped
-	print("Object tapped: " .. tostring(event.target))   -- "event.target" is the tapped object
-	return true 
-end]]--
-
--- Add a score label  
--- local score = 0  
--- local scoreLabel = display.newText( score, 0, 0, native.systemFontBold, 120 )  
--- scoreLabel.x = display.viewableContentWidth / 2  
--- scoreLabel.y = display.viewableContentHeight / 2  
--- scoreLabel:setTextColor( 0, 0, 0, 10 )
