@@ -12,12 +12,13 @@ x = 0
 function NewPower( player )
 	local power = display.newGroup()
 	
-	function power:begin( bg )
-		bg:addEventListener("touch", Shoot) 
+	function power:begin()
+		Runtime:addEventListener("touch", Shoot) 
 	end
 	
-	function power:stop( bg )
-		bg:removeEventListener("touch", Shoot) 
+	function power:destroy()
+		Runtime:removeEventListener("touch", Shoot)
+		self:removeSelf()
 	end
 	
 	function Shoot (event)

@@ -23,13 +23,17 @@ function NewPlayer ( props )
 		Power = PowerClass.NewPower( player )
 		Power:begin(player.bg)
 	end
-	
 	function player:killPlayer()
 		if (player[1]) then
 			player[1]:removeSelf()
 		end
 		
 		Power:stop(player.bg)
+	end
+	
+	function player:destroy()
+		Power:destroy()
+		self:removeSelf()
 	end
 	
 	function player:move( joystick )

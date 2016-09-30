@@ -5,6 +5,10 @@ local screenH = display.contentHeight
 local halfW = screenW/2
 local halfH = screenH/2
 local borders = 40
+-- Physics
+local physics		= require("physics")
+physics.start()
+physics.setGravity(0, 0)
 
 local worldCollisionFilter = {categoryBits = 1, maskBits = 6}
 local PlayerClass	= require("Player")
@@ -14,6 +18,9 @@ local wallsGroup = display.newGroup()
 
 function NewLevel()
 	local level = display.newGroup()
+	if not mainGroup then
+		print("hey")
+	end
 	
 	-- Create background
 	local bg = display.newImage("bg.png")
@@ -47,6 +54,14 @@ function NewLevel()
 		} 
 	)
 	Joystick.alpha = 0.2
+	
+	function level:destroy()
+		Player:destroy()
+		Joystick:delete()
+		mainGroup:removeSelf()
+		wallsGroup:removeSelf()
+		self:removeSelf()
+	end
 	
 	function level:begin()
 		Player:move(Joystick)
