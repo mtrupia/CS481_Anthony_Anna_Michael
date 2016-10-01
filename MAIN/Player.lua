@@ -2,7 +2,7 @@ module (..., package.seeall)
 
 local playerCollisionFilter = { categoryBits = 2, maskBits = 1 }
 
-local PowerClass	= require("Power")
+local PowerClass = require("Power")
 playerImage = "flower.png"
 
 function NewPlayer ( props )
@@ -23,12 +23,13 @@ function NewPlayer ( props )
 		Power = PowerClass.NewPower( player )
 		Power:begin(player.bg)
 	end
+	
 	function player:killPlayer()
 		if (player[1]) then
 			player[1]:removeSelf()
 		end
 		
-		Power:stop(player.bg)
+		Power:destroy()
 	end
 	
 	function player:destroy()

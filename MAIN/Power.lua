@@ -40,7 +40,7 @@ function NewPower( player )
 				end
 			end
 		
-			timer.performWithDelay(2500, delete)
+			timer.performWithDelay(500, delete)
 		end
 	end
 	

@@ -10,8 +10,8 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "blank.png"
-local titleImg = "title.png"
+local bgImg = "tealBG.png"
+local titleImg = "gameTitle.png"
 
 local backButton
 

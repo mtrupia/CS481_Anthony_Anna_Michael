@@ -10,11 +10,11 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "blank.png"
-local titleImg = "title.png"
+local bgImg = "tealBG.png"
+local titleImg = "gameTitle.png"
 
 local levelsButton = {}
-local levels = 1
+local levels = 10
 local backButton
 
 function scene:create( event )
