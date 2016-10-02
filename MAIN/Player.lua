@@ -65,6 +65,7 @@ function NewPlayer ( props )
 	function player:move( joystick )
 		if (player[1] and joystick) then
 			joystick:move(player, self.speed, false)
+			player.rotation = 0
 			
 			angle = joystick:getAngle() 
 			moving = joystick:getMoving()
