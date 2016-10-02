@@ -10,22 +10,12 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
--- Consts
-local pauseImg = "pauseIcon.png"
-local screenW = display.contentWidth
-local screenH = display.contentHeight
-local halfW = screenW/2
-local halfH = screenH/2
-local borders = 40
--- Physics
-local physics = require("physics")
+-- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-local worldCollisionFilter = {categoryBits = 1, maskBits = 6}
--- classes
-local PlayerLib = require("Player")
-local StickLib = require("lib_analog_stick")
--- variables
+-- Vars
+local pauseImg
+local bg
 local walls 
 local Player
 local Joystick
@@ -34,8 +24,12 @@ local pauseButton
 
 function scene:create( event )
 	local sceneGroup = self.view
+	
+	bg			= event.params.bg or "testBG.png"
+	pauseImg	= event.params.pauseImg or "pauseIcon.png"
+	
 	-- Create background
-	local bg = display.newImage("testBG.png")
+	bg = display.newImage("testBG.png")
 	bg.rotation = 90
 	sceneGroup:insert(bg)
 end
@@ -45,20 +39,12 @@ function scene:show( event )
     local phase = event.phase
 
     if phase == "will" then
+		-- BG may change
+		bg = event.params.bg or "testBG.png"
 		-- LevelID
 		levelID = event.params.levelID
 		-- Player
-		Player = PlayerLib.NewPlayer(
-			{
-				x		= 50,
-				y		= screenH-50,
-				health 	= 100,
-				mana	= 100,
-				score	= 0,
-				speed	= 3,
-				bg		= bg
-			}
-		)
+		Player = PlayerLib.NewPlayer( {} )
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
 		-- Joystick
