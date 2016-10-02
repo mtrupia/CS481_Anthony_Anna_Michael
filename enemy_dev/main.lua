@@ -1,6 +1,20 @@
-	display.setStatusBar( display.HiddenStatusBar )  
-	local enemy = require("enemy")
+-- Setup
+display.setStatusBar(display.HiddenStatusBar)
+system.activate( "multitouch" )
+
+-- Load Classes --
+-- Physics
+local physics		= require("physics")
+physics.start()
+physics.setGravity(0, 0)
+physics.setDrawMode( "hybrid" )
+-- Screen
+local ScreenClass	= require("Screen")
+Screen = ScreenClass.NewScreen()
+Screen:welcomeScreen()
+
+-- Run Program
+local function main (event)
 	
-	enemy1 = enemy.NewEnemy({})
-	enemy1.test()
-	
+end
+Runtime:addEventListener("enterFrame", main) 
