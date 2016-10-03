@@ -69,7 +69,7 @@ function scene:show( event )
 			if n <= 5 then
 				crate = display.newImage("crate.png", 50+75*(n-1), 100)
 			else
-				crate = display.newImage("crate.png", 50+75*(n-6), 300)
+				crate = display.newImage("crate.png", 50+75*(n-6), 200)
 			end
 			physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 			walls:insert(crate)

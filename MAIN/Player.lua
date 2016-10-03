@@ -31,8 +31,8 @@ local score
 function NewPlayer ( props )
 	local player	= display.newGroup()
 	player.speed	= props.speed or 3
-	player.x		= props.x or halfW
-	player.y		= props.y or halfH
+	player.x		= props.x or 50
+	player.y		= props.y or screenH-50
 	playerImage		= props.image or "flower.png"
 	health 			= props.health or 100
 	mana			= props.mana or 100
