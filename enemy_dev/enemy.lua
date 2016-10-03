@@ -1,6 +1,6 @@
 module (..., package.seeall)
 
-local enemyCollisionFilter = { categoryBits = 3, maskBits = 1 }
+local enemyCollisionFilter = { categoryBits = 8, maskBits = 7 }
 
 enemyImage = "flower.png"
 

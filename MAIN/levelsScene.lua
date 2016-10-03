@@ -15,9 +15,11 @@ physics.start()
 physics.setGravity(0, 0)
 -- Vars
 local pauseImg
-local bg
+local backGround
 local walls 
 local Player
+local Enemies = {}
+local enemyCount = 0
 local Joystick
 local levelID
 local pauseButton
@@ -25,11 +27,11 @@ local pauseButton
 function scene:create( event )
 	local sceneGroup = self.view
 	
-	bg			= event.params.bg or "testBG.png"
-	pauseImg	= event.params.pauseImg or "pauseIcon.png"
+	backGround			= event.params.bg or "res/testBG.png"
+	pauseImg	= event.params.pauseImg or "res/pauseIcon.png"
 	
 	-- Create background
-	bg = display.newImage("testBG.png")
+	bg = display.newImage(backGround)
 	bg.rotation = 90
 	sceneGroup:insert(bg)
 end
@@ -40,13 +42,21 @@ function scene:show( event )
 
     if phase == "will" then
 		-- BG may change
-		bg = event.params.bg or "testBG.png"
+		bg = event.params.bg or "res/testBG.png"
 		-- LevelID
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
+		-- Enemy
+		for n = 1, 1, 1 do
+			enemyCount = enemyCount + 1
+			Enemies[enemyCount] = EnemyLib.NewEnemy({})
+			sceneGroup:insert(Enemies[enemyCount])
+			Enemies[enemyCount]:spawn()
+		end
+		
 		-- Joystick
 		Joystick = StickLib.NewStick(
 			{
@@ -67,9 +77,9 @@ function scene:show( event )
 		for n = 1, levelID, 1 do
 			local crate
 			if n <= 5 then
-				crate = display.newImage("crate.png", 50+75*(n-1), 100)
+				crate = display.newImage("res/crate.png", 50+75*(n-1), 100)
 			else
-				crate = display.newImage("crate.png", 50+75*(n-6), 300)
+				crate = display.newImage("res/crate.png", 50+75*(n-6), 300)
 			end
 			physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 			walls:insert(crate)
@@ -85,6 +95,9 @@ function scene:show( event )
 		if Player and Joystick then
 			function begin( event )
 				Player:move(Joystick)
+				for n=1, enemyCount, 1 do
+					Enemies[n]:move(Player)
+				end
 				
 				--move world if outside border
 				if Player.x < -8 then	-- moving left
@@ -93,12 +106,20 @@ function scene:show( event )
 					for n = 1, walls.numChildren, 1 do
 						walls[n].x = walls[n].x + Player.speed
 					end
+					
+					for n=1, enemyCount, 1 do
+						Enemies[n].x = Enemies[n].x + Player.speed
+					end
 				end
 				if Player.x > screenW+8 then	-- moving right
 					Player.x = screenW+8
 					
 					for n = 1, walls.numChildren, 1 do
 						walls[n].x = walls[n].x - Player.speed
+					end
+					
+					for n=1, enemyCount, 1 do
+						Enemies[n].x = Enemies[n].x - Player.speed
 					end
 				end
 				if Player.y < borders then	-- moving up
@@ -107,12 +128,20 @@ function scene:show( event )
 					for n = 1, walls.numChildren, 1 do
 						walls[n].y = walls[n].y + Player.speed
 					end
+					
+					for n=1, enemyCount, 1 do
+						Enemies[n].y = Enemies[n].y + Player.speed
+					end
 				end
 				if Player.y > screenH-borders then	-- moving down
 					Player.y = screenH-borders
 					
 					for n = 1, walls.numChildren, 1 do
 						walls[n].y = walls[n].y - Player.speed
+					end
+					
+					for n=1, enemyCount, 1 do
+						Enemies[n].y = Enemies[n].y - Player.speed
 					end
 				end
 			end
@@ -122,6 +151,8 @@ function scene:show( event )
 			function pauseButton:touch ( event )
         		local phase = event.phase
         		if "ended" == phase then
+					physics.pause()
+					Runtime:removeEventListener("enterFrame", begin)
         			composer.showOverlay( "pauseScene", { isModal = true, effect = "fade", time = 300 } )
         		end
         	end
@@ -135,7 +166,6 @@ function scene:hide( event )
     local phase = event.phase
 
     if event.phase == "will" then
-    elseif phase == "did" then
 		if pauseButton then
 			pauseButton:removeEventListener("touch", pauseButton)
 		end
@@ -150,7 +180,20 @@ function scene:hide( event )
 			walls:removeSelf()
 			walls = nil
 		end
+		if Enemies then
+			for n=1, enemyCount, 1 do
+				Enemies[n]:destroy()
+			end
+			enemyCount = 0
+		end
+    elseif phase == "did" then
+		
     end 
+end
+
+function scene:unPause()
+	physics.start()
+	Runtime:addEventListener("enterFrame", begin)
 end
 
 function scene:destroy( event )

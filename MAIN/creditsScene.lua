@@ -10,8 +10,8 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "blackBG.png"
-local titleImg = "gameTitle.png"
+local bgImg = "res/blackBG.png"
+local titleImg = "res/gameTitle.png"
 
 local credits = "Anna Schmedding\n  Anthony Austin\n  Michael Trupia" 
 

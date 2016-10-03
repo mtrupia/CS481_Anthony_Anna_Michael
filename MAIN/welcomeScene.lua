@@ -11,8 +11,8 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "tealBG.png"
-local titleImg = "gameTitle.png"
+local bgImg = "res/tealBG.png"
+local titleImg = "res/gameTitle.png"
 
 local levelSelectionButton
 local settingsButton

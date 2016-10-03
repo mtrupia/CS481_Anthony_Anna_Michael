@@ -17,7 +17,7 @@ local bounce			-- bounce of the Power (fun)
 
 function NewPower( props )
 	local power = display.newGroup()
-	powerImage 	= props.image or "brick.png"
+	powerImage 	= props.image or "res/brick.png"
 	powerLife 	= props.life or 500
 	player		= props.player
 	powerSpeed	= props.speed or 250

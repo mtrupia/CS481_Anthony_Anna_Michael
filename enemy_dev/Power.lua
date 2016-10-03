@@ -3,7 +3,7 @@ module (..., package.seeall)
 powerImage = "brick.png"
 
 --Bullets
-local powerCollisionFilter = { categoryBits = 4, maskBits = 5 }
+local powerCollisionFilter = { categoryBits = 4, maskBits = 13 }
 bullets = {}
 n = 0
 aliveBullets = {}

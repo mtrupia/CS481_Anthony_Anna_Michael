@@ -10,8 +10,8 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "blackBG.png"
-local titleImg = "gameTitle.png"
+local bgImg = "res/blackBG.png"
+local titleImg = "res/gameTitle.png"
 
 local pauseState = "continue"
 local restartButton
@@ -89,6 +89,9 @@ function scene:hide( event )
 		end
 		if pauseState == "lvls" then
 			parent:leaveLvl()
+		end
+		if pauseState == "continue" then
+			parent:unPause()
 		end
     elseif phase == "did" then
 		if restartButton then

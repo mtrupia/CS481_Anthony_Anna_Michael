@@ -6,7 +6,7 @@ local halfW = screenW/2
 local halfH = screenH/2
 local borders = 40
 
-local worldCollisionFilter = {categoryBits = 1, maskBits = 6}
+local worldCollisionFilter = {categoryBits = 1, maskBits = 14}
 local PlayerClass	= require("Player")
 local StickLib		= require("lib_analog_stick")
 local enemy         = require("enemy")

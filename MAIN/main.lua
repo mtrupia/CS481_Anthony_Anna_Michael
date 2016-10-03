@@ -16,18 +16,20 @@ local composer = require "composer"
 -- system wide event handlers, location, key events, system resume/suspend, memory, etc.
 screenW = display.contentWidth
 screenH = display.contentHeight
-halfW = screenW/2
-halfH = screenH/2
+halfW 	= screenW/2
+halfH 	= screenH/2
 borders = 40
 -- Physics
 physics = require("physics")
-worldCollisionFilter = {categoryBits = 1, maskBits = 6}
-playerCollisionFilter = { categoryBits = 2, maskBits = 1 }
-powerCollisionFilter = { categoryBits = 4, maskBits = 5 }
+worldCollisionFilter 	= {categoryBits = 1, maskBits = 14}
+playerCollisionFilter 	= { categoryBits = 2, maskBits = 9 }
+powerCollisionFilter 	= { categoryBits = 4, maskBits = 13 }
+enemyCollisionFilter 	= { categoryBits = 8, maskBits = 15 }
 -- Classes
-StickLib = require("lib_analog_stick")
-PlayerLib = require("Player")
-PowerLib = require("Power")
+StickLib 	= require("lib_analog_stick")
+PlayerLib 	= require("Player")
+PowerLib 	= require("Power")
+EnemyLib 	= require("Enemy")
 
 -- load Welcome Screen
 composer.gotoScene( "welcomeScene" )

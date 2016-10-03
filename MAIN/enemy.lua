@@ -1,53 +1,61 @@
 module (..., package.seeall)
 
-local enemyCollisionFilter = { categoryBits = 3, maskBits = 1 }
+-- Enemy
+local enemyImage
+local health
+local enemyType
 
-enemyImage = "flower.png"
+function NewEnemy( props )
+	local enemy 	= display.newGroup()
+	enemy.speed		= props.speed or 0.5
+	enemy.x 		= props.x or 0
+	enemy.y 		= props.y or 0
+	enemyImage 		= props.img or "res/flower.png"
+	enemyType 		= props.enemyType or "x"
+	health 			= props.health or 10
+	
+	
+	function enemy:spawn()
+		enemyImg = display.newImage(enemyImage)
+		enemy:insert(enemyImg)
+		physics.addBody(enemy, {filter = enemyCollisionFilter})
+	end
+	
+	function enemy:killEnemy()
+		if (enemy[1]) then
+			enemy[1]:removeSelf()
+		end
+	end
+	
+	function enemy:useSpecial()
+		print("useSpecial")
+	end
+	
+	function enemy:damageEnemy( amt )
+		enemy.health = enemy.health - amt
+		if enemy.health <= 0 then
+			enemy:killEnemy()
+		end
+	end
+	
+	function enemy:attack()
+		print("attack")
+	end
+	
+	function enemy:destroy()
+		self:removeSelf()
+	end
+	
+	--visibility???
+	
+	function enemy:move( player )
+		if (enemy[1] and player) then
+			hyp=math.sqrt((player.x-enemy.x)^2 + (player.y-enemy.y)^2)
+			enemy.x=enemy.x + (player.x-enemy.x)/hyp
+			enemy.y=enemy.y + (player.y-enemy.y)/hyp
+		end
+		
+	end
 
-function NewEnemy( Props )
- 
-        local enemy = display.newGroup()
-
-		enemy.x = Props.x
-		enemy.y = Props.y
-		enemy.enemyType = Props.enemyType
-		enemy.health = Props.health
-		enemy.speed=1
-		function enemy:spawn()
-			enemy.img = display.newImage(enemyImage)
-			enemy:insert(enemy.img)
-			physics.addBody(enemy, {filter = enemyCollisionFilter})
-		end
-		
-		function enemy:killEnemy()
-			if (enemy[1]) then
-				enemy[1]:removeSelf()
-			end
-
-		end
-		
-		function enemy:useSpecial()
-			print("useSpecial")
-		end
-		
-		function enemy:damageEnemy( amt )
-			enemy.health = enemy.health - amt
-		end
-		
-		function enemy:attack()
-			print("attack")
-		end
-		
-		--visibility???
-		
-        function enemy:move( targetx, targety )
-			
-			hyp=math.sqrt((targetx-enemy.x)^2 + (targety-enemy.y)^2)
-			enemy.x=enemy.x + (targetx-enemy.x)/hyp
-			enemy.y=enemy.y + (targety-enemy.y)/hyp
-			
-		end
-
-        return enemy
- 
+	return enemy
 end

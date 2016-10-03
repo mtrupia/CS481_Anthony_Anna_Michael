@@ -1,6 +1,6 @@
 module (..., package.seeall)
 
-local playerCollisionFilter = { categoryBits = 2, maskBits = 1 }
+local playerCollisionFilter = { categoryBits = 2, maskBits = 9 }
 
 local PowerClass	= require("Power")
 playerImage = "flower.png"
