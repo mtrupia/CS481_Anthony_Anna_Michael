@@ -50,7 +50,7 @@ function scene:show( event )
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
 		-- Enemy
-		for n = 1, 1, 1 do
+		for n = 1, 10, 1 do
 			enemyCount = enemyCount + 1
 			Enemies[enemyCount] = EnemyLib.NewEnemy({})
 			sceneGroup:insert(Enemies[enemyCount])
