@@ -84,14 +84,12 @@ function scene:hide( event )
 	local parent = event.parent
 
     if event.phase == "will" then
+		parent:unPause()
 		if pauseState == "restart" then
 			parent:restartLvl(parent.levelID)
 		end
 		if pauseState == "lvls" then
 			parent:leaveLvl()
-		end
-		if pauseState == "continue" then
-			parent:unPause()
 		end
     elseif phase == "did" then
 		if restartButton then
