@@ -63,11 +63,11 @@ function NewStick( Props )
         local Group         = display.newGroup()
         Group.x             = Props.x
         Group.y             = Props.y
-        Group.Timer                     = nil
-        Group.angle                     = 0
-        Group.distance          = 0
-        Group.percent           = 0
-        Group.maxDist           = Props.borderSize
+        Group.Timer         = nil
+        Group.angle         = 0
+        Group.distance      = 0
+        Group.percent       = 0
+        Group.maxDist       = Props.borderSize
         Group.snapBackSpeed = Props.snapBackSpeed ~= nil and Props.snapBackSpeed or .7
  
         Group.Border = display.newCircle(0,0,Props.borderSize)
