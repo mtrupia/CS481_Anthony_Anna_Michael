@@ -38,6 +38,7 @@ function NewPlayer ( props )
 	health 			= props.health or 100
 	mana			= props.mana or 100
 	score			= props.score or 0
+	player.myName = "player"
 	
 	function player:spawnPlayer()
 		playerSprite = display.newSprite(mySheet, sequenceData)
@@ -61,6 +62,13 @@ function NewPlayer ( props )
 	function player:destroy()
 		Power:destroy()
 		self:removeSelf()
+	end
+	
+	function player:damagePlayer( amt )
+		player.health = player.health - amt
+		if player.health <= 0 then
+			player:killPlayer()
+		end
 	end
 	
 	function player:move( joystick )

@@ -4,6 +4,7 @@ module (..., package.seeall)
 local enemyImage
 local health
 local enemyType
+local enemyImg
 
 function NewEnemy( props )
 	local enemy 	= display.newGroup()
@@ -13,7 +14,7 @@ function NewEnemy( props )
 	enemyImage 		= props.img or "images/flower.png"
 	enemyType 		= props.enemyType or "x"
 	health 			= props.health or 10
-	
+	enemy.myName = "enemy"
 	
 	function enemy:spawn()
 		enemyImg = display.newImage(enemyImage)
@@ -24,6 +25,7 @@ function NewEnemy( props )
 	function enemy:killEnemy()
 		if (enemy[1]) then
 			enemy[1]:removeSelf()
+			display.remove(enemy.enemyImg)
 		end
 	end
 	
@@ -46,6 +48,18 @@ function NewEnemy( props )
 		self:removeSelf()
 	end
 	
+	function onGlobalCollision ( event )
+	
+    local o1n = event.object1.myName
+    local o2n = event.object2.myName
+
+
+    if ( o1n == "enemy" or o2n == "enemy") and (o1n == "player" or o2n == "player") then
+		enemy:killEnemy()
+		print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+		
+    end
+	end
 	--visibility???
 	
 	function enemy:move( player )
@@ -56,6 +70,8 @@ function NewEnemy( props )
 		end
 		
 	end
-
+	
+	Runtime:addEventListener("collision", onGlobalCollision)
+	
 	return enemy
 end
