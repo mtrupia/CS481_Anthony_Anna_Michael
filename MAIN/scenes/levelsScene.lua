@@ -27,8 +27,8 @@ local pauseButton
 function scene:create( event )
 	local sceneGroup = self.view
 	
-	backGround			= event.params.bg or "res/testBG.png"
-	pauseImg	= event.params.pauseImg or "res/pauseIcon.png"
+	backGround			= event.params.bg or "images/testBG.png"
+	pauseImg	= event.params.pauseImg or "images/pauseIcon.png"
 	
 	-- Create background
 	bg = display.newImage(backGround)
@@ -42,7 +42,7 @@ function scene:show( event )
 
     if phase == "will" then
 		-- BG may change
-		bg = event.params.bg or "res/testBG.png"
+		bg = event.params.bg or "images/testBG.png"
 		-- LevelID
 		levelID = event.params.levelID
 		-- Player
@@ -77,9 +77,9 @@ function scene:show( event )
 		for n = 1, levelID, 1 do
 			local crate
 			if n <= 5 then
-				crate = display.newImage("res/crate.png", 50+75*(n-1), 100)
+				crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
 			else
-				crate = display.newImage("res/crate.png", 50+75*(n-6), 300)
+				crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
 			end
 			physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 			walls:insert(crate)
@@ -153,7 +153,7 @@ function scene:show( event )
         		if "ended" == phase then
 					physics.pause()
 					Runtime:removeEventListener("enterFrame", begin)
-        			composer.showOverlay( "pauseScene", { isModal = true, effect = "fade", time = 300 } )
+        			composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
         		end
         	end
         	pauseButton:addEventListener( "touch", pauseButton )
@@ -201,11 +201,11 @@ function scene:destroy( event )
 end
 
 function scene:leaveLvl()
-	composer.gotoScene( "levelSelectionScene", { effect = "fade", time = 300 } )
+	composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 end
 
 function scene:restartLvl( id )
-	composer.gotoScene( "levelsScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
+	composer.gotoScene( "scenes.levelsScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
 end
 
 ---------------------------------------------------------------------------------

@@ -10,8 +10,8 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "res/blackBG.png"
-local titleImg = "res/gameTitle.png"
+local bgImg = "images/blackBG.png"
+local titleImg = "images/gameTitle.png"
 
 local pauseState = "continue"
 local restartButton

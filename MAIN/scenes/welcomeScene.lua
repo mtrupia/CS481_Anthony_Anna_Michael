@@ -11,8 +11,8 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "res/tealBG.png"
-local titleImg = "res/gameTitle.png"
+local bgImg = "images/tealBG.png"
+local titleImg = "images/gameTitle.png"
 
 local levelSelectionButton
 local settingsButton
@@ -59,7 +59,7 @@ function scene:show( event )
         	function levelSelectionButton:touch ( event )
         		local phase = event.phase
         		if "ended" == phase then
-        			composer.gotoScene( "levelSelectionScene", { effect = "fade", time = 300 } )
+        			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
         		end
         	end
         	-- add the touch event listener to the button
@@ -69,7 +69,7 @@ function scene:show( event )
         	function settingsButton:touch ( event )
         		local phase = event.phase
         		if "ended" == phase then
-        			composer.gotoScene( "settingsScene", { effect = "fade", time = 300 } )
+        			composer.gotoScene( "scenes.settingsScene", { effect = "fade", time = 300 } )
         		end
         	end
         	settingsButton:addEventListener( "touch", settingsButton )
@@ -78,7 +78,7 @@ function scene:show( event )
         	function creditsButton:touch ( event )
         		local phase = event.phase
         		if "ended" == phase then
-        			composer.gotoScene( "creditsScene", { effect = "fade", time = 300 } )
+        			composer.gotoScene( "scenes.creditsScene", { effect = "fade", time = 300 } )
         		end
         	end
         	creditsButton:addEventListener( "touch", creditsButton )

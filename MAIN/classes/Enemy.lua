@@ -10,7 +10,7 @@ function NewEnemy( props )
 	enemy.speed		= props.speed or 0.5
 	enemy.x 		= props.x or 0
 	enemy.y 		= props.y or 0
-	enemyImage 		= props.img or "res/flower.png"
+	enemyImage 		= props.img or "images/flower.png"
 	enemyType 		= props.enemyType or "x"
 	health 			= props.health or 10
 	
