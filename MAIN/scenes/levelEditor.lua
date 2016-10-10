@@ -108,7 +108,7 @@ function scene:show( event )
 						elseif editFilter == enemyCollisionFilter then
 							enemy = EnemyLib.NewEnemy( {x = event.x, y = event.y} )
 							enemy:spawn()
-							Enemies:insert(enemy)
+							editType:insert(enemy)
 							
 						end
 					end
@@ -236,9 +236,7 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Enemies then
-			for n=1, Enemies.numChildren, 1 do
-				Enemies[n]:destroy()
-			end
+			Enemies[1]:destroy()
 		end
 		if editType then
 			editType:removeSelf()
