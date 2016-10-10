@@ -235,7 +235,7 @@ function scene:hide( event )
 			walls:removeSelf()
 			walls = nil
 		end
-		if Enemies then
+		if Enemies[1] then
 			Enemies[1]:destroy()
 		end
 		if editType then
