@@ -21,6 +21,10 @@ local Player
 local Enemies
 local Joystick
 local pauseButton
+local editType
+local editImg
+local editFilter
+local editPhysics
 
 function scene:create( event )
 	local sceneGroup = self.view
@@ -78,12 +82,18 @@ function scene:show( event )
 	elseif phase == "did" then
 		if Player and Joystick then
 			function onMouseEvent( event )
+				if not editType then
+					editType = walls
+					editImg = "images/crate.png"
+					editFilter = worldCollisionFilter
+					editPhysics = "static"
+				end
 				if event.isSecondaryButtonDown then
 					ready = 1
-					for n = 1, walls.numChildren, 1 do
-						x1 = walls[n].x
+					for n = 1, editType.numChildren, 1 do
+						x1 = editType[n].x
 						x2 = event.x
-						y1 = walls[n].y
+						y1 = editType[n].y
 						y2 = event.y
 						
 						if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 60 then
@@ -91,32 +101,58 @@ function scene:show( event )
 						end
 					end
 					if (ready == 1) then
-						crate = display.newImage("images/crate.png", event.x, event.y)
-						physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-						walls:insert(crate)
+						if editFilter == worldCollisionFilter then
+							crate = display.newImage(editImg, event.x, event.y)
+							physics.addBody(crate, editPhysics, { filter = editFilter } )
+							editType:insert(crate)
+						elseif editFilter == enemyCollisionFilter then
+							enemy = EnemyLib.NewEnemy( {x = event.x, y = event.y} )
+							enemy:spawn()
+							Enemies:insert(enemy)
+							
+						end
 					end
 				elseif event.isMiddleButtonDown then
 					id = 0
-					for n = 1, walls.numChildren, 1 do
-						x1 = walls[n].x
+					for n = 1, editType.numChildren, 1 do
+						x1 = editType[n].x
 						x2 = event.x
-						y1 = walls[n].y
+						y1 = editType[n].y
 						y2 = event.y
 						
 						if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 30 then
 							id = n
 						end
 					end
-					walls:remove(id)
+					editType:remove(id)
 				end
 			end
 			Runtime:addEventListener("mouse", onMouseEvent)
+			function onKeyEvent( event )
+				local key = event.keyName
+				
+				if key == "1" then
+					print("walls")
+					editType = walls
+					editImg = "images/crate.png"
+					editFilter = worldCollisionFilter
+					editPhysics = "static"
+				elseif key == "2" then
+					print("enemies")
+					editType = Enemies
+					editFilter = enemyCollisionFilter
+					editPhysics = "dynamic"
+				elseif key == "deleteBack" then
+					
+				elseif key == "insert" then
+					
+				end
+			end
+			Runtime:addEventListener("key", onKeyEvent)
 		
 			function begin( event )
+				Joystick:toFront()
 				Player:move(Joystick)
-				for n=1, Enemies.numChildren, 1 do
-					Enemies[n]:move(Player)
-				end
 				
 				--move world if outside border
 				if Player.x < -8 then	-- moving left
@@ -189,6 +225,7 @@ function scene:hide( event )
 		if Player then
 			Runtime:removeEventListener("enterFrame", begin)
 			Runtime:removeEventListener("mouse", onMouseEvent)
+			Runtime:removeEventListener("key", onKeyEvent)
 			Player:destroy()
 		end
 		if Joystick then
@@ -202,6 +239,10 @@ function scene:hide( event )
 			for n=1, Enemies.numChildren, 1 do
 				Enemies[n]:destroy()
 			end
+		end
+		if editType then
+			editType:removeSelf()
+			editType = nil
 		end
     elseif phase == "did" then
 	
