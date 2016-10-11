@@ -57,7 +57,6 @@ function NewEnemy( props )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
 
-
 		if ( o1n == "enemy" or o2n == "enemy") and (o1n == "player" or o2n == "player") then
 			enemy:killEnemy()
 			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
