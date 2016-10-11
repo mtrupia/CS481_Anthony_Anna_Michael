@@ -2,6 +2,7 @@ module (..., package.seeall)
 
 -- Player
 local Power
+
 --Declare and set up Sprite Image Sheet and sequence data
 spriteOptions = {
 	height = 64,
@@ -24,10 +25,6 @@ sequenceData = {
 }
 -- Variables passed when Player is created
 local playerImage
-local hp
-local mana
-local score
-
 
 function NewPlayer ( props )
 	local player		= display.newGroup()
@@ -36,9 +33,9 @@ function NewPlayer ( props )
 	player.y				= props.y or halfH
 	playerImage			= props.image or "flower.png"
   player.myName 	= "player"
-	health 					= props.health or 0
-	mana						= props.mana or 0
-	score						= props.score or 0
+	player.hp 			= props.hp or 10
+	player.mana			= props.mana or 0
+	player.score		= props.score or 0
 
 
 	function player:spawnPlayer()

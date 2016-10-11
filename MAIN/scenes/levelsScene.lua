@@ -16,9 +16,10 @@ physics.setGravity(0, 0)
 -- Vars
 local pauseImg
 local backGround
-local walls 
+local walls
 local Player
 local Enemies = {}
+local statusBar
 local enemyCount = 0
 local Joystick
 local levelID
@@ -26,13 +27,13 @@ local pauseButton
 
 function scene:create( event )
 	local sceneGroup = self.view
-	
+
 	backGround			= event.params.bg or "images/testBG.png"
-	pauseImg	= event.params.pauseImg or "images/pauseIcon.png"
-	
+	pauseImg				= event.params.pauseImg or "images/pauseIcon.png"
+
 	-- Create background
-	bg = display.newImage(backGround)
-	bg.rotation = 90
+	bg 							= display.newImage(backGround)
+	bg.rotation 		= 90
 	sceneGroup:insert(bg)
 end
 
@@ -42,33 +43,35 @@ function scene:show( event )
 
     if phase == "will" then
 		-- BG may change
-		bg = event.params.bg or "images/testBG.png"
+		bg 			= event.params.bg or "images/testBG.png"
 		-- LevelID
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
+		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(Player)
+		sceneGroup:insert(statusBar)
 		Player:spawnPlayer()
 		-- Enemy
 		for n = 1, 10, 1 do
-			enemyCount = enemyCount + 1
+			enemyCount 					= enemyCount + 1
 			Enemies[enemyCount] = EnemyLib.NewEnemy({})
 			sceneGroup:insert(Enemies[enemyCount])
 			Enemies[enemyCount]:spawn()
 		end
-		
+
 		-- Joystick
 		Joystick = StickLib.NewStick(
 			{
 				x             = 10,
 				y             = screenH-(52),
 				thumbSize     = 20,
-				borderSize    = 32, 
-				snapBackSpeed = .2, 
+				borderSize    = 32,
+				snapBackSpeed = .2,
 				R             = 0,
 				G             = 1,
 				B             = 1
-			} 
+			}
 		)
 		sceneGroup:insert(Joystick)
 		Joystick.alpha = 0.2
@@ -85,12 +88,15 @@ function scene:show( event )
 			walls:insert(crate)
 		end
 		sceneGroup:insert(walls)
-		
-		pauseButton = display.newImage(pauseImg)
-		pauseButton.x = display.contentWidth+20
-		pauseButton.y = 21
+		-- Pause Button Initialization
+		pauseButton 			= display.newImage(pauseImg)
+		pauseButton.x 		= display.contentWidth+20
+		pauseButton.y 		= 21
 		pauseButton.alpha = 0.2
 		sceneGroup:insert(pauseButton)
+
+		--Status Bar Initialization
+
 	elseif phase == "did" then
 		if Player and Joystick then
 			function begin( event )
@@ -98,48 +104,48 @@ function scene:show( event )
 				for n=1, enemyCount, 1 do
 					Enemies[n]:move(Player)
 				end
-				
+
 				--move world if outside border
 				if Player.x < -8 then	-- moving left
 					Player.x = -8
-					
+
 					for n = 1, walls.numChildren, 1 do
 						walls[n].x = walls[n].x + Player.speed
 					end
-					
+
 					for n=1, enemyCount, 1 do
 						Enemies[n].x = Enemies[n].x + Player.speed
 					end
 				end
 				if Player.x > screenW+8 then	-- moving right
 					Player.x = screenW+8
-					
+
 					for n = 1, walls.numChildren, 1 do
 						walls[n].x = walls[n].x - Player.speed
 					end
-					
+
 					for n=1, enemyCount, 1 do
 						Enemies[n].x = Enemies[n].x - Player.speed
 					end
 				end
 				if Player.y < borders then	-- moving up
 					Player.y = borders
-					
+
 					for n = 1, walls.numChildren, 1 do
 						walls[n].y = walls[n].y + Player.speed
 					end
-					
+
 					for n=1, enemyCount, 1 do
 						Enemies[n].y = Enemies[n].y + Player.speed
 					end
 				end
 				if Player.y > screenH-borders then	-- moving down
 					Player.y = screenH-borders
-					
+
 					for n = 1, walls.numChildren, 1 do
 						walls[n].y = walls[n].y - Player.speed
 					end
-					
+
 					for n=1, enemyCount, 1 do
 						Enemies[n].y = Enemies[n].y - Player.speed
 					end
@@ -158,12 +164,12 @@ function scene:show( event )
         	end
         	pauseButton:addEventListener( "touch", pauseButton )
 		end
-    end 
+    end
 end
 
 function scene:hide( event )
-    local sceneGroup = self.view
-    local phase = event.phase
+    local sceneGroup 	= self.view
+    local phase 			= event.phase
 
     if event.phase == "will" then
 		if pauseButton then
@@ -187,8 +193,8 @@ function scene:hide( event )
 			enemyCount = 0
 		end
     elseif phase == "did" then
-		
-    end 
+
+    end
 end
 
 function scene:unPause()

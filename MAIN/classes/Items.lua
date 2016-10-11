@@ -1,10 +1,10 @@
 module (..., package.seeall)
 -- Image Variables for Items
-local healthImage = "Health.png"
-local manaImage = "Mana.png"
-local keyImage = "Key.png"
-local doorImage = "Door_.png"
-local fdoorImage = "fdoor.png"
+local healthImage = "images/Health.png"
+local manaImage = "images/Mana.png"
+local keyImage = "images/Key.png"
+local doorImage = "images/Door.png"
+local fdoorImage = "images/FinalDoor.png"
 
 -- Variable to store Items
 local items = display.newGroup()
