@@ -1,23 +1,19 @@
 module (..., package.seeall)
 
 -- Enemy
-local enemyImage
-local health
-local enemyType
-local enemyImg
 
 function NewEnemy( props )
-	local enemy 	= display.newGroup()
-	enemy.speed		= props.speed or 0.5
-	enemy.x 		= props.x or 0
-	enemy.y 		= props.y or 0
-	enemyImage 		= props.img or "images/flower.png"
-	enemyType 		= props.enemyType or "x"
-	health 			= props.health or 10
-	enemy.myName = "enemy"
+	local enemy 	   = display.newGroup()
+	enemy.speed		   = props.speed or 0.5
+	enemy.x 		   = props.x or 0
+	enemy.y 		   = props.y or 0
+	enemy.enemyImage   = props.img or "images/flower.png"
+	enemy.enemyType    = props.enemyType or "x"
+	enemy.hp 	       = props.hp or 10
+	enemy.myName       = "enemy"
 	
 	function enemy:spawn()
-		enemyImg = display.newImage(enemyImage)
+		enemyImg = display.newImage(enemy.enemyImage)
 		enemy:insert(enemyImg)
 		physics.addBody(enemy, {filter = enemyCollisionFilter})
 	end
@@ -30,12 +26,20 @@ function NewEnemy( props )
 	end
 	
 	function enemy:useSpecial()
-		print("useSpecial")
+		if ( enemy.enemyType == "chaser" ) then
+			print("useSpecial chaser")
+		elseif ( enemy.enemyType == "ranger" ) then
+			print("useSpecial ranger")
+		elseif ( enemy.enemyType == "trapper" ) then
+			print("useSpecial trapper")
+		elseif ( enemy.enemyType == "tank" ) then
+			print("useSpecial tank")
+		end
 	end
 	
 	function enemy:damageEnemy( amt )
-		enemy.health = enemy.health - amt
-		if enemy.health <= 0 then
+		enemy.hp = enemy.hp - amt
+		if enemy.hp <= 0 then
 			enemy:killEnemy()
 		end
 	end
@@ -50,16 +54,17 @@ function NewEnemy( props )
 	
 	function onGlobalCollision ( event )
 	
-    local o1n = event.object1.myName
-    local o2n = event.object2.myName
+		local o1n = event.object1.myName
+		local o2n = event.object2.myName
 
 
-    if ( o1n == "enemy" or o2n == "enemy") and (o1n == "player" or o2n == "player") then
-		enemy:killEnemy()
-		print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+		if ( o1n == "enemy" or o2n == "enemy") and (o1n == "player" or o2n == "player") then
+			enemy:killEnemy()
+			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 		
-    end
+		end
 	end
+	
 	--visibility???
 	
 	function enemy:move( player )
