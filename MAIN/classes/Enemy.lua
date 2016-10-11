@@ -1,6 +1,6 @@
 module (..., package.seeall)
 
--- Enemy
+-- Enemy Class
 
 function NewEnemy( props )
 	local enemy 	   = display.newGroup()
@@ -57,7 +57,6 @@ function NewEnemy( props )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
 
-
 		if ( o1n == "enemy" or o2n == "enemy") and (o1n == "player" or o2n == "player") then
 			enemy:killEnemy()
 			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
@@ -65,7 +64,9 @@ function NewEnemy( props )
 		end
 	end
 	
-	--visibility???
+	function enemy:isVisible()
+		print("TODO: isVisible")
+	end
 	
 	function enemy:move( player )
 		if (enemy[1] and player) then
