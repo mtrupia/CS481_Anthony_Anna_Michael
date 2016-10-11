@@ -1,6 +1,6 @@
 module (..., package.seeall)
 
--- Enemy
+-- Enemy Class
 
 function NewEnemy( props )
 	local enemy 	   = display.newGroup()
@@ -65,7 +65,9 @@ function NewEnemy( props )
 		end
 	end
 	
-	--visibility???
+	function enemy:isVisible()
+		print("TODO: isVisible")
+	end
 	
 	function enemy:move( player )
 		if (enemy[1] and player) then
