@@ -19,21 +19,21 @@ function NewPower( props )
 	local power = display.newGroup()
 	powerImage 	= props.image or "images/brick.png"
 	powerLife 	= props.life or 500
-	player		= props.player
+	player			= props.player
 	powerSpeed	= props.speed or 250
-	density		= props.density or 3
-	friction	= props.friction or 0.500
-	bounce		= props.bounce or 1
-	
+	density			= props.density or 3
+	friction		= props.friction or 0.500
+	bounce			= props.bounce or 1
+
 	function power:begin()
-		Runtime:addEventListener("touch", Shoot) 
+		Runtime:addEventListener("touch", Shoot)
 	end
-	
+
 	function power:destroy()
 		Runtime:removeEventListener("touch", Shoot)
 		self:removeSelf()
 	end
-	
+
 	function Shoot (event)
 		if "began" == event.phase then
 			n = n + 1
@@ -45,7 +45,7 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			
+
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]]) then
@@ -55,6 +55,6 @@ function NewPower( props )
 			timer.performWithDelay(powerLife, delete)
 		end
 	end
-	
+
 	return power
 end

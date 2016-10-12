@@ -26,10 +26,11 @@ playerCollisionFilter 	= { categoryBits = 2, maskBits = 9 }
 powerCollisionFilter 	= { categoryBits = 4, maskBits = 13 }
 enemyCollisionFilter 	= { categoryBits = 8, maskBits = 15 }
 -- Classes   ('require('classes.cannon').newCannon') <--- change to
-StickLib 	= require("libs.lib_analog_stick")
+StickLib 	  = require("libs.lib_analog_stick")
 PlayerLib 	= require("classes.Player")
-PowerLib 	= require("classes.Power")
-EnemyLib 	= require("classes.Enemy")
+PowerLib 	  = require("classes.Power")
+EnemyLib 	  = require("classes.Enemy")
+SBLib       = require("classes.StatusBar")
 
 -- load Welcome Screen
 composer.gotoScene( "scenes.welcomeScene" )
