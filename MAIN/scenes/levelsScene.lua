@@ -48,9 +48,7 @@ function scene:show( event )
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
-		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(Player)
-		sceneGroup:insert(statusBar)
 		Player:spawnPlayer()
 		-- Enemy
 		for n = 1, 10, 1 do
@@ -59,7 +57,9 @@ function scene:show( event )
 			sceneGroup:insert(Enemies[enemyCount])
 			Enemies[enemyCount]:spawn()
 		end
-
+		-- StatusBar
+		statusBar = iniStatusBar(Player)
+		sceneGroup:insert(statusBar)
 		-- Joystick
 		Joystick = StickLib.NewStick(
 			{
