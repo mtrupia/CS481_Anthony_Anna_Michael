@@ -3,14 +3,16 @@ module (..., package.seeall)
 -- Enemy Class
 
 function NewEnemy( props )
-	local enemy 	   = display.newGroup()
-	enemy.speed		   = props.speed or 0.5
-	enemy.x 		   = props.x or 0
-	enemy.y 		   = props.y or 0
-	enemy.enemyImage   = props.img or "images/flower.png"
-	enemy.enemyType    = props.enemyType or "x"
-	enemy.hp 	       = props.hp or 10
-	enemy.myName       = "enemy"
+	local enemy			= display.newGroup()
+	enemy.speed			= props.speed or 0.5
+	enemy.x				= props.x or 0
+	enemy.y				= props.y or 0
+	enemy.enemyImage	= props.img or "images/flower.png"
+	enemy.enemyType		= props.enemyType or "x"
+	enemy.hp			= props.hp or 10
+	enemy.index			= props.index or 0
+	enemy.myName		= "enemy" .. enemy.index
+	enemy.visible		= false
 	
 	function enemy:spawn()
 		enemyImg = display.newImage(enemy.enemyImage)
@@ -20,8 +22,8 @@ function NewEnemy( props )
 	
 	function enemy:killEnemy()
 		if (enemy[1]) then
+			display.remove(enemy[1].enemyImg)
 			enemy[1]:removeSelf()
-			display.remove(enemy.enemyImg)
 		end
 	end
 	
@@ -49,6 +51,8 @@ function NewEnemy( props )
 	end
 	
 	function enemy:destroy()
+		display.remove(enemy.enemyImg)
+		physics.removeBody( enemy )
 		self:removeSelf()
 	end
 	
@@ -57,19 +61,20 @@ function NewEnemy( props )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
 
-		if ( o1n == "enemy" or o2n == "enemy") and (o1n == "player" or o2n == "player") then
+		if ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "power" or o2n == "power") then
 			enemy:killEnemy()
 			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
-		
 		end
 	end
 	
-	function enemy:isVisible()
-		print("TODO: isVisible")
+	function enemy:visibility()
+		enemy.visible = true
+		
 	end
 	
 	function enemy:move( player )
-		if (enemy[1] and player) then
+		enemy:visibility()
+		if (enemy[1] and player and enemy.visible) then
 			hyp=math.sqrt((player.x-enemy.x)^2 + (player.y-enemy.y)^2)
 			enemy.x=enemy.x + (player.x-enemy.x)/hyp
 			enemy.y=enemy.y + (player.y-enemy.y)/hyp
