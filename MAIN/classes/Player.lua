@@ -29,11 +29,11 @@ local playerImage
 function NewPlayer ( props )
 	local player		= display.newGroup()
 	player.speed		= props.speed or 3
-	player.x				= props.x or halfW
-	player.y				= props.y or halfH
+	player.x			= props.x or halfW
+	player.y			= props.y or halfH
 	playerImage			= props.image or "flower.png"
-  player.myName 	= "player"
-	player.hp 			= props.hp or 10
+	player.myName 		= "player"
+	player.hp 			= props.hp or 100
 	player.mana			= props.mana or 0
 	player.score		= props.score or 0
 
