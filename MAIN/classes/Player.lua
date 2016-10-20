@@ -43,7 +43,6 @@ function NewPlayer ( props )
 		playerSprite:setSequence("forward")
 		player:insert(playerSprite)
 		physics.addBody(player, {filter = playerCollisionFilter})
-
 		-- Power
 		Power = PowerLib.NewPower( { player = player } )
 		Power:begin()
