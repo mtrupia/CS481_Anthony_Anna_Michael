@@ -49,6 +49,7 @@ function scene:show( event )
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
+
 		Items = ItemsLib.Items()
 		Items:newItem("hp",100,100)
 		Items:newItem("mana", 200, 100)
@@ -67,7 +68,9 @@ function scene:show( event )
 		-- StatusBar
 		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(statusBar)
+
 		statusBar:iHPB()
+
 		-- Joystick
 		Joystick = StickLib.NewStick(
 			{
@@ -191,6 +194,10 @@ function scene:hide( event )
       Items:destroy()
       Items:removeSelf()
     end
+		if statusBar then
+			statusBar:destroy()
+			statusBar:removeSelf()
+		end
 		if Enemies then
 			for n=1, enemyCount, 1 do
 				Enemies[n]:destroy()
