@@ -123,5 +123,8 @@ function iniStatusBar(Player)
       statusBar.HPB.mid.width = statusBar.HPB.mid.width - 12
     end
   end
+  function statusBar:destroy()
+    self:removeSelf()
+  end
   return statusBar
 end
