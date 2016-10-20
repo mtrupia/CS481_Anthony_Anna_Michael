@@ -23,12 +23,6 @@ function iniStatusBar(Player)
   statusBar.HPB.begin = display.newCircle(-32,15.8,6.2)
   statusBar:insert(statusBar.HPB.begin)
   statusBar.HPB.begin:setFillColor(1,0,0)
-<<<<<<< HEAD
-  -- Middle of Health Bar
-  statusBar.HPB.mid   = display.newRect(-31,16,106,12)
-  statusBar:insert(statusBar.HPB.mid)
-  statusBar.HPB.mid:setFillColor(1,0,0)
-=======
   statusBar.HPB.begin.isVisible = false
   -- Middle of Health Bar
   statusBar.HPB.mid = display.newRect(-31,16,10,12)
@@ -36,17 +30,13 @@ function iniStatusBar(Player)
   statusBar.HPB.mid:setFillColor(1,0,0)
   statusBar.HPB.mid.isVisible = false
   print(statusBar.HPB.mid.isVisible)
->>>>>>> refs/remotes/origin/Anthony
   statusBar.HPB.mid.anchorX = 0
   statusBar.HPB.mid.anchorY = 0.5
   -- Circle for End Of Health Bar
   statusBar.HPB.fin   = display.newCircle(73,15.8,6)
   statusBar:insert(statusBar.HPB.fin)
   statusBar.HPB.fin:setFillColor(1,0,0)
-<<<<<<< HEAD
-=======
   statusBar.HPB.fin.isVisible = false
->>>>>>> refs/remotes/origin/Anthony
   statusBar.HPB:toFront()
 
   -- MANA BAR
@@ -78,8 +68,6 @@ function iniStatusBar(Player)
   statusBar.key:scale(0.5,0.5)
   statusBar.key.isVisible = false
 
-<<<<<<< HEAD
-=======
   -- increase HP Bar
   function statusBar:iHPB ()
     print("Function: statusBar:iHPB ran")
@@ -135,6 +123,5 @@ function iniStatusBar(Player)
       statusBar.HPB.mid.width = statusBar.HPB.mid.width - 12
     end
   end
->>>>>>> refs/remotes/origin/Anthony
   return statusBar
 end
