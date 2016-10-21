@@ -39,13 +39,14 @@ function NewEnemy( props )
 		else
 			enemy.speed			= 0.5
 			enemy.enemyImage	= "images/flower.png"
-			print("¯\_(ツ)_/¯")
+			print("¯\\_(ツ)_/¯")
 			--error here
 		end
 		
 		enemyImg = display.newImage(enemy.enemyImage)
 		enemy:insert(enemyImg)
 		physics.addBody(enemy, {filter = enemyCollisionFilter})	
+		enemy.isFixedRotation = true
 	end
 	
 	function enemy:killEnemy()
@@ -81,7 +82,7 @@ function NewEnemy( props )
 	
 	function enemy:destroy()
 		display.remove(enemy.enemyImg)
-		physics.removeBody( enemy )
+		--physics.removeBody( enemy )
 		self:removeSelf()
 	end
 	
@@ -90,7 +91,7 @@ function NewEnemy( props )
 		local o2n = event.object2.myName
 
 		if ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "power" or o2n == "power") then
-			enemy:damageEnemy( 10 ) --figure out what to do here
+			enemy:damageEnemy( 100 ) --figure out what to do here
 			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 		end
 	end
