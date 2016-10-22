@@ -61,7 +61,7 @@ function scene:show( event )
 		-- Enemy
 		for n = 1, 10, 1 do
 			enemyCount 					= enemyCount + 1
-			Enemies[enemyCount] = EnemyLib.NewEnemy({})
+			Enemies[enemyCount] = EnemyLib.NewEnemy({index=enemyCount})
 			sceneGroup:insert(Enemies[enemyCount])
 			Enemies[enemyCount]:spawn()
 		end

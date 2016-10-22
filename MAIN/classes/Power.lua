@@ -39,6 +39,7 @@ function NewPower( props )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
 			physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )
+			powers[n].myName = "power"
 			deltaX = event.x - player.x
 			deltaY = event.y - player.y
 			normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
