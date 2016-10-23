@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -133,7 +133,7 @@ function scene:show( event )
 		pauseButton 			= display.newImage(pauseImg)
 		pauseButton.x 		= display.contentWidth+20
 		pauseButton.y 		= 21
-		pauseButton.alpha = 0.5
+		pauseButton.alpha = 0.2
 		sceneGroup:insert(pauseButton)
 	elseif phase == "did" then
 		if levelID == 2 then
@@ -144,7 +144,6 @@ function scene:show( event )
 			function begin( event )
 				statusBar:toFront()
 				Joystick:toFront()
-				pauseButton:toFront()
 				Player:move(Joystick)
 				--for n=1, Enemies.numChildren, 1 do
 				--	Enemies[n]:move(Player)
@@ -307,7 +306,6 @@ function onGlobalCollision ( event )
   elseif (o1n == fdoor or o2n == fdoor) and (o1n == "player" or o2n == "player") then
     print("Final Door Collision Detected.")
 	text.isVisible = true
-	text:toFront()
 	function endLevel()
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
