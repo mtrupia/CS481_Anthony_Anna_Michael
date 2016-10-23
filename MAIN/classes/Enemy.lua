@@ -93,6 +93,12 @@ function NewEnemy( props )
 		if ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "power" or o2n == "power") then
 			enemy:damageEnemy( 100 ) --figure out what to do here
 			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+			if o1n == "power" then
+				event.object2:damageEnemy( 100 ) --figure out what to do here
+			else
+				event.object1:damageEnemy( 100 )
+			end
+			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 		end
 	end
 
