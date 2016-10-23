@@ -240,14 +240,17 @@ function onGlobalCollision ( event )
     display.remove( Items.hp )
 		Player.hp = Player.hp + 10
     statusBar:iHPB()
+
 	--If player collides w/ Mana, increase MP
   elseif (o1n == Mana or o2n == Mana) and (o1n == "player" or o2n == "player") then
     display.remove( Items.mana )
 		Player.mana = Player.mana + 10
 		statusBar:iMPB()
+	--If player collides w/ Key, pick up key
   elseif (o1n == key or o2n == key) and (o1n == "player" or o2n == "player") then
     Items.key = display.remove( Items.key )
 		statusBar.key.isVisible = true
+	--If door collides w/ Door, if you have a key.
   elseif (o1n == door or o2n == door) and (o1n == "player" or o2n == "player") then
     if(statusBar.key) then
       statusBar.key.isVisible = false

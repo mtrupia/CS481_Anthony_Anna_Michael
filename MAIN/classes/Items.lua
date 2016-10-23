@@ -19,6 +19,7 @@ function Items ()
       items:insert(items.hp)
       physics.addBody( items.hp, "static" )
       items.hp.myName = "hp"
+
     end
     -- Mana
     -- Replenishes Mana
