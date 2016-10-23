@@ -33,8 +33,6 @@ local Joystick
 local levelID
 local pauseButton
 
-local text
-
 function scene:create( event )
 	local sceneGroup = self.view
 
@@ -76,188 +74,213 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-
+	local sceneGroup = self.view
+	local phase = event.phase
 
 	if phase == "will" then
+		-- BG may change
+		bg 			= event.params.bg or "images/testBG.png"
+		-- LevelID
+		levelID = event.params.levelID
+		-- Player
+		Player = PlayerLib.NewPlayer( {} )
+
+		Items = ItemsLib.Items()
+		--Items:newItem("hp",100,100)
+		--Items:newItem("mana", 200, 100)
+		--Items:newItem("key", 300, 100)
+		--Items:newItem("door", 500, 100)
+		--Items:newItem("fdoor", 500, 300)
+		sceneGroup:insert(Items)
+		sceneGroup:insert(Player)
+		Player:spawnPlayer()
+		-- Enemy
+		Enemies = display.newGroup()
+		sceneGroup:insert(Enemies)
+		-- StatusBar
+		statusBar = iniStatusBar(Player)
+		sceneGroup:insert(statusBar)
 
 		if phase == "will" then
-			text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
-			text.isVisible = false
-			sceneGroup:insert(text)
+
+			if phase == "will" then
+				text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+				text.isVisible = false
+				sceneGroup:insert(text)
 
 
-			-- BG may change
-			bg 			= event.params.bg or "images/testBG.png"
-			-- LevelID
-			levelID = event.params.levelID
-			-- Player
-			Player = PlayerLib.NewPlayer( {} )
+				-- BG may change
+				bg 			= event.params.bg or "images/testBG.png"
+				-- LevelID
+				levelID = event.params.levelID
+				-- Player
+				Player = PlayerLib.NewPlayer( {} )
 
 
-			-- Items:newItem("hp",100,100)
-			-- Items:newItem("mana", 200, 100)
-			-- Items:newItem("key", 300, 100)
-			-- Items:newItem("door", 500, 100)
-			-- Items:newItem("fdoor", 500, 300)
-			Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
-			sceneGroup:insert(Items[itemCount])
-			Items[itemCount]:spawn()
-			itemCount	= itemCount + 1
+				-- Items:newItem("hp",100,100)
+				-- Items:newItem("mana", 200, 100)
+				-- Items:newItem("key", 300, 100)
+				-- Items:newItem("door", 500, 100)
+				-- Items:newItem("fdoor", 500, 300)
+				Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
+				sceneGroup:insert(Items[itemCount])
+				Items[itemCount]:spawn()
+				itemCount	= itemCount + 1
 
-			Items[itemCount] = ItemsLib.newItem(itemCount,"mana",200,100)
-			sceneGroup:insert(Items[itemCount])
-			Items[itemCount]:spawn()
-			itemCount = itemCount + 1
+				Items[itemCount] = ItemsLib.newItem(itemCount,"mana",200,100)
+				sceneGroup:insert(Items[itemCount])
+				Items[itemCount]:spawn()
+				itemCount = itemCount + 1
 
-			Items[itemCount] = ItemsLib.newItem(itemCount,"key",300,100)
-			sceneGroup:insert(Items[itemCount])
-			Items[itemCount]:spawn()
-			itemCount = itemCount + 1
+				Items[itemCount] = ItemsLib.newItem(itemCount,"key",300,100)
+				sceneGroup:insert(Items[itemCount])
+				Items[itemCount]:spawn()
+				itemCount = itemCount + 1
 
-			Items[itemCount] = ItemsLib.newItem(itemCount,"door",500,100)
-			sceneGroup:insert(Items[itemCount])
-			Items[itemCount]:spawn()
-			itemCount = itemCount + 1
+				Items[itemCount] = ItemsLib.newItem(itemCount,"door",500,100)
+				sceneGroup:insert(Items[itemCount])
+				Items[itemCount]:spawn()
+				itemCount = itemCount + 1
 
-			Items[itemCount] = ItemsLib.newItem(itemCount,"fdoor",500,300)
-			sceneGroup:insert(Items[itemCount])
-			Items[itemCount]:spawn()
-			itemCount = itemCount + 1
-
-
-			Items = ItemsLib.Items()
-			--Items:newItem("hp",100,100)
-			--Items:newItem("mana", 200, 100)
-			--Items:newItem("key", 300, 100)
-			--Items:newItem("door", 500, 100)
-			--Items:newItem("fdoor", 500, 300)
-			sceneGroup:insert(Items)
-
-			sceneGroup:insert(Player)
-			Player:spawnPlayer()
-
-			-- Enemy
-
-			-- for n = 1, 10, 1 do
-			-- 	enemyCount 					= enemyCount + 1
-			-- 	Enemies[enemyCount] = EnemyLib.NewEnemy({index=enemyCount})
-			-- 	sceneGroup:insert(Enemies[enemyCount])
-			-- 	Enemies[enemyCount]:spawn()
-			-- end
+				Items[itemCount] = ItemsLib.newItem(itemCount,"fdoor",500,300)
+				sceneGroup:insert(Items[itemCount])
+				Items[itemCount]:spawn()
+				itemCount = itemCount + 1
 
 
-			Enemies = display.newGroup()
-			sceneGroup:insert(Enemies)
+				Items = ItemsLib.Items()
+				--Items:newItem("hp",100,100)
+				--Items:newItem("mana", 200, 100)
+				--Items:newItem("key", 300, 100)
+				--Items:newItem("door", 500, 100)
+				--Items:newItem("fdoor", 500, 300)
+				sceneGroup:insert(Items)
 
-			-- StatusBar
-			statusBar = iniStatusBar(Player)
-			sceneGroup:insert(statusBar)
-			Player.hp = Player.hp + 10
-			statusBar:iHPB()
+				sceneGroup:insert(Player)
+				Player:spawnPlayer()
 
-			-- Joystick
-			Joystick = StickLib.NewStick(
-			{
-				x             = 10,
-				y             = screenH-(52),
-				thumbSize     = 20,
-				borderSize    = 32,
-				snapBackSpeed = .2,
-				R             = 0,
-				G             = 1,
-				B             = 1
-			}
-		)
-		sceneGroup:insert(Joystick)
-		Joystick.alpha = 0.2
-		-- Create some collision
-		walls = display.newGroup()
-		for n = 1, levelID, 1 do
-			local crate
-			if n <= 5 then
-				crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
-			else
-				crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+				-- Enemy
+
+				-- for n = 1, 10, 1 do
+				-- 	enemyCount 					= enemyCount + 1
+				-- 	Enemies[enemyCount] = EnemyLib.NewEnemy({index=enemyCount})
+				-- 	sceneGroup:insert(Enemies[enemyCount])
+				-- 	Enemies[enemyCount]:spawn()
+				-- end
+
+
+				Enemies = display.newGroup()
+				sceneGroup:insert(Enemies)
+
+				-- StatusBar
+				statusBar = iniStatusBar(Player)
+				sceneGroup:insert(statusBar)
+				Player.hp = Player.hp + 10
+				statusBar:iHPB()
+
+				-- Joystick
+				Joystick = StickLib.NewStick(
+				{
+					x             = 10,
+					y             = screenH-(52),
+					thumbSize     = 20,
+					borderSize    = 32,
+					snapBackSpeed = .2,
+					R             = 0,
+					G             = 1,
+					B             = 1
+				}
+			)
+			sceneGroup:insert(Joystick)
+			Joystick.alpha = 0.2
+			-- Create some collision
+			walls = display.newGroup()
+			for n = 1, levelID, 1 do
+				local crate
+				if n <= 5 then
+					crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
+				else
+					crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+				end
+				physics.addBody(crate, "static", { filter = worldCollisionFilter } )
+				walls:insert(crate)
 			end
-			physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-			walls:insert(crate)
-		end
-		sceneGroup:insert(walls)
-		-- Pause Button Initialization
-		pauseButton 			= display.newImage(pauseImg)
-		pauseButton.x 		= display.contentWidth+20
-		pauseButton.y 		= 21
-		pauseButton.alpha = 0.5
-		sceneGroup:insert(pauseButton)
-	elseif phase == "did" then
-		if Player and Joystick then
-			function begin( event )
+			sceneGroup:insert(walls)
+			-- Pause Button Initialization
+			pauseButton 			= display.newImage(pauseImg)
+			pauseButton.x 		= display.contentWidth+20
+			pauseButton.y 		= 21
+			pauseButton.alpha = 0.5
+			sceneGroup:insert(pauseButton)
+		elseif phase == "did" then
+			if Player and Joystick then
+				function begin( event )
 
 
-				statusBar:toFront()
-				Joystick:toFront()
-				pauseButton:toFront()
-				Player:move(Joystick)
-				for n=1, enemyCount, 1 do
-					Enemies[n]:move(Player)
-				end
-
-				--move world if outside border
-				if Player.x < -8 then	-- moving left
-					Player.x = -8
-
-					for n = 1, walls.numChildren, 1 do
-						walls[n].x = walls[n].x + Player.speed
+					statusBar:toFront()
+					Joystick:toFront()
+					pauseButton:toFront()
+					Player:move(Joystick)
+					for n=1, enemyCount, 1 do
+						Enemies[n]:move(Player)
 					end
-					for n = 0, itemCount, 1 do
-						if(Items[n]) then
-							Items[n].x = Items[n].x + Player.speed
+
+					--move world if outside border
+					if Player.x < -8 then	-- moving left
+						Player.x = -8
+
+						for n = 1, walls.numChildren, 1 do
+							walls[n].x = walls[n].x + Player.speed
+						end
+						for n = 0, itemCount, 1 do
+							if(Items[n]) then
+								Items[n].x = Items[n].x + Player.speed
+							end
 						end
 					end
-				end
-				if Player.x > screenW+8 then	-- moving right
-					Player.x = screenW+8
+					if Player.x > screenW+8 then	-- moving right
+						Player.x = screenW+8
 
-					for n = 1, walls.numChildren, 1 do
-						walls[n].x = walls[n].x - Player.speed
-					end
-					for n = 0, itemCount, 1 do
-						if(Items[n]) then
-							Items[n].x = Items[n].x - Player.speed
+						for n = 1, walls.numChildren, 1 do
+							walls[n].x = walls[n].x - Player.speed
+						end
+						for n = 0, itemCount, 1 do
+							if(Items[n]) then
+								Items[n].x = Items[n].x - Player.speed
+							end
 						end
 					end
-				end
-				if Player.y < borders then	-- moving up
-					Player.y = borders
+					if Player.y < borders then	-- moving up
+						Player.y = borders
 
-					for n = 1, walls.numChildren, 1 do
-						walls[n].y = walls[n].y + Player.speed
-					end
-					for n = 0, itemCount, 1 do
-						if(Items[n]) then
-							Items[n].y = Items[n].y + Player.speed
+						for n = 1, walls.numChildren, 1 do
+							walls[n].y = walls[n].y + Player.speed
+						end
+						for n = 0, itemCount, 1 do
+							if(Items[n]) then
+								Items[n].y = Items[n].y + Player.speed
+							end
 						end
 					end
-				end
-				if Player.y > screenH-borders then	-- moving down
-					Player.y = screenH-borders
+					if Player.y > screenH-borders then	-- moving down
+						Player.y = screenH-borders
 
-					for n = 1, walls.numChildren, 1 do
-						walls[n].y = walls[n].y - Player.speed
-					end
-					for n = 0, itemCount, 1 do
-						if(Items[n]) then
-							Items[n].y = Items[n].y - Player.speed
+						for n = 1, walls.numChildren, 1 do
+							walls[n].y = walls[n].y - Player.speed
+						end
+						for n = 0, itemCount, 1 do
+							if(Items[n]) then
+								Items[n].y = Items[n].y - Player.speed
+							end
 						end
 					end
-				end
 
-				-- Pause Button Initialization
-				pauseButton 			= display.newImage(pauseImg)
-				pauseButton.x 		= display.contentWidth+20
-				pauseButton.y 		= 21
-				pauseButton.alpha = 0.2
-				sceneGroup:insert(pauseButton)
+					-- Pause Button Initialization
+					pauseButton 			= display.newImage(pauseImg)
+					pauseButton.x 		= display.contentWidth+20
+					pauseButton.y 		= 21
+					pauseButton.alpha = 0.2
+					sceneGroup:insert(pauseButton)
 				end
 			elseif phase == "did" then
 				if levelID == 2 then
@@ -367,12 +390,25 @@ function scene:hide( event )
 		end
 		if Items then
 
+
 			for n=0, itemCount, 1 do
 				Items[n]:destroy()
 			end
 			itemCount = 0
-		end
 
+			Items:destroy()
+			Items:removeSelf()
+		end
+		if statusBar then
+			statusBar:destroy()
+			statusBar:removeSelf()
+		end
+		if Enemies then
+			for n=1, enemyCount, 1 do
+				Enemies[n]:destroy()
+			end
+			enemyCount = 0
+		end
 		Items:destroy()
 		Items:removeSelf()
 	end
@@ -451,11 +487,7 @@ function onGlobalCollision ( event )
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
 		timer.performWithDelay(3000, endLevel, 1)
-end
-
-function removeP(i)
-	Player:toFront()
-	physics.removeBody( Items[i] )
+	end
 end
 ---------------------------------------------------------------------------------
 
