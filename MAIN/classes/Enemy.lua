@@ -11,10 +11,10 @@ function NewEnemy( props )
 	enemy.enemyType		= props.enemyType or "chaser"
 	--enemy.hp			= props.hp or 10
 	enemy.index			= props.index or 0
-	
+
 	enemy.myName		= "enemy" .. enemy.index
 	enemy.visible		= false
-	
+
 	function enemy:spawn()
 		if ( enemy.enemyType == "chaser" ) then
 			enemy.speed			= 1.0
@@ -42,20 +42,20 @@ function NewEnemy( props )
 			print("¯\\_(ツ)_/¯")
 			--error here
 		end
-		
+
 		enemyImg = display.newImage(enemy.enemyImage)
 		enemy:insert(enemyImg)
-		physics.addBody(enemy, {filter = enemyCollisionFilter})	
+		physics.addBody(enemy, {filter = enemyCollisionFilter})
 		enemy.isFixedRotation = true
 	end
-	
+
 	function enemy:killEnemy()
 		if (enemy[1]) then
 			display.remove(enemy[1].enemyImg)
 			enemy[1]:removeSelf()
 		end
 	end
-	
+
 	function enemy:useSpecial()
 		if ( enemy.enemyType == "chaser" ) then
 			print("useSpecial chaser")
@@ -67,39 +67,39 @@ function NewEnemy( props )
 			print("useSpecial tank")
 		end
 	end
-	
+
 	function enemy:damageEnemy( amt )
 		enemy.hp = enemy.hp - amt
 		if enemy.hp <= 0 then
 			enemy:killEnemy()
 		end
 	end
-	
+
 	function enemy:attack( player )
 		print("attack")
 		player:damagePlayer( enemy.attackDamage )
 	end
-	
+
 	function enemy:destroy()
 		display.remove(enemy.enemyImg)
 		--physics.removeBody( enemy )
 		self:removeSelf()
 	end
-	
+
 	function onGlobalCollision ( event )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
 
 		if ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "power" or o2n == "power") then
 			enemy:damageEnemy( 100 ) --figure out what to do here
-			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 		end
 	end
-	
+
 	function enemy:visibility()
-		enemy.visible = true	
+		enemy.visible = true
 	end
-	
+
 	function enemy:move( player )
 		enemy:visibility()
 		if ( enemy[1] and player and enemy.visible and enemy.enemyType == "chaser" ) then
@@ -117,8 +117,8 @@ function NewEnemy( props )
 		end
 
 	end
-	
+
 	Runtime:addEventListener("collision", onGlobalCollision)
-	
+
 	return enemy
 end
