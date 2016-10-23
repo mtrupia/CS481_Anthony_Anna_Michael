@@ -27,8 +27,6 @@ local Joystick
 local levelID
 local pauseButton
 
-local text
-
 function scene:create( event )
 	local sceneGroup = self.view
 
@@ -72,10 +70,6 @@ function scene:show( event )
     local phase = event.phase
 
     if phase == "will" then
-		text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
-		text.isVisible = false
-		sceneGroup:insert(text)
-		
 		-- BG may change
 		bg 			= event.params.bg or "images/testBG.png"
 		-- LevelID
@@ -239,16 +233,18 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
-			Items:destroy()
-			Items:removeSelf()
+      Items:destroy()
+      Items:removeSelf()
     end
 		if statusBar then
 			statusBar:destroy()
 			statusBar:removeSelf()
 		end
 		if Enemies then
-			Enemies:removeSelf()
-			Enemies = nil
+			for n=1, enemyCount, 1 do
+				Enemies[n]:destroy()
+			end
+			enemyCount = 0
 		end
     elseif phase == "did" then
 
@@ -305,11 +301,7 @@ function onGlobalCollision ( event )
     end
   elseif (o1n == fdoor or o2n == fdoor) and (o1n == "player" or o2n == "player") then
     print("Final Door Collision Detected.")
-	text.isVisible = true
-	function endLevel()
-		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
-	end
-	timer.performWithDelay(3000, endLevel, 1)
+	composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
   end
 end
 
