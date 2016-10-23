@@ -7,62 +7,39 @@ local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
 
 -- Variable to store Items
-local items
+local item
 
-function Items ()
-  items = display.newGroup()
-  -- Health
-  -- Restores Health
-  function items:newItem(arg, x, y)
-    if(arg == "hp") then
-      items.hp = display.newImage( healthImage, x, y )
-      items:insert(items.hp)
-      physics.addBody( items.hp, "static" )
-      items.hp.myName = "hp"
+function newItem ( props )
+  item = display.newGroup()
+  item.x      = props.x or 0
+  item.y      = props.y or 0
+  item.type   = props.type or "key"
+  item.index  = props.index or 0
+  item.myName = props.type
 
-    end
-    -- Mana
-    -- Replenishes Mana
-    if(arg == "mana") then
-      items.mana = display.newImage( manaImage, x, y )
-      items:insert(items.mana)
-      physics.addBody( items.mana, "static" )
-      items.mana.myName = "mana"
-    end
-
-    -- Key
-    -- Unlocks Doors
-    if (arg == "key") then
-      items.key = display.newImage( keyImage, x, y )
-      items:insert(items.key)
-      physics.addBody( items.key, "static")
-      items.key.myName = "key"
+  function item:spawn()
+    if( item.type == "hp") then
+      item.image = healthImage
+    elseif (item.type == "mana") then
+      item.image = manaImage
+    elseif (item.type == "key") then
+      item.image = keyImage
+    elseif (item.type == "door") then
+      item.image = doorImage
+      item.circle = display.newCircle(item.x, item.y - 20, 8)
+      item.circle:setFillColor(1,0,0)
+      item:insert(item.circle)
+    elseif (item.type == "fdoor") then
+      item.image = fdoorImage
     end
 
-    -- Final Door
-    -- Ends Level
-    if (arg == "fdoor") then
-      items.fdoor = display.newImage( fdoorImage, x, y )
-      items:insert(items.fdoor)
-      physics.addBody( items.fdoor, "static")
-      items.fdoor.myName = "fdoor"
-    end
-
-    -- Door
-    -- Locked, unlocked by using a key
-    if (arg == "door") then
-      items.door = display.newImage( doorImage, x, y )
-      items:insert(items.door)
-      items.door.circle = display.newCircle( x, y - 20, 8)
-      items.door.circle:setFillColor(1,0,0)
-      items:insert(items.door.circle)
-      physics.addBody( items.door, "static")
-      items.door.myName = "door"
-    end
+    itemImg = display.newImage(item.image)
+    item:insert(itemImg)
+    physics.addBody(item, "static")
   end
-  function items:destroy()
+  function item:destroy()
     self:removeSelf()
   end
 
-  return items
+  return item
 end
