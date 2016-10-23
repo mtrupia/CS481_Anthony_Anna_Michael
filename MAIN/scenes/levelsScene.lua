@@ -315,7 +315,6 @@ function onGlobalCollision ( event )
 			statusBar.key.isVisible = false
 			display.remove( o1 )
 			Items[o1.index] = nil
-			walls:insert(display.newImage("images/Door.png",o1.x,o1.y))
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		text.isVisible = true
