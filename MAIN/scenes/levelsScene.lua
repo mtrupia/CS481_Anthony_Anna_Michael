@@ -73,7 +73,7 @@ function scene:show( event )
 	local phase = event.phase
 
 	if phase == "will" then
-		text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text.isVisible = false
 		sceneGroup:insert(text)
 
@@ -115,16 +115,16 @@ function scene:show( event )
 	Joystick.alpha = 0.2
 	-- Create some collision
 	walls = display.newGroup()
-	--for n = 1, levelID, 1 do
-	--	local crate
-	--	if n <= 5 then
-	--		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
-	--	else
-	--		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
-	--	end
-	--	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-	--	walls:insert(crate)
-	--end
+	-- for n = 1, levelID, 1 do
+	-- 	local crate
+	-- 	if n <= 5 then
+	-- 		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
+	-- 	else
+	-- 		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+	-- 	end
+	-- 	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
+	-- 	walls:insert(crate)
+	-- end
 	sceneGroup:insert(walls)
 	-- Pause Button Initialization
 	pauseButton 			= display.newImage(pauseImg)
@@ -237,7 +237,6 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
-			Items:removeSelf()
 			Items = nil
 		end
 		if statusBar then
