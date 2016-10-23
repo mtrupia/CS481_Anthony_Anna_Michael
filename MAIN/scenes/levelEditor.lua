@@ -64,7 +64,9 @@ function scene:loadLevel()
 	
 	for i = 1, #level.items do
 		local b = level.items[i]
-		Items:newItem(b.name, b.x, b.y)
+		newItem = ItemsLib.newItem(1, b.name, b.x, b.y)
+		Items:insert(newItem)
+		newItem:spawn()
 	end
 end
 
@@ -151,7 +153,7 @@ function scene:show( event )
 		Enemies = display.newGroup()
 		sceneGroup:insert(Enemies)
 		-- Items
-		Items = ItemsLib.Items()
+		Items = display.newGroup()
 		sceneGroup:insert(Items)
 		
 		-- Joystick
@@ -190,8 +192,9 @@ function scene:show( event )
 				end
 				if event.isSecondaryButtonDown then
 					if key == "w" then
-						local x1 = event.x
-						local y1 = event.y
+						x1 = event.x
+						y1 = event.y
+					
 						for n = 1, walls.numChildren, 1 do
 							x2 = walls[n].x
 							y2 = walls[n].y
@@ -201,6 +204,7 @@ function scene:show( event )
 								y1 = walls[n].y
 							end
 						end
+					
 						pos = { x = x1, y = y1}
 					else
 						ready = 1
@@ -224,7 +228,9 @@ function scene:show( event )
 								enemy:spawn()
 								editType:insert(enemy)
 							elseif editType == Items then
-								Items:newItem(editName, event.x, event.y)
+								newItem = ItemsLib.newItem(1, editName, event.x, event.y)
+								Items:insert(newItem)
+								newItem:spawn()
 							end
 						end
 					end
@@ -288,11 +294,28 @@ function scene:show( event )
 					elseif key == "w" then
 						print("wall building mode")
 					elseif pos then
-						if key == "right" then
+						local makeBlock = true
+						for n = 1, walls.numChildren, 1 do
+							if pos.x == walls[n].x and pos.y == walls[n].y then
+								makeBlock = false
+							end
+						end
+						
+						if makeBlock then
+							print("making crate")
 							crate = display.newImage("images/crate.png", pos.x, pos.y)
 							physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 							walls:insert(crate)
-							pos.x = pos.x + crate.width
+						end
+						
+						if key == "right" then
+							pos.x = pos.x + walls[1].width
+						elseif key == "left" then
+							pos.x = pos.x - walls[1].width
+						elseif key == "up" then
+							pos.y = pos.y - walls[1].height
+						elseif key == "down" then
+							pos.y = pos.y + walls[1].height
 						end
 					end
 				end
@@ -405,7 +428,8 @@ function scene:hide( event )
 			Enemies[1]:destroy()
 		end
 		if Items then
-			Items:destroy()
+			Items:removeSelf()
+			Items = nil
 		end
 		if editType then
 			editType:removeSelf()

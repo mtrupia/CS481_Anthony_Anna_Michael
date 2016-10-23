@@ -64,7 +64,9 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		Items:newItem(b.name, b.x, b.y)
+		newItem = ItemsLib.newItem(1, b.name, b.x, b.y)
+		Items:insert(newItem)
+		newItem:spawn()
 	end
 end
 
@@ -73,7 +75,7 @@ function scene:show( event )
 	local phase = event.phase
 
 	if phase == "will" then
-		text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text.isVisible = false
 		sceneGroup:insert(text)
 
@@ -83,10 +85,8 @@ function scene:show( event )
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
-		Items = {}
-		Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
-		sceneGroup:insert(Items[itemCount])
-		Items[itemCount]:spawn()
+		Items = display.newGroup()
+		sceneGroup:insert(Items)
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
 		-- Enemy
@@ -157,7 +157,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x + Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x + Player.speed
 					end
@@ -172,7 +172,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x - Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x - Player.speed
 					end
@@ -187,7 +187,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y + Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y + Player.speed
 					end
@@ -202,7 +202,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y - Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y - Player.speed
 					end
@@ -245,6 +245,7 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
+			Items:removeSelf()
 			Items = nil
 		end
 		if statusBar then
@@ -254,6 +255,9 @@ function scene:hide( event )
 		if Enemies then
 			Enemies:removeSelf()
 			Enemies = nil
+		end
+		if text then
+			text:removeSelf()
 		end
 	elseif phase == "did" then
 
@@ -316,6 +320,7 @@ function onGlobalCollision ( event )
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		text.isVisible = true
+		text:toFront()
 		function endLevel()
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
