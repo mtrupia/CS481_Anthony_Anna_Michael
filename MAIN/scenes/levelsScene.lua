@@ -102,6 +102,7 @@ function scene:show( event )
 		sceneGroup:insert(statusBar)
 
 		if phase == "will" then
+<<<<<<< HEAD
 
 			if phase == "will" then
 				text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
@@ -201,6 +202,128 @@ function scene:show( event )
 					crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
 				else
 					crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+=======
+			text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+			text.isVisible = false
+			sceneGroup:insert(text)
+
+
+			-- BG may change
+			bg 			= event.params.bg or "images/testBG.png"
+			-- LevelID
+			levelID = event.params.levelID
+			-- Player
+			Player = PlayerLib.NewPlayer( {} )
+
+
+			-- Items:newItem("hp",100,100)
+			-- Items:newItem("mana", 200, 100)
+			-- Items:newItem("key", 300, 100)
+			-- Items:newItem("door", 500, 100)
+			-- Items:newItem("fdoor", 500, 300)
+			Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
+			sceneGroup:insert(Items[itemCount])
+			Items[itemCount]:spawn()
+			itemCount	= itemCount + 1
+
+			Items[itemCount] = ItemsLib.newItem(itemCount,"mana",200,100)
+			sceneGroup:insert(Items[itemCount])
+			Items[itemCount]:spawn()
+			itemCount = itemCount + 1
+
+			Items[itemCount] = ItemsLib.newItem(itemCount,"key",300,100)
+			sceneGroup:insert(Items[itemCount])
+			Items[itemCount]:spawn()
+			itemCount = itemCount + 1
+
+			Items[itemCount] = ItemsLib.newItem(itemCount,"door",500,100)
+			sceneGroup:insert(Items[itemCount])
+			Items[itemCount]:spawn()
+			itemCount = itemCount + 1
+
+			Items[itemCount] = ItemsLib.newItem(itemCount,"fdoor",500,300)
+			sceneGroup:insert(Items[itemCount])
+			Items[itemCount]:spawn()
+			itemCount = itemCount + 1
+
+
+			Items = ItemsLib.Items()
+			--Items:newItem("hp",100,100)
+			--Items:newItem("mana", 200, 100)
+			--Items:newItem("key", 300, 100)
+			--Items:newItem("door", 500, 100)
+			--Items:newItem("fdoor", 500, 300)
+			sceneGroup:insert(Items)
+
+			sceneGroup:insert(Player)
+			Player:spawnPlayer()
+
+			-- Enemy
+
+			-- for n = 1, 10, 1 do
+			-- 	enemyCount 					= enemyCount + 1
+			-- 	Enemies[enemyCount] = EnemyLib.NewEnemy({index=enemyCount})
+			-- 	sceneGroup:insert(Enemies[enemyCount])
+			-- 	Enemies[enemyCount]:spawn()
+			-- end
+
+
+			Enemies = display.newGroup()
+			sceneGroup:insert(Enemies)
+
+			-- StatusBar
+			statusBar = iniStatusBar(Player)
+			sceneGroup:insert(statusBar)
+			Player.hp = Player.hp + 10
+			statusBar:iHPB()
+
+			-- Joystick
+			Joystick = StickLib.NewStick(
+			{
+				x             = 10,
+				y             = screenH-(52),
+				thumbSize     = 20,
+				borderSize    = 32,
+				snapBackSpeed = .2,
+				R             = 0,
+				G             = 1,
+				B             = 1
+			}
+		)
+		sceneGroup:insert(Joystick)
+		Joystick.alpha = 0.2
+		-- Create some collision
+		walls = display.newGroup()
+		for n = 1, levelID, 1 do
+			local crate
+			if n <= 5 then
+				crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
+			else
+				crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+			end
+			physics.addBody(crate, "static", { filter = worldCollisionFilter } )
+			walls:insert(crate)
+		end
+		sceneGroup:insert(walls)
+		-- Pause Button Initialization
+		pauseButton 			= display.newImage(pauseImg)
+		pauseButton.x 		= display.contentWidth+20
+		pauseButton.y 		= 21
+		pauseButton.alpha = 0.5
+		sceneGroup:insert(pauseButton)
+	elseif phase == "did" then
+		if Player and Joystick then
+			function begin( event )
+<<<<<<< HEAD
+=======
+				statusBar:toFront()
+				Joystick:toFront()
+				pauseButton:toFront()
+>>>>>>> 13ed26f0dfe96cdae96a4d0f4089eb76532fff7c
+				Player:move(Joystick)
+				for n=1, enemyCount, 1 do
+					Enemies[n]:move(Player)
+>>>>>>> parent of 53c274e... hjhj
 				end
 				physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 				walls:insert(crate)
@@ -275,6 +398,7 @@ function scene:show( event )
 						end
 					end
 
+<<<<<<< HEAD
 					-- Pause Button Initialization
 					pauseButton 			= display.newImage(pauseImg)
 					pauseButton.x 		= display.contentWidth+20
@@ -282,12 +406,19 @@ function scene:show( event )
 					pauseButton.alpha = 0.2
 					sceneGroup:insert(pauseButton)
 				end
+=======
+				-- Pause Button Initialization
+				pauseButton 			= display.newImage(pauseImg)
+				pauseButton.x 		= display.contentWidth+20
+				pauseButton.y 		= 21
+				pauseButton.alpha = 0.2
+				sceneGroup:insert(pauseButton)
+>>>>>>> parent of 53c274e... hjhj
 			elseif phase == "did" then
 				if levelID == 2 then
 					self.loadLevel()
 				end
 			end
-
 			if Player and Joystick then
 				function begin( event )
 					statusBar:toFront()
