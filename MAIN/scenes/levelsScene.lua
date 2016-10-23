@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-physics.setDrawMode( "hybrid" )
+--physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -187,11 +187,17 @@ function scene:show( event )
 		pauseButton 			= display.newImage(pauseImg)
 		pauseButton.x 		= display.contentWidth+20
 		pauseButton.y 		= 21
-		pauseButton.alpha = 0.2
+		pauseButton.alpha = 0.5
 		sceneGroup:insert(pauseButton)
 	elseif phase == "did" then
 		if Player and Joystick then
 			function begin( event )
+<<<<<<< HEAD
+=======
+				statusBar:toFront()
+				Joystick:toFront()
+				pauseButton:toFront()
+>>>>>>> 13ed26f0dfe96cdae96a4d0f4089eb76532fff7c
 				Player:move(Joystick)
 				for n=1, enemyCount, 1 do
 					Enemies[n]:move(Player)
@@ -431,6 +437,7 @@ function onGlobalCollision ( event )
 		display.remove( o1 )
 		Items[o1.index] = nil
 		statusBar.key.isVisible = true
+<<<<<<< HEAD
 	elseif(o1.type == door and o2.myName == pname) then
 		if(statusBar.key.isVisible) then
 			statusBar.key.isVisible = false
@@ -444,6 +451,21 @@ function onGlobalCollision ( event )
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
 		timer.performWithDelay(3000, endLevel, 1)
+=======
+	--If door collides w/ Door, if you have a key.
+  elseif (o1n == door or o2n == door) and (o1n == "player" or o2n == "player") then
+    if(statusBar.key) then
+      statusBar.key.isVisible = false
+      Items.door.circle:setFillColor(0,1,0)
+      timer.performWithDelay(200, removeP)
+    end
+  elseif (o1n == fdoor or o2n == fdoor) and (o1n == "player" or o2n == "player") then
+    print("Final Door Collision Detected.")
+	text.isVisible = true
+	text:toFront()
+	function endLevel()
+		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+>>>>>>> 13ed26f0dfe96cdae96a4d0f4089eb76532fff7c
 	end
 end
 
