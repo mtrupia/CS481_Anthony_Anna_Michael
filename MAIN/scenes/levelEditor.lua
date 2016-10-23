@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------
 --
--- levelsScene.lua	: Loads the levels of the game ( SO FAR ONLY 1 :( )
+-- levelEditor.lua	: MAKE A LEVEL BBY
 --
 ---------------------------------------------------------------------------------
 
@@ -19,23 +19,119 @@ local backGround
 local walls 
 local Player
 local Enemies
+local Items
 local Joystick
 local pauseButton
 local editType
 local editImg
 local editFilter
 local editPhysics
+local editName
 
 function scene:create( event )
 	local sceneGroup = self.view
 	
-	backGround			= event.params.bg or "images/testBG.png"
+	backGround	= event.params.bg or "images/testBG.png"
 	pauseImage	= event.params.pauseImg or "images/pauseIcon.png"
 	
 	-- Create background
 	bg = display.newImage(backGround)
 	bg.rotation = 90
 	sceneGroup:insert(bg)
+end
+
+function scene:loadLevel()
+	level = require('levels.1')
+	
+	Player.x = level.player[1].x
+	Player.y = level.player[1].y
+	
+	for i = 1, #level.enemies do
+		local b = level.enemies[i]
+		enemy = EnemyLib.NewEnemy( {x = b.x, y = b.y} )
+		enemy:spawn()
+		Enemies:insert(enemy)
+	end
+	
+	for i = 1, #level.walls do
+		local b = level.walls[i]
+		crate = display.newImage("images/crate.png", b.x, b.y)
+		physics.addBody(crate, "static", { filter = editFilter } )
+		walls:insert(crate)
+	end
+	
+	for i = 1, #level.items do
+		local b = level.items[i]
+		Items:newItem(b.name, b.x, b.y)
+	end
+end
+
+function scene:saveLevel() 
+	package.loaded['levels.1'] = nil
+	local s = 'return {\n'
+
+	s = s .. '\tplayer = {\n'
+	local b = Player
+	if b.x then
+		s = s .. '\t\t{x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
+		s = s .. '\n'
+	end
+    s = s .. '\t},\n'
+	
+    s = s .. '\tenemies = {\n'
+    for i = 1, Enemies.numChildren do
+        local b = Enemies[i]
+        if b.x then
+            s = s .. '\t\t{x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
+            if i < Enemies.numChildren then
+                s = s .. ',\n'
+            else
+                s = s .. '\n'
+            end
+        end
+    end
+    s = s .. '\t},\n'
+	
+	--items
+	s = s .. '\titems = {\n'
+    for i = 1, Items.numChildren do
+        local b = Items[i]
+		if b.x then
+			s = s .. '\t\t{name = \'' .. b.myName .. '\', x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
+			if i < Items.numChildren then
+				s = s .. ',\n'
+			else
+				s = s .. '\n'
+			end
+		end
+    end
+    s = s .. '\t},\n'
+
+    s = s .. '\twalls = {\n'
+    for i = 1, walls.numChildren do
+        local b = walls[i]
+		if b.x then
+			s = s .. '\t\t{x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
+			if i < walls.numChildren then
+				s = s .. ',\n'
+			else
+				s = s .. '\n'
+			end
+		end
+    end
+    s = s .. '\t},\n'
+	
+    s = s .. '}\n'
+	
+    local path = system.pathForFile('levels/1.lua', system.ResourceDirectory)
+    local file = io.open(path, 'w')
+    
+	if file then
+        file:write(s)
+        io.close(file)
+    end
+    
+	print('level 1 saved')
 end
 
 function scene:show( event )
@@ -45,8 +141,6 @@ function scene:show( event )
     if phase == "will" then
 		-- BG may change
 		bg = event.params.bg or "images/testBG.png"
-		-- LevelID
-		levelID = 5
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
 		sceneGroup:insert(Player)
@@ -54,6 +148,9 @@ function scene:show( event )
 		-- Enemy
 		Enemies = display.newGroup()
 		sceneGroup:insert(Enemies)
+		-- Items
+		Items = ItemsLib.Items()
+		sceneGroup:insert(Items)
 		
 		-- Joystick
 		Joystick = StickLib.NewStick(
@@ -87,6 +184,7 @@ function scene:show( event )
 					editImg = "images/crate.png"
 					editFilter = worldCollisionFilter
 					editPhysics = "static"
+					editName = "hp"
 				end
 				if event.isSecondaryButtonDown then
 					ready = 1
@@ -101,15 +199,16 @@ function scene:show( event )
 						end
 					end
 					if (ready == 1) then
-						if editFilter == worldCollisionFilter then
+						if editType == walls then
 							crate = display.newImage(editImg, event.x, event.y)
 							physics.addBody(crate, editPhysics, { filter = editFilter } )
 							editType:insert(crate)
-						elseif editFilter == enemyCollisionFilter then
+						elseif editType == Enemies then
 							enemy = EnemyLib.NewEnemy( {x = event.x, y = event.y} )
 							enemy:spawn()
 							editType:insert(enemy)
-							
+						elseif editType == Items then
+							Items:newItem(editName, event.x, event.y)
 						end
 					end
 				elseif event.isMiddleButtonDown then
@@ -128,25 +227,50 @@ function scene:show( event )
 				end
 			end
 			Runtime:addEventListener("mouse", onMouseEvent)
+			-- 1 = walls,	2 = enemies,	3 = health,		4 = mana,	5 = key,	6 = door,	7 = fdoor
 			function onKeyEvent( event )
-				local key = event.keyName
+				local phase = event.phase
 				
-				if key == "1" then
-					print("walls")
-					editType = walls
-					editImg = "images/crate.png"
-					editFilter = worldCollisionFilter
-					editPhysics = "static"
-				elseif key == "2" then
-					print("enemies")
-					editType = Enemies
-					editFilter = enemyCollisionFilter
-					editPhysics = "dynamic"
-				elseif key == "deleteBack" then
-					
-				elseif key == "insert" then
-					
+				if phase == "down" then
+					local key = event.keyName
+					if key == "1" then
+						print("walls")
+						editType = walls
+						editImg = "images/crate.png"
+						editFilter = worldCollisionFilter
+						editPhysics = "static"
+					elseif key == "2" then
+						print("enemies")
+						editType = Enemies
+						editFilter = enemyCollisionFilter
+						editPhysics = "dynamic"
+					elseif key == "3" then
+						print("health")
+						editType = Items
+						editName = "hp"
+					elseif key == "4" then
+						print("mana")
+						editType = Items
+						editName = "mana"
+					elseif key == "5" then
+						print("key")
+						editType = Items
+						editName = "key"
+					elseif key == "6" then
+						print("door")
+						editType = Items
+						editName = "door"
+					elseif key == "7" then
+						print("fdoor")
+						editType = Items
+						editName = "fdoor"
+					elseif key == "deleteBack" then
+						self.loadLevel()
+					elseif key == "insert" then
+						self.saveLevel()
+					end
 				end
+			
 			end
 			Runtime:addEventListener("key", onKeyEvent)
 		
@@ -165,6 +289,10 @@ function scene:show( event )
 					for n=1, Enemies.numChildren, 1 do
 						Enemies[n].x = Enemies[n].x + Player.speed
 					end
+					
+					for n=1, Items.numChildren, 1 do
+						Items[n].x = Items[n].x + Player.speed
+					end
 				end
 				if Player.x > screenW+8 then	-- moving right
 					Player.x = screenW+8
@@ -175,6 +303,10 @@ function scene:show( event )
 					
 					for n=1, Enemies.numChildren, 1 do
 						Enemies[n].x = Enemies[n].x - Player.speed
+					end
+					
+					for n=1, Items.numChildren, 1 do
+						Items[n].x = Items[n].x - Player.speed
 					end
 				end
 				if Player.y < borders then	-- moving up
@@ -187,6 +319,10 @@ function scene:show( event )
 					for n=1, Enemies.numChildren, 1 do
 						Enemies[n].y = Enemies[n].y + Player.speed
 					end
+					
+					for n=1, Items.numChildren, 1 do
+						Items[n].y = Items[n].y + Player.speed
+					end
 				end
 				if Player.y > screenH-borders then	-- moving down
 					Player.y = screenH-borders
@@ -197,6 +333,10 @@ function scene:show( event )
 					
 					for n=1, Enemies.numChildren, 1 do
 						Enemies[n].y = Enemies[n].y - Player.speed
+					end
+					
+					for n=1, Items.numChildren, 1 do
+						Items[n].y = Items[n].y - Player.speed
 					end
 				end
 			end
@@ -237,6 +377,9 @@ function scene:hide( event )
 		end
 		if Enemies[1] then
 			Enemies[1]:destroy()
+		end
+		if Items then
+			Items:destroy()
 		end
 		if editType then
 			editType:removeSelf()
