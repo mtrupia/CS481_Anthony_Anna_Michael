@@ -212,163 +212,148 @@ function scene:show( event )
 			pauseButton.y 		= 21
 			pauseButton.alpha = 0.5
 			sceneGroup:insert(pauseButton)
-		elseif phase == "did" then
-			if Player and Joystick then
-				function begin( event )
-
-
-					statusBar:toFront()
-					Joystick:toFront()
-					pauseButton:toFront()
-					Player:move(Joystick)
-					for n=1, enemyCount, 1 do
-						Enemies[n]:move(Player)
-					end
-
-					--move world if outside border
-					if Player.x < -8 then	-- moving left
-						Player.x = -8
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].x = walls[n].x + Player.speed
-						end
-						for n = 0, itemCount, 1 do
-							if(Items[n]) then
-								Items[n].x = Items[n].x + Player.speed
-							end
-						end
-					end
-					if Player.x > screenW+8 then	-- moving right
-						Player.x = screenW+8
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].x = walls[n].x - Player.speed
-						end
-						for n = 0, itemCount, 1 do
-							if(Items[n]) then
-								Items[n].x = Items[n].x - Player.speed
-							end
-						end
-					end
-					if Player.y < borders then	-- moving up
-						Player.y = borders
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].y = walls[n].y + Player.speed
-						end
-						for n = 0, itemCount, 1 do
-							if(Items[n]) then
-								Items[n].y = Items[n].y + Player.speed
-							end
-						end
-					end
-					if Player.y > screenH-borders then	-- moving down
-						Player.y = screenH-borders
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].y = walls[n].y - Player.speed
-						end
-						for n = 0, itemCount, 1 do
-							if(Items[n]) then
-								Items[n].y = Items[n].y - Player.speed
-							end
-						end
-					end
-
-					-- Pause Button Initialization
-					pauseButton 			= display.newImage(pauseImg)
-					pauseButton.x 		= display.contentWidth+20
-					pauseButton.y 		= 21
-					pauseButton.alpha = 0.2
-					sceneGroup:insert(pauseButton)
-				end
-			elseif phase == "did" then
-				if levelID == 2 then
-					self.loadLevel()
-				end
-			end
-
-			if Player and Joystick then
-				function begin( event )
-					statusBar:toFront()
-					Joystick:toFront()
-					Player:move(Joystick)
-					--for n=1, Enemies.numChildren, 1 do
-					--	Enemies[n]:move(Player)
-					--end
-
-					--move world if outside border
-					if Player.x < -8 then	-- moving left
-						Player.x = -8
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].x = walls[n].x + Player.speed
-						end
-						for n = 1, Enemies.numChildren, 1 do
-							Enemies[n].x = Enemies[n].x + Player.speed
-						end
-						for n = 1, Items.numChildren, 1 do
-							Items[n].x = Items[n].x + Player.speed
-						end
-					end
-					if Player.x > screenW+8 then	-- moving right
-						Player.x = screenW+8
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].x = walls[n].x - Player.speed
-						end
-						for n = 1, Enemies.numChildren, 1 do
-							Enemies[n].x = Enemies[n].x - Player.speed
-						end
-						for n = 1, Items.numChildren, 1 do
-							Items[n].x = Items[n].x - Player.speed
-						end
-					end
-					if Player.y < borders then	-- moving up
-						Player.y = borders
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].y = walls[n].y + Player.speed
-						end
-						for n = 1, Enemies.numChildren, 1 do
-							Enemies[n].y = Enemies[n].y + Player.speed
-						end
-						for n = 1, Items.numChildren, 1 do
-							Items[n].y = Items[n].y + Player.speed
-						end
-					end
-					if Player.y > screenH-borders then	-- moving down
-						Player.y = screenH-borders
-
-						for n = 1, walls.numChildren, 1 do
-							walls[n].y = walls[n].y - Player.speed
-						end
-						for n = 1, Enemies.numChildren, 1 do
-							Enemies[n].y = Enemies[n].y - Player.speed
-						end
-						for n = 1, Items.numChildren, 1 do
-							Items[n].y = Items[n].y - Player.speed
-						end
-					end
-				end
-				Runtime:addEventListener("enterFrame", begin)
-			end
-			Runtime:addEventListener("enterFrame", begin)
 		end
-		if pauseButton then
-			function pauseButton:touch ( event )
-				local phase = event.phase
-				if "ended" == phase then
-					physics.pause()
-					Runtime:removeEventListener("enterFrame", begin)
-					composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
+		function begin( event )
+
+
+			statusBar:toFront()
+			Joystick:toFront()
+			pauseButton:toFront()
+			Player:move(Joystick)
+			for n=1, enemyCount, 1 do
+				Enemies[n]:move(Player)
+			end
+
+			--move world if outside border
+			if Player.x < -8 then	-- moving left
+				Player.x = -8
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].x = walls[n].x + Player.speed
+				end
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].x = Items[n].x + Player.speed
+					end
 				end
 			end
-			pauseButton:addEventListener( "touch", pauseButton )
+			if Player.x > screenW+8 then	-- moving right
+				Player.x = screenW+8
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].x = walls[n].x - Player.speed
+				end
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].x = Items[n].x - Player.speed
+					end
+				end
+			end
+			if Player.y < borders then	-- moving up
+				Player.y = borders
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].y = walls[n].y + Player.speed
+				end
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].y = Items[n].y + Player.speed
+					end
+				end
+			end
+			if Player.y > screenH-borders then	-- moving down
+				Player.y = screenH-borders
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].y = walls[n].y - Player.speed
+				end
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].y = Items[n].y - Player.speed
+					end
+				end
+			end
+
+			-- Pause Button Initialization
+			pauseButton 			= display.newImage(pauseImg)
+			pauseButton.x 		= display.contentWidth+20
+			pauseButton.y 		= 21
+			pauseButton.alpha = 0.2
+			sceneGroup:insert(pauseButton)
+		end
+	elseif phase == "did" then
+		if levelID == 2 then
+			self.loadLevel()
 		end
 	end
-end
 
+	if Player and Joystick then
+		function begin( event )
+			statusBar:toFront()
+			Joystick:toFront()
+			Player:move(Joystick)
+			--for n=1, Enemies.numChildren, 1 do
+			--	Enemies[n]:move(Player)
+			--end
+
+			--move world if outside border
+			if Player.x < -8 then	-- moving left
+				Player.x = -8
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].x = walls[n].x + Player.speed
+				end
+				for n = 1, Enemies.numChildren, 1 do
+					Enemies[n].x = Enemies[n].x + Player.speed
+				end
+				for n = 1, Items.numChildren, 1 do
+					Items[n].x = Items[n].x + Player.speed
+				end
+			end
+			if Player.x > screenW+8 then	-- moving right
+				Player.x = screenW+8
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].x = walls[n].x - Player.speed
+				end
+				for n = 1, Enemies.numChildren, 1 do
+					Enemies[n].x = Enemies[n].x - Player.speed
+				end
+				for n = 1, Items.numChildren, 1 do
+					Items[n].x = Items[n].x - Player.speed
+				end
+			end
+			if Player.y < borders then	-- moving up
+				Player.y = borders
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].y = walls[n].y + Player.speed
+				end
+				for n = 1, Enemies.numChildren, 1 do
+					Enemies[n].y = Enemies[n].y + Player.speed
+				end
+				for n = 1, Items.numChildren, 1 do
+					Items[n].y = Items[n].y + Player.speed
+				end
+			end
+			if Player.y > screenH-borders then	-- moving down
+				Player.y = screenH-borders
+
+				for n = 1, walls.numChildren, 1 do
+					walls[n].y = walls[n].y - Player.speed
+				end
+				for n = 1, Enemies.numChildren, 1 do
+					Enemies[n].y = Enemies[n].y - Player.speed
+				end
+				for n = 1, Items.numChildren, 1 do
+					Items[n].y = Items[n].y - Player.speed
+				end
+			end
+		end
+		Runtime:addEventListener("enterFrame", begin)
+	end
+	Runtime:addEventListener("enterFrame", begin)
+end
 function scene:hide( event )
 	local sceneGroup 	= self.view
 	local phase 			= event.phase
@@ -421,11 +406,7 @@ function scene:hide( event )
 		Enemies:removeSelf()
 		Enemies = nil
 	end
-elseif phase == "did" then
-
 end
-end
-
 function scene:unPause()
 	physics.start()
 	Runtime:addEventListener("enterFrame", begin)
