@@ -33,7 +33,7 @@ function NewPlayer ( props )
 	player.y			= props.y or halfH
 	playerImage			= props.image or "flower.png"
 	player.myName 		= "player"
-	player.hp 			= props.hp or 10
+	player.hp 			= props.hp or 100
 	player.mana			= props.mana or 0
 	player.score		= props.score or 0
 
