@@ -83,7 +83,7 @@ function scene:show( event )
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
-
+		Items = {}
 		Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
 		sceneGroup:insert(Items[itemCount])
 		Items[itemCount]:spawn()
@@ -157,8 +157,10 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x + Player.speed
 				end
-				for n = 1, Items.numChildren, 1 do
-					Items[n].x = Items[n].x + Player.speed
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].x = Items[n].x + Player.speed
+					end
 				end
 			end
 			if Player.x > screenW+8 then	-- moving right
@@ -170,8 +172,10 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x - Player.speed
 				end
-				for n = 1, Items.numChildren, 1 do
-					Items[n].x = Items[n].x - Player.speed
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].x = Items[n].x - Player.speed
+					end
 				end
 			end
 			if Player.y < borders then	-- moving up
@@ -183,8 +187,10 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y + Player.speed
 				end
-				for n = 1, Items.numChildren, 1 do
-					Items[n].y = Items[n].y + Player.speed
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].y = Items[n].y + Player.speed
+					end
 				end
 			end
 			if Player.y > screenH-borders then	-- moving down
@@ -196,8 +202,10 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y - Player.speed
 				end
-				for n = 1, Items.numChildren, 1 do
-					Items[n].y = Items[n].y - Player.speed
+				for n = 0, itemCount, 1 do
+					if(Items[n]) then
+						Items[n].y = Items[n].y - Player.speed
+					end
 				end
 			end
 		end
@@ -237,7 +245,6 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
-			Items:removeSelf()
 			Items = nil
 		end
 		if statusBar then
