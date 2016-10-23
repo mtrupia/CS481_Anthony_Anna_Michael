@@ -19,11 +19,9 @@ local pauseImg
 local backGround
 local walls
 local Player
-local Items = {}
-local itemCount = 0
-local Enemies = {}
+local Items
+local Enemies
 local statusBar
-local enemyCount = 0
 local Joystick
 local levelID
 local pauseButton
@@ -83,10 +81,11 @@ function scene:show( event )
 		levelID = event.params.levelID
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
-		Items = {}
+		Items = display.newGroup()
+		sceneGroup:insert(Items)
 		placeItem("hp",100,100)
 		placeItem("mana", 200, 100)
-		placeItem("key", 200, 100)
+		placeItem("key", 300, 100)
 		placeItem("door", 500, 100)
 		placeItem("fdoor", 500, 300)
 		sceneGroup:insert(Player)
@@ -159,7 +158,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x + Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x + Player.speed
 					end
@@ -174,7 +173,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x - Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x - Player.speed
 					end
@@ -189,7 +188,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y + Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y + Player.speed
 					end
@@ -204,7 +203,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y - Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y - Player.speed
 					end
@@ -247,6 +246,7 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
+			Items:removeSelf()
 			Items = nil
 		end
 		if statusBar then
@@ -257,6 +257,10 @@ function scene:hide( event )
 			Enemies:removeSelf()
 			Enemies = nil
 		end
+		if text then
+			text:removeSelf()
+		end
+
 	elseif phase == "did" then
 
 	end
@@ -325,10 +329,9 @@ function onGlobalCollision ( event )
 	end
 end
 function placeItem(type, x, y)
-	Items[itemCount] = ItemsLib.newItem(itemCount,type,x,y)
-	sceneGroup:insert(Items[itemCount])
-	Items[itemCount]:spawn()
-	itemCount = itemCount + 1
+	newItem = ItemsLib.newItem(itemCount,type,x,y)
+	Items:insert(newItem)
+	newItem:spawn()
 end
 ---------------------------------------------------------------------------------
 

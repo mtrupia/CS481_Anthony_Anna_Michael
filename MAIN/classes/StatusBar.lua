@@ -80,10 +80,7 @@ function iniStatusBar(Player)
     elseif (Player.hp == 100) then
       statusBar.HPB.begin.isVisible = true
       statusBar.HPB.mid.isVisible = true
-      statusBar.HPB.mid.width = 96
-      statusBar.HPB.fin.isVisible = true
-    else
-      statusBar.HPB.mid.width = statusBar.HPB.mid.width + 12
+      statusBar.HPB.mid.width = 103
       statusBar.HPB.fin.isVisible = true
     end
   end
