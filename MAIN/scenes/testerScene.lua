@@ -27,14 +27,14 @@ local enemyCount = 0
 local Joystick
 local levelID
 local pauseButton
-local sceneGroup
+
 local text
 
 function scene:create( event )
 	local sceneGroup = self.view
 
-	backGround			= event.params.bg or "images/testBG.png"
-	pauseImg				= event.params.pauseImg or "images/pauseIcon.png"
+	backGround			= "images/testBG.png"
+	pauseImg				= "images/pauseIcon.png"
 
 	-- Create background
 	bg 							= display.newImage(backGround)
@@ -69,7 +69,7 @@ function scene:loadLevel()
 end
 
 function scene:show( event )
-	sceneGroup = self.view
+	local sceneGroup = self.view
 	local phase = event.phase
 
 	if phase == "will" then
@@ -78,17 +78,15 @@ function scene:show( event )
 		sceneGroup:insert(text)
 
 		-- BG may change
-		bg 			= event.params.bg or "images/testBG.png"
+		bg 			= "images/testBG.png"
 		-- LevelID
-		levelID = event.params.levelID
+		levelID = 1
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
 		Items = {}
-		placeItem("hp",100,100)
-		placeItem("mana", 200, 100)
-		placeItem("key", 200, 100)
-		placeItem("door", 500, 100)
-		placeItem("fdoor", 500, 300)
+		Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
+		sceneGroup:insert(Items[itemCount])
+		Items[itemCount]:spawn()
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
 		-- Enemy
@@ -272,7 +270,7 @@ function scene:destroy( event )
 end
 
 function scene:leaveLvl()
-	composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+	composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
 end
 
 function scene:restartLvl( id )
@@ -315,7 +313,6 @@ function onGlobalCollision ( event )
 			statusBar.key.isVisible = false
 			display.remove( o1 )
 			Items[o1.index] = nil
-			walls:insert(display.newImage("images/Door.png",o1.x,o1.y))
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		text.isVisible = true
@@ -324,12 +321,6 @@ function onGlobalCollision ( event )
 		end
 		timer.performWithDelay(3000, endLevel, 1)
 	end
-end
-function placeItem(type, x, y)
-	Items[itemCount] = ItemsLib.newItem(itemCount,type,x,y)
-	sceneGroup:insert(Items[itemCount])
-	Items[itemCount]:spawn()
-	itemCount = itemCount + 1
 end
 ---------------------------------------------------------------------------------
 
