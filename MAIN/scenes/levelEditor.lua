@@ -27,6 +27,8 @@ local editImg
 local editFilter
 local editPhysics
 local editName
+local key
+local pos
 
 function scene:create( event )
 	local sceneGroup = self.view
@@ -56,7 +58,7 @@ function scene:loadLevel()
 	for i = 1, #level.walls do
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
-		physics.addBody(crate, "static", { filter = editFilter } )
+		physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 		walls:insert(crate)
 	end
 	
@@ -187,28 +189,43 @@ function scene:show( event )
 					editName = "hp"
 				end
 				if event.isSecondaryButtonDown then
-					ready = 1
-					for n = 1, editType.numChildren, 1 do
-						x1 = editType[n].x
-						x2 = event.x
-						y1 = editType[n].y
-						y2 = event.y
-						
-						if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 60 then
-							ready = 0
+					if key == "w" then
+						local x1 = event.x
+						local y1 = event.y
+						for n = 1, walls.numChildren, 1 do
+							x2 = walls[n].x
+							y2 = walls[n].y
+							
+							if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 60 then
+								x1 = walls[n].x
+								y1 = walls[n].y
+							end
 						end
-					end
-					if (ready == 1) then
-						if editType == walls then
-							crate = display.newImage(editImg, event.x, event.y)
-							physics.addBody(crate, editPhysics, { filter = editFilter } )
-							editType:insert(crate)
-						elseif editType == Enemies then
-							enemy = EnemyLib.NewEnemy( {x = event.x, y = event.y} )
-							enemy:spawn()
-							editType:insert(enemy)
-						elseif editType == Items then
-							Items:newItem(editName, event.x, event.y)
+						pos = { x = x1, y = y1}
+					else
+						ready = 1
+						for n = 1, editType.numChildren, 1 do
+							x1 = editType[n].x
+							x2 = event.x
+							y1 = editType[n].y
+							y2 = event.y
+							
+							if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 60 then
+								ready = 0
+							end
+						end
+						if (ready == 1) then
+							if editType == walls then
+								crate = display.newImage(editImg, event.x, event.y)
+								physics.addBody(crate, editPhysics, { filter = editFilter } )
+								editType:insert(crate)
+							elseif editType == Enemies then
+								enemy = EnemyLib.NewEnemy( {x = event.x, y = event.y} )
+								enemy:spawn()
+								editType:insert(enemy)
+							elseif editType == Items then
+								Items:newItem(editName, event.x, event.y)
+							end
 						end
 					end
 				elseif event.isMiddleButtonDown then
@@ -232,7 +249,7 @@ function scene:show( event )
 				local phase = event.phase
 				
 				if phase == "down" then
-					local key = event.keyName
+					key = event.keyName
 					if key == "1" then
 						print("walls")
 						editType = walls
@@ -268,6 +285,15 @@ function scene:show( event )
 						self.loadLevel()
 					elseif key == "insert" then
 						self.saveLevel()
+					elseif key == "w" then
+						print("wall building mode")
+					elseif pos then
+						if key == "right" then
+							crate = display.newImage("images/crate.png", pos.x, pos.y)
+							physics.addBody(crate, "static", { filter = worldCollisionFilter } )
+							walls:insert(crate)
+							pos.x = pos.x + crate.width
+						end
 					end
 				end
 			
