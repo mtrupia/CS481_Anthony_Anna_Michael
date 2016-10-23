@@ -192,12 +192,11 @@ function scene:show( event )
 	elseif phase == "did" then
 		if Player and Joystick then
 			function begin( event )
-<<<<<<< HEAD
-=======
+
+
 				statusBar:toFront()
 				Joystick:toFront()
 				pauseButton:toFront()
->>>>>>> 13ed26f0dfe96cdae96a4d0f4089eb76532fff7c
 				Player:move(Joystick)
 				for n=1, enemyCount, 1 do
 					Enemies[n]:move(Player)
@@ -259,11 +258,13 @@ function scene:show( event )
 				pauseButton.y 		= 21
 				pauseButton.alpha = 0.2
 				sceneGroup:insert(pauseButton)
+				end
 			elseif phase == "did" then
 				if levelID == 2 then
 					self.loadLevel()
 				end
 			end
+
 			if Player and Joystick then
 				function begin( event )
 					statusBar:toFront()
