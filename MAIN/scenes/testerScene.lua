@@ -19,20 +19,22 @@ local pauseImg
 local backGround
 local walls
 local Player
-local Items
-local Enemies
+local Items = {}
+local itemCount = 0
+local Enemies = {}
 local statusBar
+local enemyCount = 0
 local Joystick
 local levelID
 local pauseButton
-local sceneGroup
+
 local text
 
 function scene:create( event )
 	local sceneGroup = self.view
 
-	backGround			= event.params.bg or "images/testBG.png"
-	pauseImg				= event.params.pauseImg or "images/pauseIcon.png"
+	backGround			= "images/testBG.png"
+	pauseImg				= "images/pauseIcon.png"
 
 	-- Create background
 	bg 							= display.newImage(backGround)
@@ -62,29 +64,29 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		newItem = ItemsLib.newItem(1, b.name, b.x, b.y)
-		Items:insert(newItem)
-		newItem:spawn()
+		Items:newItem(b.name, b.x, b.y)
 	end
 end
 
 function scene:show( event )
-	sceneGroup = self.view
+	local sceneGroup = self.view
 	local phase = event.phase
 
 	if phase == "will" then
-		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+		text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text.isVisible = false
 		sceneGroup:insert(text)
 
 		-- BG may change
-		bg 			= event.params.bg or "images/testBG.png"
+		bg 			= "images/testBG.png"
 		-- LevelID
-		levelID = event.params.levelID
+		levelID = 1
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
-		Items = display.newGroup()
-		sceneGroup:insert(Items)
+		Items = {}
+		Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
+		sceneGroup:insert(Items[itemCount])
+		Items[itemCount]:spawn()
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
 		-- Enemy
@@ -155,7 +157,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x + Player.speed
 				end
-				for n = 0, Items.numChildren, 1 do
+				for n = 0, itemCount, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x + Player.speed
 					end
@@ -170,7 +172,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x - Player.speed
 				end
-				for n = 0, Items.numChildren, 1 do
+				for n = 0, itemCount, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x - Player.speed
 					end
@@ -185,7 +187,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y + Player.speed
 				end
-				for n = 0, Items.numChildren, 1 do
+				for n = 0, itemCount, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y + Player.speed
 					end
@@ -200,7 +202,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y - Player.speed
 				end
-				for n = 0, Items.numChildren, 1 do
+				for n = 0, itemCount, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y - Player.speed
 					end
@@ -243,7 +245,6 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
-			Items:removeSelf()
 			Items = nil
 		end
 		if statusBar then
@@ -254,10 +255,6 @@ function scene:hide( event )
 			Enemies:removeSelf()
 			Enemies = nil
 		end
-		if text then
-			text:removeSelf()
-		end
-		
 	elseif phase == "did" then
 
 	end
@@ -273,7 +270,7 @@ function scene:destroy( event )
 end
 
 function scene:leaveLvl()
-	composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+	composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
 end
 
 function scene:restartLvl( id )
@@ -319,17 +316,11 @@ function onGlobalCollision ( event )
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		text.isVisible = true
-		text:toFront()
 		function endLevel()
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
 		timer.performWithDelay(3000, endLevel, 1)
 	end
-end
-function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(itemCount,type,x,y)
-	Items:insert(newItem)
-	newItem:spawn()
 end
 ---------------------------------------------------------------------------------
 
