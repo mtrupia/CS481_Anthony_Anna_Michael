@@ -13,13 +13,14 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
 local walls
 local Player
 local Items
-local Enemies = {}
+local Enemies
 local statusBar
 local enemyCount = 0
 local Joystick
@@ -38,6 +39,32 @@ function scene:create( event )
 	sceneGroup:insert(bg)
 end
 
+function scene:loadLevel()
+	level = require('levels.1')
+	
+	Player.x = level.player[1].x
+	Player.y = level.player[1].y
+	
+	for i = 1, #level.enemies do
+		local b = level.enemies[i]
+		enemy = EnemyLib.NewEnemy( {x = b.x, y = b.y} )
+		enemy:spawn()
+		Enemies:insert(enemy)
+	end
+	
+	for i = 1, #level.walls do
+		local b = level.walls[i]
+		crate = display.newImage("images/crate.png", b.x, b.y)
+		physics.addBody(crate, "static", { filter = editFilter } )
+		walls:insert(crate)
+	end
+	
+	for i = 1, #level.items do
+		local b = level.items[i]
+		Items:newItem(b.name, b.x, b.y)
+	end
+end
+
 function scene:show( event )
     local sceneGroup = self.view
     local phase = event.phase
@@ -51,20 +78,17 @@ function scene:show( event )
 		Player = PlayerLib.NewPlayer( {} )
 
 		Items = ItemsLib.Items()
-		Items:newItem("hp",100,100)
-		Items:newItem("mana", 200, 100)
-    Items:newItem("key", 300, 100)
-    Items:newItem("door", 500, 100)
-    --Items:newItem("fdoor", 500, 300)
+		--Items:newItem("hp",100,100)
+		--Items:newItem("mana", 200, 100)
+		--Items:newItem("key", 300, 100)
+		--Items:newItem("door", 500, 100)
+		--Items:newItem("fdoor", 500, 300)
+		sceneGroup:insert(Items)
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
 		-- Enemy
-		for n = 1, 10, 1 do
-			enemyCount 					= enemyCount + 1
-			Enemies[enemyCount] = EnemyLib.NewEnemy({index=enemyCount})
-			sceneGroup:insert(Enemies[enemyCount])
-			Enemies[enemyCount]:spawn()
-		end
+		Enemies = display.newGroup()
+		sceneGroup:insert(Enemies)
 		-- StatusBar
 		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(statusBar)
@@ -88,16 +112,16 @@ function scene:show( event )
 		Joystick.alpha = 0.2
 		-- Create some collision
 		walls = display.newGroup()
-		for n = 1, levelID, 1 do
-			local crate
-			if n <= 5 then
-				crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
-			else
-				crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
-			end
-			physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-			walls:insert(crate)
-		end
+		--for n = 1, levelID, 1 do
+		--	local crate
+		--	if n <= 5 then
+		--		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
+		--	else
+		--		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+		--	end
+		--	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
+		--	walls:insert(crate)
+		--end
 		sceneGroup:insert(walls)
 		-- Pause Button Initialization
 		pauseButton 			= display.newImage(pauseImg)
@@ -106,55 +130,73 @@ function scene:show( event )
 		pauseButton.alpha = 0.2
 		sceneGroup:insert(pauseButton)
 	elseif phase == "did" then
+		if levelID == 2 then
+			self.loadLevel()
+		end
+		
 		if Player and Joystick then
 			function begin( event )
+				statusBar:toFront()
+				Joystick:toFront()
 				Player:move(Joystick)
-				for n=1, enemyCount, 1 do
-					Enemies[n]:move(Player)
-				end
+				--for n=1, Enemies.numChildren, 1 do
+				--	Enemies[n]:move(Player)
+				--end
 
 				--move world if outside border
 				if Player.x < -8 then	-- moving left
-        Player.x = -8
+					Player.x = -8
 
-        for n = 1, walls.numChildren, 1 do
-          walls[n].x = walls[n].x + Player.speed
-        end
-        for n = 1, Items.numChildren, 1 do
-          Items[n].x = Items[n].x + Player.speed
-        end
-      end
-      if Player.x > screenW+8 then	-- moving right
-        Player.x = screenW+8
+					for n = 1, walls.numChildren, 1 do
+					  walls[n].x = walls[n].x + Player.speed
+					end
+					for n = 1, Enemies.numChildren, 1 do
+						Enemies[n].x = Enemies[n].x + Player.speed
+					end
+					for n = 1, Items.numChildren, 1 do
+					  Items[n].x = Items[n].x + Player.speed
+					end
+				  end
+				if Player.x > screenW+8 then	-- moving right
+					Player.x = screenW+8
 
-        for n = 1, walls.numChildren, 1 do
-          walls[n].x = walls[n].x - Player.speed
-        end
-        for n = 1, Items.numChildren, 1 do
-          Items[n].x = Items[n].x - Player.speed
-        end
-      end
-      if Player.y < borders then	-- moving up
-        Player.y = borders
+					for n = 1, walls.numChildren, 1 do
+					  walls[n].x = walls[n].x - Player.speed
+					end
+					for n = 1, Enemies.numChildren, 1 do
+						Enemies[n].x = Enemies[n].x - Player.speed
+					end
+					for n = 1, Items.numChildren, 1 do
+					  Items[n].x = Items[n].x - Player.speed
+					end
+				  end
+				if Player.y < borders then	-- moving up
+					Player.y = borders
 
-        for n = 1, walls.numChildren, 1 do
-          walls[n].y = walls[n].y + Player.speed
-        end
-        for n = 1, Items.numChildren, 1 do
-          Items[n].y = Items[n].y + Player.speed
-        end
-      end
-      if Player.y > screenH-borders then	-- moving down
-        Player.y = screenH-borders
+					for n = 1, walls.numChildren, 1 do
+					  walls[n].y = walls[n].y + Player.speed
+					end
+					for n = 1, Enemies.numChildren, 1 do
+						Enemies[n].y = Enemies[n].y + Player.speed
+					end
+					for n = 1, Items.numChildren, 1 do
+					  Items[n].y = Items[n].y + Player.speed
+					end
+				  end
+				if Player.y > screenH-borders then	-- moving down
+					Player.y = screenH-borders
 
-        for n = 1, walls.numChildren, 1 do
-          walls[n].y = walls[n].y - Player.speed
-        end
-        for n = 1, Items.numChildren, 1 do
-          Items[n].y = Items[n].y - Player.speed
-        end
-      end
-    end
+					for n = 1, walls.numChildren, 1 do
+					  walls[n].y = walls[n].y - Player.speed
+					end
+					for n = 1, Enemies.numChildren, 1 do
+						Enemies[n].y = Enemies[n].y - Player.speed
+					end
+					for n = 1, Items.numChildren, 1 do
+					  Items[n].y = Items[n].y - Player.speed
+					end
+				end
+			end
 			Runtime:addEventListener("enterFrame", begin)
 		end
 		if pauseButton then
@@ -258,7 +300,8 @@ function onGlobalCollision ( event )
       timer.performWithDelay(200, removeP)
     end
   elseif (o1n == fdoor or o2n == fdoor) and (o1n == "player" or o2n == "player") then
-    print("Final Door Collision Detected.\nExit Level\nJust Kidding, Anthony has to fix the broken item class")
+    print("Final Door Collision Detected.")
+	composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
   end
 end
 
