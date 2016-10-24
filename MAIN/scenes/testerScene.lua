@@ -21,13 +21,12 @@ local walls
 local Player
 local Items
 local Enemies
-local statusBar
 local Joystick
 local levelID
 local pauseButton
 local sceneGroup
 local text
-
+local itemCount = 0
 function scene:create( event )
 	local sceneGroup = self.view
 
@@ -366,7 +365,7 @@ function scene:leaveLvl()
 end
 
 function scene:restartLvl( id )
-	composer.gotoScene( "scenes.levelsScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
+	composer.gotoScene( "scenes.testerScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
 end
 
 function onGlobalCollision ( event )
@@ -416,9 +415,10 @@ function onGlobalCollision ( event )
 	end
 end
 function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(1,type,x,y)
+	newItem = ItemsLib.newItem(itemCount,type,x,y)
 	Items:insert(newItem)
 	newItem:spawn()
+	itemCount = itemCount + 1
 end
 
 function placeEnemy(t,z)

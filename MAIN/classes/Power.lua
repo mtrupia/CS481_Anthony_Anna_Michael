@@ -31,7 +31,9 @@ function NewPower( props )
 
 	function power:destroy()
 		Runtime:removeEventListener("touch", Shoot)
-		self:removeSelf()
+		if(power) then
+			self:removeSelf()
+		end
 	end
 
 	function Shoot (event)

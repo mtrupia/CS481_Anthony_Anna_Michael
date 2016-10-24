@@ -84,8 +84,8 @@ function NewEnemy( props )
 	function onGlobalCollision ( event )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
-		
-		
+
+
 		if ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "power" or o2n == "power") then
 			if o1n == "power" then
 				event.object2:damageEnemy( 100 ) --figure out what to do here
@@ -93,7 +93,7 @@ function NewEnemy( props )
 				event.object1:damageEnemy( 100 )
 			end
 			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
-		elseif ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "player" or o2n == "player") and dmgReady then 
+		elseif ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "player" or o2n == "player") and dmgReady then
 			if o1n == "player" then
 				event.object1.hp = event.object1.hp - 10
 				statusBar:dHPB()
