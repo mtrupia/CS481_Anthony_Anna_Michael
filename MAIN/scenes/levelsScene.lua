@@ -138,9 +138,6 @@ elseif phase == "did" then
 		Runtime:addEventListener("collision", onGlobalCollision)
 		function begin( event )
 			if (Player.hp <= 0) then
-				text = display.newText("YOU DIED", halfW, halfH, native.systemFont, 80)
-				text:toFront()
-				sceneGroup:insert(text)
 				self:leaveLvl()
 				return
 			end
@@ -336,9 +333,6 @@ function onGlobalCollision ( event )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
-		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
-		text:toFront()
-		sceneGroup:insert(text)
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
 end

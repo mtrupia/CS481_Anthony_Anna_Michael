@@ -189,6 +189,7 @@ function scene:show( event )
 		sceneGroup:insert(pauseButton)
 	elseif phase == "did" then
 		if Player and Joystick then
+			Runtime:addEventListener("collision", onGlobalCollision)
 			function onMouseEvent( event )
 				if not editType then
 					editType = walls
@@ -331,12 +332,17 @@ function scene:show( event )
 			Runtime:addEventListener("key", onKeyEvent)
 		
 			function begin( event )
+				if (Player.hp <= 0) then
+					composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+					return
+				end
+			
 				Joystick:toFront()
 				Player:move(Joystick)
 				
 				--move world if outside border
-				if Player.x < -8 then	-- moving left
-					Player.x = -8
+				if Player.x < borders-80 then	-- moving left
+					Player.x = borders-80
 					
 					for n = 1, walls.numChildren, 1 do
 						walls[n].x = walls[n].x + Player.speed
@@ -350,8 +356,8 @@ function scene:show( event )
 						Items[n].x = Items[n].x + Player.speed
 					end
 				end
-				if Player.x > screenW+8 then	-- moving right
-					Player.x = screenW+8
+				if Player.x > screenW-borders then	-- moving right
+					Player.x = screenW-borders
 					
 					for n = 1, walls.numChildren, 1 do
 						walls[n].x = walls[n].x - Player.speed
@@ -450,6 +456,56 @@ end
 
 function scene:destroy( event )
     local sceneGroup = self.view
+end
+
+function onGlobalCollision ( event )
+	--if event.object1.myName and event.object2.myName then
+	--	print(event.object1.myName .. ":" .. event.object2.myName)
+	--end
+
+	local o1
+	local o2
+	if(event.object1.type) then
+		o1 = event.object1
+		o2 = event.object2
+	else
+		o1 = event.object2
+		o2 = event.object1
+	end
+	local index
+	local pname 	= "player"
+	local health 	= "hp"
+	local mana 		= "mana"
+	local key 		= "key"
+	local door		= "door"
+	local fdoor 	= "fdoor"
+	if(o1.type == health and o2.myName == pname) then
+		display.remove( o1 )
+		Items[o1.index] = nil
+		for n = 1, 5, 1 do
+			Player.hp = Player.hp + 10
+			statusBar:iHPB()
+		end
+	elseif(o1.type == mana and o2.myName == pname) then
+		display.remove( o1 )
+		Items[o1.index] = nil
+		for n = 1, 5, 1 do
+			Player.mana = Player.mana + 10
+			statusBar:iMPB()
+		end
+	elseif(o1.type == key and o2.myName == pname) then
+		display.remove( o1 )
+		Items[o1.index] = nil
+		statusBar.key.isVisible = true
+	elseif(o1.type == door and o2.myName == pname) then
+		if(statusBar.key.isVisible) then
+			statusBar.key.isVisible = false
+			display.remove( o1 )
+			Items[o1.index] = nil
+		end
+	elseif(o1.type == fdoor and o2.myName == pname) then
+		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+	end
 end
 
 ---------------------------------------------------------------------------------
