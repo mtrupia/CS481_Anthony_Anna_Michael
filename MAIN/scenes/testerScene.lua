@@ -366,7 +366,7 @@ function scene:leaveLvl()
 end
 
 function scene:restartLvl( id )
-	composer.gotoScene( "scenes.levelsScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
+	composer.gotoScene( "scenes.testerScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
 end
 
 function onGlobalCollision ( event )
