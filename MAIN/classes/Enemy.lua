@@ -4,12 +4,9 @@ module (..., package.seeall)
 
 function NewEnemy( props )
 	local enemy			= display.newGroup()
-	--enemy.speed			= props.speed or 0.5
 	enemy.x				= props.x or 0
 	enemy.y				= props.y or 0
-	--enemy.enemyImage	= props.img or "images/flower.png"
 	enemy.enemyType		= props.enemyType or "chaser"
-	--enemy.hp			= props.hp or 10
 	enemy.index			= props.index or 0
 
 	enemy.myName		= "enemy" .. enemy.index
@@ -39,7 +36,6 @@ function NewEnemy( props )
 		else
 			enemy.speed			= 0.5
 			enemy.enemyImage	= "images/flower.png"
-			print("¯\\_(ツ)_/¯")
 			--error here
 		end
 
@@ -81,7 +77,6 @@ function NewEnemy( props )
 
 	function enemy:destroy()
 		display.remove(enemy.enemyImg)
-		--physics.removeBody( enemy )
 		self:removeSelf()
 	end
 
@@ -90,7 +85,6 @@ function NewEnemy( props )
 		local o2n = event.object2.myName
 
 		if ( o1n == enemy.myName or o2n == enemy.myName) and (o1n == "power" or o2n == "power") then
-			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 			if o1n == "power" then
 				event.object2:damageEnemy( 100 ) --figure out what to do here
 			else

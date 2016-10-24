@@ -22,9 +22,9 @@ borders = 40
 -- Physics
 physics = require("physics")
 worldCollisionFilter 	= {categoryBits = 1, maskBits = 14}
-playerCollisionFilter 	= { categoryBits = 2, maskBits = 9 }
+playerCollisionFilter 	= { categoryBits = 2, maskBits = 1 }
 powerCollisionFilter 	= { categoryBits = 4, maskBits = 13 }
-enemyCollisionFilter 	= { categoryBits = 8, maskBits = 15 }
+enemyCollisionFilter 	= { categoryBits = 8, maskBits = 7 }
 -- Classes   ('require('classes.cannon').newCannon') <--- change to
 StickLib 	  = require("libs.lib_analog_stick")
 PlayerLib 	= require("classes.Player")

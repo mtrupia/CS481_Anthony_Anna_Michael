@@ -142,9 +142,9 @@ elseif phase == "did" then
 			Joystick:toFront()
 			pauseButton:toFront()
 			Player:move(Joystick)
-			--for n=1, Enemies.numChildren, 1 do
-			--	Enemies[n]:move(Player)
-			--end
+			for n=1, Enemies.numChildren, 1 do
+				Enemies[n]:move(Player)
+			end
 
 			--move world if outside border
 			if Player.x < -8 then	-- moving left
