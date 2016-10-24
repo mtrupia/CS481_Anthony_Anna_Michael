@@ -119,31 +119,24 @@ function scene:show( event )
 		assert(Items[3].x == 300, "Error: Not Item 3's X Coordinate")
 		assert(Items[4].x == 500, "Error: Not Item 4's X Coordinate")
 		assert(Items[5].x == 500, "Error: Not Item 5's X Coordinate")
-
-
-
-
 		-- TESTING Y COORDINATE OF ITEM
 		assert(Items[1].y == 100, "Error: Not Item 1's Y Coordinate")
 		assert(Items[2].y == 100, "Error: Not Item 2's Y Coordinate")
 		assert(Items[3].y == 100, "Error: Not Item 3's Y Coordinate")
 		assert(Items[4].y == 100, "Error: Not Item 4's Y Coordinate")
 		assert(Items[5].y == 500, "Error: Not Item 5's Y Coordinate")
-
 		-- TESTING TYPE OF ITEM
 		assert(Items[1].type == "hp", "Error: Not HP")
 		assert(Items[2].type == "mana", "Error: Not Mana")
 		assert(Items[3].type == "key", "Error: Not Key")
 		assert(Items[4].type == "door", "Error: Not Door")
 		assert(Items[5].type == "fdoor", "Error: Not Final Door")
-
 		-- TESTING IMAGE OF ITEM
 		assert(Items[1].image == healthImage, "Error: Item 1 Has Wrong Image")
 		assert(Items[2].image == manaImage, "Error: Item 2 Has Wrong Image")
 		assert(Items[3].image == keyImage, "Error: Item 3 Has Wrong Image")
 		assert(Items[4].image == doorImage, "Error: Item 4 Has Wrong Image")
 		assert(Items[5].image == fdoorImage, "Error: Item 5 Has Wrong Image")
-
 		-- For Player Test:
 		-- SPEED , X , Y , IMAGE , NAME , HP , MANA , SCORE
 		assert(Player.speed == 3, "Error: Player's Speed Is Incorrect")
@@ -153,7 +146,6 @@ function scene:show( event )
 		assert(Player.hp == 100, "Error: Player's HP Is Incorrect")
 		assert(Player.mana == 100, "Error: Player's Mana Is Incorrect")
 		assert(Player.score == 0, "Error: Player's Score Is Incorrect")
-
 		-- For Enemy Test:
 		-- X , Y , TYPE , myName , visible
 		for n = 1, Enemies.numChildren, 1 do
@@ -205,16 +197,7 @@ function scene:show( event )
 	Joystick.alpha = 0.2
 	-- Create some collision
 	walls = display.newGroup()
-	--for n = 1, levelID, 1 do
-	--	local crate
-	--	if n <= 5 then
-	--		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
-	--	else
-	--		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
-	--	end
-	--	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-	--	walls:insert(crate)
-	--end
+
 	sceneGroup:insert(walls)
 	-- Pause Button Initialization
 	pauseButton 			= display.newImage(pauseImg)
