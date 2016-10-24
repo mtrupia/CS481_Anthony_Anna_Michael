@@ -120,6 +120,9 @@ function scene:show( event )
 		assert(Items[4].x == 500, "Error: Not Item 4's X Coordinate")
 		assert(Items[5].x == 500, "Error: Not Item 5's X Coordinate")
 
+
+
+
 		-- TESTING Y COORDINATE OF ITEM
 		assert(Items[1].y == 100, "Error: Not Item 1's Y Coordinate")
 		assert(Items[2].y == 100, "Error: Not Item 2's Y Coordinate")
@@ -140,6 +143,12 @@ function scene:show( event )
 		assert(Items[3].image == keyImage, "Error: Item 3 Has Wrong Image")
 		assert(Items[4].image == doorImage, "Error: Item 4 Has Wrong Image")
 		assert(Items[5].image == fdoorImage, "Error: Item 5 Has Wrong Image")
+
+		--MANIPULATE VARIABLES
+
+		Items[1].type = "mana"
+		Items[1]:spawn()
+		print(Items[1].type)
 
 		-- For Player Test:
 		-- SPEED , X , Y , IMAGE , NAME , HP , MANA , SCORE
@@ -387,26 +396,31 @@ function onGlobalCollision ( event )
 	local door		= "door"
 	local fdoor 	= "fdoor"
 	if(o1.type == health and o2.myName == pname) then
+		assert(o1.type == health)
 		display.remove( o1 )
 		Items[o1.index] = nil
 		Player.hp = Player.hp + 10
 		statusBar:iHPB()
 	elseif(o1.type == mana and o2.myName == pname) then
+		assert(o1.type == mana)
 		display.remove( o1 )
 		Items[o1.index] = nil
 		Player.mana = Player.mana + 10
 		statusBar:iMPB()
 	elseif(o1.type == key and o2.myName == pname) then
+		assert(o1.type == key)
 		display.remove( o1 )
 		Items[o1.index] = nil
 		statusBar.key.isVisible = true
 	elseif(o1.type == door and o2.myName == pname) then
+		assert(o1.type == door)
 		if(statusBar.key.isVisible) then
 			statusBar.key.isVisible = false
 			display.remove( o1 )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
+		assert(o1.type == fdoor)
 		text.isVisible = true
 		text:toFront()
 		function endLevel()
