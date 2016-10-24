@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-physics.setDrawMode( "hybrid" )
+--physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -291,9 +291,9 @@ function scene:restartLvl( id )
 end
 
 function onGlobalCollision ( event )
-	if event.object1.myName and event.object2.myName then
-		print(event.object1.myName .. ":" .. event.object2.myName)
-	end
+	--if event.object1.myName and event.object2.myName then
+	--	print(event.object1.myName .. ":" .. event.object2.myName)
+	--end
 
 	local o1
 	local o2

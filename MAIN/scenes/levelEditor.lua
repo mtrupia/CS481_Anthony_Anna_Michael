@@ -175,6 +175,13 @@ function scene:show( event )
 		walls = display.newGroup()
 		sceneGroup:insert(walls)
 		
+		-- StatusBar
+		statusBar = iniStatusBar(Player)
+		sceneGroup:insert(statusBar)
+
+		statusBar:iHPB()
+		statusBar:iMPB()
+		
 		pauseButton = display.newImage(pauseImage)
 		pauseButton.x = display.contentWidth+20
 		pauseButton.y = 21
@@ -413,6 +420,7 @@ function scene:hide( event )
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", begin)
+			Runtime:removeEventListener("collision", onGlobalCollision)
 			Runtime:removeEventListener("mouse", onMouseEvent)
 			Runtime:removeEventListener("key", onKeyEvent)
 			Player:destroy()
