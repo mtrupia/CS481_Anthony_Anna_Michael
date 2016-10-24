@@ -143,7 +143,6 @@ function scene:show( event )
 
 		-- For Player Test:
 		-- SPEED , X , Y , IMAGE , NAME , HP , MANA , SCORE
-
 		assert(Player.speed == 3, "Error: Player's Speed Is Incorrect")
 		assert(Player.x == halfW, "Error: Player's X Coordinate Is Incorrect")
 		assert(Player.y == halfH, "Error: Player's Y Is Incorrect")
@@ -184,7 +183,6 @@ function scene:show( event )
 		assert(statusBar.MPB.begin.isVisible == true)
 		assert(statusBar.MPB.mid.isVisible == true)
 		assert(statusBar.MPB.fin.isVisible == true)
-
 		-- UNIT TESTING ENDS HERE
 
 		-- Joystick

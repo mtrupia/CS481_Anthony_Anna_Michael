@@ -333,6 +333,11 @@ function placeItem(type, x, y)
 	Items:insert(newItem)
 	newItem:spawn()
 end
+function placeEnemy(t,z)
+	enemy = EnemyLib.NewEnemy( {x = t, y = z} )
+	enemy:spawn()
+	Enemies:insert(enemy)
+end
 ---------------------------------------------------------------------------------
 
 -- Listener setup

@@ -90,7 +90,7 @@ function NewEnemy( props )
 			else
 				event.object1:damageEnemy( 100 )
 			end
-			print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 		end
 	end
 
