@@ -35,7 +35,7 @@ function NewPower( props )
 	end
 
 	function Shoot (event)
-		if "began" == event.phase then
+		if "began" == event.phase and player.mana > 0 then
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
 			physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )

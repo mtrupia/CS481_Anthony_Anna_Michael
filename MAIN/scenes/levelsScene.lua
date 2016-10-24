@@ -40,7 +40,11 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	level = require('levels.1')
+	if not (levelID == 1) then
+		level = require('levels.1')
+	else
+		level = require('levels.' .. levelID)
+	end
 
 	Player.x = level.player[1].x
 	Player.y = level.player[1].y
@@ -72,10 +76,6 @@ function scene:show( event )
 	local phase = event.phase
 
 	if phase == "will" then
-		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
-		text.isVisible = false
-		sceneGroup:insert(text)
-
 		-- BG may change
 		bg 			= event.params.bg or "images/testBG.png"
 		-- LevelID
@@ -131,13 +131,19 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
+	
+	self.loadLevel()
 elseif phase == "did" then
-	if levelID == 2 then
-		self.loadLevel()
-	end
-
 	if Player and Joystick then
 		function begin( event )
+			if (Player.hp <= 0) then
+				text = display.newText("YOU DIED", halfW, halfH, native.systemFont, 80)
+				text:toFront()
+				sceneGroup:insert(text)
+				self:leaveLvl()
+				return
+			end
+		
 			statusBar:toFront()
 			Joystick:toFront()
 			pauseButton:toFront()
@@ -147,9 +153,8 @@ elseif phase == "did" then
 			end
 
 			--move world if outside border
-			if Player.x < -8 then	-- moving left
-				Player.x = -8
-
+			if Player.x < borders-80 then	-- moving left
+				Player.x = borders-80
 				for n = 1, walls.numChildren, 1 do
 					walls[n].x = walls[n].x + Player.speed
 				end
@@ -162,8 +167,8 @@ elseif phase == "did" then
 					end
 				end
 			end
-			if Player.x > screenW+8 then	-- moving right
-				Player.x = screenW+8
+			if Player.x > screenW-borders then	-- moving right
+				Player.x = screenW-borders
 
 				for n = 1, walls.numChildren, 1 do
 					walls[n].x = walls[n].x - Player.speed
@@ -239,6 +244,7 @@ function scene:hide( event )
 		end
 		if Joystick then
 			Joystick:delete()
+			Joystick = nil
 		end
 		if walls then
 			walls:removeSelf()
@@ -258,6 +264,7 @@ function scene:hide( event )
 		end
 		if text then
 			text:removeSelf()
+			text = nil
 		end
 
 	elseif phase == "did" then
@@ -302,13 +309,17 @@ function onGlobalCollision ( event )
 	if(o1.type == health and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		Player.hp = Player.hp + 10
-		statusBar:iHPB()
+		for n = 1, 5, 1 do
+			Player.hp = Player.hp + 10
+			statusBar:iHPB()
+		end
 	elseif(o1.type == mana and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		Player.mana = Player.mana + 10
-		statusBar:iMPB()
+		for n = 1, 5, 1 do
+			Player.mana = Player.mana + 10
+			statusBar:iMPB()
+		end
 	elseif(o1.type == key and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
@@ -320,8 +331,9 @@ function onGlobalCollision ( event )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
-		text.isVisible = true
+		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text:toFront()
+		sceneGroup:insert(text)
 		function endLevel()
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
