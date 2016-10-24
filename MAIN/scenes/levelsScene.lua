@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -21,7 +21,6 @@ local walls
 local Player
 local Items
 local Enemies
-local statusBar
 local Joystick
 local levelID
 local pauseButton
@@ -41,7 +40,11 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	level = require('levels.1')
+	if not (levelID == 1) then
+		level = require('levels.1')
+	else
+		level = require('levels.' .. levelID)
+	end
 
 	Player.x = level.player[1].x
 	Player.y = level.player[1].y
@@ -73,10 +76,6 @@ function scene:show( event )
 	local phase = event.phase
 
 	if phase == "will" then
-		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
-		text.isVisible = false
-		sceneGroup:insert(text)
-
 		-- BG may change
 		bg 			= event.params.bg or "images/testBG.png"
 		-- LevelID
@@ -95,6 +94,8 @@ function scene:show( event )
 		sceneGroup:insert(statusBar)
 
 		statusBar:iHPB()
+		statusBar:iMPB()
+
 
 		-- Joystick
 		Joystick = StickLib.NewStick(
@@ -130,25 +131,31 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
+	
+	self.loadLevel()
 elseif phase == "did" then
-	if levelID == 2 then
-		self.loadLevel()
-	end
-
 	if Player and Joystick then
+		Runtime:addEventListener("collision", onGlobalCollision)
 		function begin( event )
+			if (Player.hp <= 0) then
+				text = display.newText("YOU DIED", halfW, halfH, native.systemFont, 80)
+				text:toFront()
+				sceneGroup:insert(text)
+				self:leaveLvl()
+				return
+			end
+		
 			statusBar:toFront()
 			Joystick:toFront()
 			pauseButton:toFront()
 			Player:move(Joystick)
-			--for n=1, Enemies.numChildren, 1 do
-			--	Enemies[n]:move(Player)
-			--end
+			for n=1, Enemies.numChildren, 1 do
+				Enemies[n]:move(Player)
+			end
 
 			--move world if outside border
-			if Player.x < -8 then	-- moving left
-				Player.x = -8
-
+			if Player.x < borders-80 then	-- moving left
+				Player.x = borders-80
 				for n = 1, walls.numChildren, 1 do
 					walls[n].x = walls[n].x + Player.speed
 				end
@@ -161,8 +168,8 @@ elseif phase == "did" then
 					end
 				end
 			end
-			if Player.x > screenW+8 then	-- moving right
-				Player.x = screenW+8
+			if Player.x > screenW-borders then	-- moving right
+				Player.x = screenW-borders
 
 				for n = 1, walls.numChildren, 1 do
 					walls[n].x = walls[n].x - Player.speed
@@ -233,10 +240,12 @@ function scene:hide( event )
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", begin)
+			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
 		end
 		if Joystick then
 			Joystick:delete()
+			Joystick = nil
 		end
 		if walls then
 			walls:removeSelf()
@@ -256,8 +265,9 @@ function scene:hide( event )
 		end
 		if text then
 			text:removeSelf()
+			text = nil
 		end
-		
+
 	elseif phase == "did" then
 
 	end
@@ -281,6 +291,10 @@ function scene:restartLvl( id )
 end
 
 function onGlobalCollision ( event )
+	if event.object1.myName and event.object2.myName then
+		print(event.object1.myName .. ":" .. event.object2.myName)
+	end
+
 	local o1
 	local o2
 	if(event.object1.type) then
@@ -300,13 +314,17 @@ function onGlobalCollision ( event )
 	if(o1.type == health and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		Player.hp = Player.hp + 10
-		statusBar:iHPB()
+		for n = 1, 5, 1 do
+			Player.hp = Player.hp + 10
+			statusBar:iHPB()
+		end
 	elseif(o1.type == mana and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		Player.mana = Player.mana + 10
-		statusBar:iMPB()
+		for n = 1, 5, 1 do
+			Player.mana = Player.mana + 10
+			statusBar:iMPB()
+		end
 	elseif(o1.type == key and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
@@ -318,23 +336,25 @@ function onGlobalCollision ( event )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
-		text.isVisible = true
+		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text:toFront()
-		function endLevel()
-			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
-		end
-		timer.performWithDelay(3000, endLevel, 1)
+		sceneGroup:insert(text)
+		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
 end
 function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(itemCount,type,x,y)
+	newItem = ItemsLib.newItem(type,x,y)
 	Items:insert(newItem)
 	newItem:spawn()
+end
+function placeEnemy(t,z)
+	enemy = EnemyLib.NewEnemy( {x = t, y = z} )
+	enemy:spawn()
+	Enemies:insert(enemy)
 end
 ---------------------------------------------------------------------------------
 
 -- Listener setup
-Runtime:addEventListener("collision", onGlobalCollision)
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )

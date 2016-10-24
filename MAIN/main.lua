@@ -18,7 +18,7 @@ screenW = display.contentWidth
 screenH = display.contentHeight
 halfW 	= screenW/2
 halfH 	= screenH/2
-borders = 40
+borders = 140
 -- Physics
 physics = require("physics")
 worldCollisionFilter 	= {categoryBits = 1, maskBits = 14}
