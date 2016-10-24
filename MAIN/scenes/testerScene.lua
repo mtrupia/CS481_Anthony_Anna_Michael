@@ -163,25 +163,27 @@ function scene:show( event )
 		--For statusBar Test
 		-- HPB: X , Y , isVisible
 		-- MPB: X , Y , isVisible
-		assert(statusBar.HPB.x == display.contentWidth - 460)
-		assert(statusBar.HPB.y == display.contentHeight - 300)
-		assert(statusBar.HPB.begin.isVisible == false)
-		assert(statusBar.HPB.mid.isVisible == false)
-		assert(statusBar.HPB.fin.isVisible == false)
+		assert(statusBar.HPB.x == display.contentWidth - 460, "Error: HPB X")
+		assert(statusBar.HPB.y == display.contentHeight - 300, "Error: HPB Y")
+		assert(statusBar.HPB.begin.isVisible == false, "Error: HPB begin Visibility")
+		assert(statusBar.HPB.mid.isVisible == false, "Error: HPB mid Visibility")
+		assert(statusBar.HPB.fin.isVisible == false, "Error: HPB fin Visibility")
 
-		assert(statusBar.MPB.x == display.contentWidth - 335)
-		assert(statusBar.MPB.y == display.contentHeight - 300)
-		assert(statusBar.MPB.begin.isVisible == false)
-		assert(statusBar.MPB.mid.isVisible == false)
-		assert(statusBar.MPB.fin.isVisible == false)
+		assert(statusBar.MPB.x == display.contentWidth - 335, "Error: MPB X")
+		assert(statusBar.MPB.y == display.contentHeight - 300, "Error: MPB Y")
+		assert(statusBar.MPB.begin.isVisible == false, "Error: MPB begin Visibility")
+		assert(statusBar.MPB.mid.isVisible == false, "Error: MPB mid Visibility")
+		assert(statusBar.MPB.fin.isVisible == false, "Error: MPB end Visibility")
 		statusBar:iHPB()
 		statusBar:iMPB()
-		assert(statusBar.HPB.begin.isVisible == true)
-		assert(statusBar.HPB.mid.isVisible == true)
-		assert(statusBar.HPB.fin.isVisible == true)
-		assert(statusBar.MPB.begin.isVisible == true)
-		assert(statusBar.MPB.mid.isVisible == true)
-		assert(statusBar.MPB.fin.isVisible == true)
+		assert(statusBar.HPB.begin.isVisible == true, "Error: HPB begin Visibility")
+		assert(statusBar.HPB.mid.isVisible == true, "Error: HPB mid Visibility")
+		assert(statusBar.HPB.fin.isVisible == true, "Error: HPB fin Visibility")
+		assert(statusBar.MPB.begin.isVisible == true, "Error: MPB begin Visibility")
+		assert(statusBar.MPB.mid.isVisible == true, "Error: MPB mid Visibility")
+		assert(statusBar.MPB.fin.isVisible == true, "Error: MPB fin Visibility")
+
+		assert(statusBar.key.isVisible == false, "Error: Key Visibility")
 		-- UNIT TESTING ENDS HERE
 
 		-- Joystick
