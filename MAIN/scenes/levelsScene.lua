@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -131,10 +131,11 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
-
+	
 	self.loadLevel()
 elseif phase == "did" then
 	if Player and Joystick then
+		Runtime:addEventListener("collision", onGlobalCollision)
 		function begin( event )
 			if (Player.hp <= 0) then
 				text = display.newText("YOU DIED", halfW, halfH, native.systemFont, 80)
@@ -143,7 +144,7 @@ elseif phase == "did" then
 				self:leaveLvl()
 				return
 			end
-
+		
 			statusBar:toFront()
 			Joystick:toFront()
 			pauseButton:toFront()
@@ -290,8 +291,10 @@ function scene:restartLvl( id )
 end
 
 function onGlobalCollision ( event )
-	print(event.object1.myName)
-	print(event.object2.myName)
+	if event.object1.myName and event.object2.myName then
+		print(event.object1.myName .. ":" .. event.object2.myName)
+	end
+
 	local o1
 	local o2
 	if(event.object1.type) then
@@ -301,6 +304,7 @@ function onGlobalCollision ( event )
 		o1 = event.object2
 		o2 = event.object1
 	end
+	local index
 	local pname 	= "player"
 	local health 	= "hp"
 	local mana 		= "mana"
@@ -351,7 +355,6 @@ end
 ---------------------------------------------------------------------------------
 
 -- Listener setup
-Runtime:addEventListener("collision", onGlobalCollision)
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )

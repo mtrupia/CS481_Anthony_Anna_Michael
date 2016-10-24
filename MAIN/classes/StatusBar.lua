@@ -14,7 +14,7 @@ local options = {
 }
 
 function iniStatusBar(Player)
-  local statusBar = display.newGroup()
+  statusBar = display.newGroup()
   -- HP BAR
   statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
   statusBar:insert(statusBar.HPB)
@@ -69,9 +69,9 @@ function iniStatusBar(Player)
 
   -- increase HP Bar
   function statusBar:iHPB ()
-    if Player.hp < 0 then Player.hp = 0
-    elseif Player.hp > 100 then Player.hp = 100 end
-
+	if Player.hp < 0 then Player.hp = 0
+	elseif Player.hp > 100 then Player.hp = 100 end
+  
     --print("Function: statusBar:iHPB ran")
     if (Player.hp == 10) then
       statusBar.HPB.begin.isVisible = true
@@ -88,9 +88,9 @@ function iniStatusBar(Player)
   end
   -- decrease HP Bar
   function statusBar:dHPB()
-    if Player.hp < 0 then Player.hp = 0
-    elseif Player.hp > 100 then Player.hp = 100 end
-
+	if Player.hp < 0 then Player.hp = 0
+	elseif Player.hp > 100 then Player.hp = 100 end
+  
     --print("Function: statusBar:dHPB ran")
     if (Player.hp == 0) then
       statusBar.HPB.begin.isVisible = false
@@ -104,9 +104,9 @@ function iniStatusBar(Player)
   end
 
   function statusBar:iMPB()
-    if Player.mana < 0 then Player.mana = 0
-    elseif Player.mana > 100 then Player.mana = 100 end
-
+	if Player.mana < 0 then Player.mana = 0
+	elseif Player.mana > 100 then Player.mana = 100 end
+  
     --print("Function: statusBar:iMPB ran")
     if (Player.mana == 10) then
       statusBar.MPB.begin.isVisible = true
@@ -124,9 +124,9 @@ function iniStatusBar(Player)
   end
 
   function statusBar:dMPB()
-    if Player.mana < 0 then Player.mana = 0
-    elseif Player.mana > 100 then Player.mana = 100 end
-
+	if Player.mana < 0 then Player.mana = 0
+	elseif Player.mana > 100 then Player.mana = 100 end
+  
     --print("Function: statusBar:dMPB ran")
     if (Player.mana == 0) then
       statusBar.MPB.begin.isVisible = false
@@ -139,9 +139,7 @@ function iniStatusBar(Player)
     end
   end
   function statusBar:destroy()
-    if(statusBar) then
-      self:removeSelf()
-    end
+    self:removeSelf()
   end
   return statusBar
 end
