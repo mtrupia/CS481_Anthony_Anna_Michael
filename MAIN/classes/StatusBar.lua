@@ -14,7 +14,7 @@ local options = {
 }
 
 function iniStatusBar(Player)
-  local statusBar = display.newGroup()
+  statusBar = display.newGroup()
   -- HP BAR
   statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
   statusBar:insert(statusBar.HPB)
