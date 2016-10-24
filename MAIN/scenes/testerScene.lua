@@ -19,15 +19,13 @@ local pauseImg
 local backGround
 local walls
 local Player
-local Items = {}
-local itemCount = 0
-local Enemies = {}
+local Items
+local Enemies
 local statusBar
-local enemyCount = 0
 local Joystick
 local levelID
 local pauseButton
-
+local sceneGroup
 local text
 
 function scene:create( event )
@@ -64,39 +62,130 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		Items:newItem(b.name, b.x, b.y)
+		newItem = ItemsLib.newItem(1, b.name, b.x, b.y)
+		Items:insert(newItem)
+		newItem:spawn()
 	end
 end
 
 function scene:show( event )
-	local sceneGroup = self.view
+	sceneGroup = self.view
 	local phase = event.phase
 
 	if phase == "will" then
-		text= display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text.isVisible = false
 		sceneGroup:insert(text)
 
 		-- BG may change
 		bg 			= "images/testBG.png"
 		-- LevelID
-		levelID = 1
 		-- Player
 		Player = PlayerLib.NewPlayer( {} )
-		Items = {}
-		Items[itemCount] = ItemsLib.newItem(itemCount,"hp",100,100)
-		sceneGroup:insert(Items[itemCount])
-		Items[itemCount]:spawn()
+		Items = display.newGroup()
+		sceneGroup:insert(Items)
 		sceneGroup:insert(Player)
 		Player:spawnPlayer()
+
 		-- Enemy
 		Enemies = display.newGroup()
 		sceneGroup:insert(Enemies)
-		-- StatusBar
+		-- Status Bar
 		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(statusBar)
+		-- UNIT TEST INITIALIZATION
+		placeItem("hp", 100, 100)
+		placeItem("mana", 200, 100)
+		placeItem("key", 300, 100)
+		placeItem("door", 500, 100)
+		placeItem("fdoor", 500, 500)
 
+
+		-- UNIT TESTING BEGINS HERE
+		placeEnemy(700,100)
+		placeEnemy(705,100)
+		placeEnemy(710,100)
+		placeEnemy(715,100)
+		--For Items Test:
+		-- X , Y , TYPE
+		local healthImage = "images/Health.png"
+		local manaImage = "images/Mana.png"
+		local keyImage = "images/Key.png"
+		local doorImage = "images/Door.png"
+		local fdoorImage = "images/FinalDoor.png"
+		-- TESTING X COORDINATE OF ITEM
+		assert(Items[1].x == 100, "Error: Not Item 1's X Coordinate")
+		assert(Items[2].x == 200, "Error: Not Item 2's X Coordinate")
+		assert(Items[3].x == 300, "Error: Not Item 3's X Coordinate")
+		assert(Items[4].x == 500, "Error: Not Item 4's X Coordinate")
+		assert(Items[5].x == 500, "Error: Not Item 5's X Coordinate")
+
+		-- TESTING Y COORDINATE OF ITEM
+		assert(Items[1].y == 100, "Error: Not Item 1's Y Coordinate")
+		assert(Items[2].y == 100, "Error: Not Item 2's Y Coordinate")
+		assert(Items[3].y == 100, "Error: Not Item 3's Y Coordinate")
+		assert(Items[4].y == 100, "Error: Not Item 4's Y Coordinate")
+		assert(Items[5].y == 500, "Error: Not Item 5's Y Coordinate")
+
+		-- TESTING TYPE OF ITEM
+		assert(Items[1].type == "hp", "Error: Not HP")
+		assert(Items[2].type == "mana", "Error: Not Mana")
+		assert(Items[3].type == "key", "Error: Not Key")
+		assert(Items[4].type == "door", "Error: Not Door")
+		assert(Items[5].type == "fdoor", "Error: Not Final Door")
+
+		-- TESTING IMAGE OF ITEM
+		assert(Items[1].image == healthImage, "Error: Item 1 Has Wrong Image")
+		assert(Items[2].image == manaImage, "Error: Item 2 Has Wrong Image")
+		assert(Items[3].image == keyImage, "Error: Item 3 Has Wrong Image")
+		assert(Items[4].image == doorImage, "Error: Item 4 Has Wrong Image")
+		assert(Items[5].image == fdoorImage, "Error: Item 5 Has Wrong Image")
+
+		-- For Player Test:
+		-- SPEED , X , Y , IMAGE , NAME , HP , MANA , SCORE
+
+		assert(Player.speed == 3, "Error: Player's Speed Is Incorrect")
+		assert(Player.x == halfW, "Error: Player's X Coordinate Is Incorrect")
+		assert(Player.y == halfH, "Error: Player's Y Is Incorrect")
+		assert(Player.myName == "player", "Error: Player's Name Is Incorrect")
+		assert(Player.hp == 100, "Error: Player's HP Is Incorrect")
+		assert(Player.mana == 100, "Error: Player's Mana Is Incorrect")
+		assert(Player.score == 0, "Error: Player's Score Is Incorrect")
+
+		-- For Enemy Test:
+		-- X , Y , TYPE , myName , visible
+		for n = 1, Enemies.numChildren, 1 do
+			assert(Enemies[n].x == 700 + (n-1) * 5, "Error: Enemy " .. n .. " X coordinate Is Incorrect")
+			assert(Enemies[n].y == 100, "Error: Enemy " .. n .. " Y coordinate Is Incorrect")
+			assert(Enemies[n].enemyType == "chaser", "Error: Enemy" .. n .. " Type is Not chaser")
+			assert(Enemies[n].myName == "enemy0", "Error: Enemy" .. n .. " Name is Incorrect")
+			assert(Enemies[n].visible == false, "Error: Enemy" .. n .. " Visibility is Incorrect")
+		end
+
+		--For statusBar Test
+		-- HPB: X , Y , isVisible
+		-- MPB: X , Y , isVisible
+		assert(statusBar.HPB.x == display.contentWidth - 460)
+		assert(statusBar.HPB.y == display.contentHeight - 300)
+		assert(statusBar.HPB.begin.isVisible == false)
+		assert(statusBar.HPB.mid.isVisible == false)
+		assert(statusBar.HPB.fin.isVisible == false)
+
+		assert(statusBar.MPB.x == display.contentWidth - 335)
+		assert(statusBar.MPB.y == display.contentHeight - 300)
+		assert(statusBar.MPB.begin.isVisible == false)
+		assert(statusBar.MPB.mid.isVisible == false)
+		assert(statusBar.MPB.fin.isVisible == false)
 		statusBar:iHPB()
+		statusBar:iMPB()
+		assert(statusBar.HPB.begin.isVisible == true)
+		assert(statusBar.HPB.mid.isVisible == true)
+		assert(statusBar.HPB.fin.isVisible == true)
+		assert(statusBar.MPB.begin.isVisible == true)
+		assert(statusBar.MPB.mid.isVisible == true)
+		assert(statusBar.MPB.fin.isVisible == true)
+
+		-- UNIT TESTING ENDS HERE
 
 		-- Joystick
 		Joystick = StickLib.NewStick(
@@ -157,7 +246,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x + Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x + Player.speed
 					end
@@ -172,7 +261,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].x = Enemies[n].x - Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].x = Items[n].x - Player.speed
 					end
@@ -187,7 +276,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y + Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y + Player.speed
 					end
@@ -202,7 +291,7 @@ elseif phase == "did" then
 				for n = 1, Enemies.numChildren, 1 do
 					Enemies[n].y = Enemies[n].y - Player.speed
 				end
-				for n = 0, itemCount, 1 do
+				for n = 0, Items.numChildren, 1 do
 					if(Items[n]) then
 						Items[n].y = Items[n].y - Player.speed
 					end
@@ -245,6 +334,7 @@ function scene:hide( event )
 			walls = nil
 		end
 		if Items then
+			Items:removeSelf()
 			Items = nil
 		end
 		if statusBar then
@@ -255,6 +345,10 @@ function scene:hide( event )
 			Enemies:removeSelf()
 			Enemies = nil
 		end
+		if text then
+			text:removeSelf()
+		end
+
 	elseif phase == "did" then
 
 	end
@@ -270,7 +364,7 @@ function scene:destroy( event )
 end
 
 function scene:leaveLvl()
-	composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
+	composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 end
 
 function scene:restartLvl( id )
@@ -316,11 +410,23 @@ function onGlobalCollision ( event )
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		text.isVisible = true
+		text:toFront()
 		function endLevel()
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
 		timer.performWithDelay(3000, endLevel, 1)
 	end
+end
+function placeItem(type, x, y)
+	newItem = ItemsLib.newItem(1,type,x,y)
+	Items:insert(newItem)
+	newItem:spawn()
+end
+
+function placeEnemy(t,z)
+	enemy = EnemyLib.NewEnemy( {x = t, y = z} )
+	enemy:spawn()
+	Enemies:insert(enemy)
 end
 ---------------------------------------------------------------------------------
 

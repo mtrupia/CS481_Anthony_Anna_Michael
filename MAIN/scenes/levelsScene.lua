@@ -21,7 +21,6 @@ local walls
 local Player
 local Items
 local Enemies
-local statusBar
 local Joystick
 local levelID
 local pauseButton
@@ -95,6 +94,8 @@ function scene:show( event )
 		sceneGroup:insert(statusBar)
 
 		statusBar:iHPB()
+		statusBar:iMPB()
+
 
 		-- Joystick
 		Joystick = StickLib.NewStick(
@@ -233,6 +234,7 @@ function scene:hide( event )
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", begin)
+			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
 		end
 		if Joystick then
@@ -257,7 +259,7 @@ function scene:hide( event )
 		if text then
 			text:removeSelf()
 		end
-		
+
 	elseif phase == "did" then
 
 	end
@@ -327,7 +329,7 @@ function onGlobalCollision ( event )
 	end
 end
 function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(itemCount,type,x,y)
+	newItem = ItemsLib.newItem(type,x,y)
 	Items:insert(newItem)
 	newItem:spawn()
 end

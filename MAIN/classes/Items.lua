@@ -15,7 +15,6 @@ function newItem ( index, type, x, y )
   item.y      = y or 0
   item.type   = type or "key"
   item.index  = index or 0
-  item.myName = type
 
   function item:spawn()
     if( item.type == "hp") then

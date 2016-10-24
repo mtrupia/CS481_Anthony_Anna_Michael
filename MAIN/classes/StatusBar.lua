@@ -29,7 +29,6 @@ function iniStatusBar(Player)
   statusBar:insert(statusBar.HPB.mid)
   statusBar.HPB.mid:setFillColor(1,0,0)
   statusBar.HPB.mid.isVisible = false
-  print(statusBar.HPB.mid.isVisible)
   statusBar.HPB.mid.anchorX = 0
   statusBar.HPB.mid.anchorY = 0.5
   -- Circle for End Of Health Bar
@@ -70,7 +69,7 @@ function iniStatusBar(Player)
 
   -- increase HP Bar
   function statusBar:iHPB ()
-    print("Function: statusBar:iHPB ran")
+    --print("Function: statusBar:iHPB ran")
     if (Player.hp == 10) then
       statusBar.HPB.begin.isVisible = true
     elseif (Player.hp == 20) then
@@ -86,7 +85,7 @@ function iniStatusBar(Player)
   end
   -- decrease HP Bar
   function statusBar:dHPB()
-    print("Function: statusBar:dHPB ran")
+    --print("Function: statusBar:dHPB ran")
     if (Player.hp == 0) then
       statusBar.HPB.begin.isVisible = false
     elseif(Player.hp == 10) then
@@ -99,7 +98,7 @@ function iniStatusBar(Player)
   end
 
   function statusBar:iMPB()
-    print("Function: statusBar:iMPB ran")
+    --print("Function: statusBar:iMPB ran")
     if (Player.mana == 10) then
       statusBar.MPB.begin.isVisible = true
 
@@ -107,22 +106,24 @@ function iniStatusBar(Player)
       statusBar.MPB.mid.isVisible = true
     elseif (Player.mana < 100) then
       statusBar.MPB.mid.width = statusBar.MPB.mid.width + 12
-    else
-      statusBar.MPB.mid.width = statusBar.MPB.mid.width + 12
+    elseif (Player.hp == 100) then
+      statusBar.MPB.begin.isVisible = true
+      statusBar.MPB.mid.isVisible = true
+      statusBar.MPB.mid.width = 103
       statusBar.MPB.fin.isVisible = true
     end
   end
 
   function statusBar:dMPB()
-    print("Function: statusBar:dMPB ran")
+    --print("Function: statusBar:dMPB ran")
     if (Player.mana == 0) then
-      statusBar.HPB.begin.isVisible = false
+      statusBar.MPB.begin.isVisible = false
     elseif(Player.mana == 10) then
-      statusBar.HPB.mid.isVisible = false
+      statusBar.MPB.mid.isVisible = false
     elseif (Player.mana == 90) then
-      statusBar.HPB.fin.isVisible = false
+      statusBar.MPB.fin.isVisible = false
     elseif (Player.mana < 100) then
-      statusBar.HPB.mid.width = statusBar.HPB.mid.width - 12
+      statusBar.MPB.mid.width = statusBar.MPB.mid.width - 12
     end
   end
   function statusBar:destroy()
