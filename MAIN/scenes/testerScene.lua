@@ -23,7 +23,7 @@ local Items
 local Enemies
 local statusBar
 local Joystick
-local levelID
+local levelID = "T"
 local pauseButton
 local sceneGroup
 local text
@@ -94,18 +94,22 @@ function scene:show( event )
 		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(statusBar)
 		-- UNIT TEST INITIALIZATION
+		-- SPAWN ITEMS IN
 		placeItem("hp", 100, 100)
 		placeItem("mana", 200, 100)
 		placeItem("key", 300, 100)
 		placeItem("door", 500, 100)
 		placeItem("fdoor", 500, 500)
-
-
-		-- UNIT TESTING BEGINS HERE
+		-- SPAWN ENEMIES IN
 		placeEnemy(700,100)
 		placeEnemy(705,100)
 		placeEnemy(710,100)
 		placeEnemy(715,100)
+
+		-- UNIT TESTING BEGINS HERE
+
+		-- For levelID test:
+		assert(levelID == "T", "Error: Not in testerScene")
 		--For Items Test:
 		-- X , Y , TYPE
 		local healthImage = "images/Health.png"
