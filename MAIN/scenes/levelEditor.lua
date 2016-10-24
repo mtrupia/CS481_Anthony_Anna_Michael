@@ -438,8 +438,9 @@ function scene:hide( event )
 			walls:removeSelf()
 			walls = nil
 		end
-		if Enemies[1] then
-			Enemies[1]:destroy()
+		if Enemies then
+			Enemies:removeSelf()
+			Enemies = nil
 		end
 		if Items then
 			Items:removeSelf()
