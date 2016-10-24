@@ -144,12 +144,6 @@ function scene:show( event )
 		assert(Items[4].image == doorImage, "Error: Item 4 Has Wrong Image")
 		assert(Items[5].image == fdoorImage, "Error: Item 5 Has Wrong Image")
 
-		--MANIPULATE VARIABLES
-
-		Items[1].type = "mana"
-		Items[1]:spawn()
-		print(Items[1].type)
-
 		-- For Player Test:
 		-- SPEED , X , Y , IMAGE , NAME , HP , MANA , SCORE
 		assert(Player.speed == 3, "Error: Player's Speed Is Incorrect")
