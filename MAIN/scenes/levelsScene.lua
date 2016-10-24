@@ -334,10 +334,7 @@ function onGlobalCollision ( event )
 		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
 		text:toFront()
 		sceneGroup:insert(text)
-		function endLevel()
-			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
-		end
-		timer.performWithDelay(3000, endLevel, 1)
+		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
 end
 function placeItem(type, x, y)
