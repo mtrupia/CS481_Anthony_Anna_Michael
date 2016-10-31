@@ -32,6 +32,7 @@ ItemsLib    = require("classes.Items")
 PowerLib 	  = require("classes.Power")
 EnemyLib 	  = require("classes.Enemy")
 SBLib       = require("classes.StatusBar")
+AStarLib    = require("libs.a-star")
 
 -- load Welcome Screen
 composer.gotoScene( "scenes.welcomeScene" )
