@@ -20,7 +20,7 @@ local backGround
 local walls
 local statusBar
 local Joystick
-local levelID = "T"
+local levelID
 local pauseButton
 local sceneGroup
 local text
@@ -91,35 +91,22 @@ function scene:show( event )
 		statusBar = iniStatusBar(Player)
 		sceneGroup:insert(statusBar)
 		-- UNIT TEST INITIALIZATION
-		-- SPAWN ITEMS IN
 		placeItem("hp", 100, 100)
 		placeItem("mana", 200, 100)
 		placeItem("key", 300, 100)
 		placeItem("door", 500, 100)
 		placeItem("fdoor", 500, 500)
-<<<<<<< HEAD
-		-- SPAWN ENEMIES IN
-=======
 		placeItem("bomb", 50, 200)
 
 
 		-- UNIT TESTING BEGINS HERE
 
->>>>>>> refs/remotes/origin/Anthony
 		placeEnemy(700,100)
 		placeEnemy(705,100)
 		placeEnemy(710,100)
 		placeEnemy(715,100)
-<<<<<<< HEAD
-
-		-- UNIT TESTING BEGINS HERE
-
-		-- For levelID test:
-		assert(levelID == "T", "Error: Not in testerScene")
-=======
 		placeEnemy(50,150)
 		placeEnemy(50,200)
->>>>>>> refs/remotes/origin/Anthony
 		--For Items Test:
 		-- X , Y , TYPE
 		local healthImage = "images/Health.png"
@@ -133,24 +120,28 @@ function scene:show( event )
 		assert(Items[3].x == 300, "Error: Not Item 3's X Coordinate")
 		assert(Items[4].x == 500, "Error: Not Item 4's X Coordinate")
 		assert(Items[5].x == 500, "Error: Not Item 5's X Coordinate")
+
 		-- TESTING Y COORDINATE OF ITEM
 		assert(Items[1].y == 100, "Error: Not Item 1's Y Coordinate")
 		assert(Items[2].y == 100, "Error: Not Item 2's Y Coordinate")
 		assert(Items[3].y == 100, "Error: Not Item 3's Y Coordinate")
 		assert(Items[4].y == 100, "Error: Not Item 4's Y Coordinate")
 		assert(Items[5].y == 500, "Error: Not Item 5's Y Coordinate")
+
 		-- TESTING TYPE OF ITEM
 		assert(Items[1].type == "hp", "Error: Not HP")
 		assert(Items[2].type == "mana", "Error: Not Mana")
 		assert(Items[3].type == "key", "Error: Not Key")
 		assert(Items[4].type == "door", "Error: Not Door")
 		assert(Items[5].type == "fdoor", "Error: Not Final Door")
+
 		-- TESTING IMAGE OF ITEM
 		assert(Items[1].image == healthImage, "Error: Item 1 Has Wrong Image")
 		assert(Items[2].image == manaImage, "Error: Item 2 Has Wrong Image")
 		assert(Items[3].image == keyImage, "Error: Item 3 Has Wrong Image")
 		assert(Items[4].image == doorImage, "Error: Item 4 Has Wrong Image")
 		assert(Items[5].image == fdoorImage, "Error: Item 5 Has Wrong Image")
+
 		-- For Player Test:
 		-- SPEED , X , Y , IMAGE , NAME , HP , MANA , SCORE
 		assert(Player.speed == 3, "Error: Player's Speed Is Incorrect")
@@ -160,6 +151,7 @@ function scene:show( event )
 		assert(Player.hp == 100, "Error: Player's HP Is Incorrect")
 		assert(Player.mana == 100, "Error: Player's Mana Is Incorrect")
 		assert(Player.score == 0, "Error: Player's Score Is Incorrect")
+
 		-- For Enemy Test:
 		-- X , Y , TYPE , myName , visible
 		for n = 1, Enemies.numChildren - 2, 1 do
@@ -173,27 +165,25 @@ function scene:show( event )
 		--For statusBar Test
 		-- HPB: X , Y , isVisible
 		-- MPB: X , Y , isVisible
-		assert(statusBar.HPB.x == display.contentWidth - 460, "Error: HPB X")
-		assert(statusBar.HPB.y == display.contentHeight - 300, "Error: HPB Y")
-		assert(statusBar.HPB.begin.isVisible == false, "Error: HPB begin Visibility")
-		assert(statusBar.HPB.mid.isVisible == false, "Error: HPB mid Visibility")
-		assert(statusBar.HPB.fin.isVisible == false, "Error: HPB fin Visibility")
+		assert(statusBar.HPB.x == display.contentWidth - 460)
+		assert(statusBar.HPB.y == display.contentHeight - 300)
+		assert(statusBar.HPB.begin.isVisible == false)
+		assert(statusBar.HPB.mid.isVisible == false)
+		assert(statusBar.HPB.fin.isVisible == false)
 
-		assert(statusBar.MPB.x == display.contentWidth - 335, "Error: MPB X")
-		assert(statusBar.MPB.y == display.contentHeight - 300, "Error: MPB Y")
-		assert(statusBar.MPB.begin.isVisible == false, "Error: MPB begin Visibility")
-		assert(statusBar.MPB.mid.isVisible == false, "Error: MPB mid Visibility")
-		assert(statusBar.MPB.fin.isVisible == false, "Error: MPB end Visibility")
+		assert(statusBar.MPB.x == display.contentWidth - 335)
+		assert(statusBar.MPB.y == display.contentHeight - 300)
+		assert(statusBar.MPB.begin.isVisible == false)
+		assert(statusBar.MPB.mid.isVisible == false)
+		assert(statusBar.MPB.fin.isVisible == false)
 		statusBar:iHPB()
 		statusBar:iMPB()
-		assert(statusBar.HPB.begin.isVisible == true, "Error: HPB begin Visibility")
-		assert(statusBar.HPB.mid.isVisible == true, "Error: HPB mid Visibility")
-		assert(statusBar.HPB.fin.isVisible == true, "Error: HPB fin Visibility")
-		assert(statusBar.MPB.begin.isVisible == true, "Error: MPB begin Visibility")
-		assert(statusBar.MPB.mid.isVisible == true, "Error: MPB mid Visibility")
-		assert(statusBar.MPB.fin.isVisible == true, "Error: MPB fin Visibility")
-
-		assert(statusBar.key.isVisible == false, "Error: Key Visibility")
+		assert(statusBar.HPB.begin.isVisible == true)
+		assert(statusBar.HPB.mid.isVisible == true)
+		assert(statusBar.HPB.fin.isVisible == true)
+		assert(statusBar.MPB.begin.isVisible == true)
+		assert(statusBar.MPB.mid.isVisible == true)
+		assert(statusBar.MPB.fin.isVisible == true)
 		-- UNIT TESTING ENDS HERE
 
 		-- Joystick
@@ -213,7 +203,16 @@ function scene:show( event )
 	Joystick.alpha = 0.2
 	-- Create some collision
 	walls = display.newGroup()
-
+	--for n = 1, levelID, 1 do
+	--	local crate
+	--	if n <= 5 then
+	--		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
+	--	else
+	--		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
+	--	end
+	--	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
+	--	walls:insert(crate)
+	--end
 	sceneGroup:insert(walls)
 	-- Pause Button Initialization
 	pauseButton 			= display.newImage(pauseImg)
@@ -391,29 +390,24 @@ function onGlobalCollision ( event )
 	local bomb		= "bomb"
 	local power		= "power"
 	if(o1.type == health and o2.myName == pname) then
-		assert(o1.type == health)
 		display.remove( o1 )
 		Items[o1.index] = nil
 		statusBar:iHPB()
 	elseif(o1.type == mana and o2.myName == pname) then
-		assert(o1.type == mana)
 		display.remove( o1 )
 		Items[o1.index] = nil
 		statusBar:iMPB()
 	elseif(o1.type == key and o2.myName == pname) then
-		assert(o1.type == key)
 		display.remove( o1 )
 		Items[o1.index] = nil
 		statusBar.key.isVisible = true
 	elseif(o1.type == door and o2.myName == pname) then
-		assert(o1.type == door)
 		if(statusBar.key.isVisible) then
 			statusBar.key.isVisible = false
 			display.remove( o1 )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
-		assert(o1.type == fdoor)
 		text.isVisible = true
 		text:toFront()
 		function endLevel()

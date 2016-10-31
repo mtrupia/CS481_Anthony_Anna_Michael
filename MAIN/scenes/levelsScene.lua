@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -135,6 +135,9 @@ elseif phase == "did" then
 		Runtime:addEventListener("collision", onGlobalCollision)
 		function begin( event )
 			if (Player.hp <= 0) then
+				text = display.newText("YOU DIED", halfW, halfH, native.systemFont, 80)
+				text:toFront()
+				sceneGroup:insert(text)
 				self:leaveLvl()
 				return
 			end
@@ -285,15 +288,9 @@ function scene:restartLvl( id )
 end
 
 function onGlobalCollision ( event )
-<<<<<<< HEAD
-	--if event.object1.myName and event.object2.myName then
-	--	print(event.object1.myName .. ":" .. event.object2.myName)
-	--end
-=======
 	if event.object1.myName and event.object2.myName then
 		--print(event.object1.myName .. ":" .. event.object2.myName)
 	end
->>>>>>> refs/remotes/origin/Anthony
 
 	local o1
 	local o2
@@ -336,6 +333,9 @@ function onGlobalCollision ( event )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
+		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
+		text:toFront()
+		sceneGroup:insert(text)
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
 end
