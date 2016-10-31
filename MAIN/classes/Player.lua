@@ -57,6 +57,8 @@ function NewPlayer ( props )
 	end
 
 	function player:destroy()
+		display.remove(placer)
+		display.remove(placer.img)
 		Power:destroy()
 		self:removeSelf()
 	end
@@ -122,8 +124,9 @@ function NewPlayer ( props )
 		end
 	end
 
-	local placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
-
+	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
+	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
+	placer.img:scale(0.5,0.5)
 	placer:addEventListener("touch", placeBomb )
 
 	return player

@@ -236,6 +236,7 @@ function scene:hide( event )
 			pauseButton:removeEventListener("touch", pauseButton)
 		end
 		if Player then
+			display.remove(placer)
 			Runtime:removeEventListener("enterFrame", begin)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
@@ -253,6 +254,7 @@ function scene:hide( event )
 			Items = nil
 		end
 		if statusBar then
+			display.remove(statusBar.bomb)
 			statusBar:destroy()
 			statusBar:removeSelf()
 		end
