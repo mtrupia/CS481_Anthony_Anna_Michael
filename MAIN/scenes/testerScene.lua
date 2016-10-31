@@ -13,13 +13,13 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
 local walls
 local Player
-local Items
+
 local Enemies
 local statusBar
 local Joystick
@@ -99,13 +99,17 @@ function scene:show( event )
 		placeItem("key", 300, 100)
 		placeItem("door", 500, 100)
 		placeItem("fdoor", 500, 500)
+		placeItem("bomb", 50, 200)
 
 
 		-- UNIT TESTING BEGINS HERE
+
 		placeEnemy(700,100)
 		placeEnemy(705,100)
 		placeEnemy(710,100)
 		placeEnemy(715,100)
+		placeEnemy(50,150)
+		placeEnemy(50,200)
 		--For Items Test:
 		-- X , Y , TYPE
 		local healthImage = "images/Health.png"
@@ -153,7 +157,7 @@ function scene:show( event )
 
 		-- For Enemy Test:
 		-- X , Y , TYPE , myName , visible
-		for n = 1, Enemies.numChildren, 1 do
+		for n = 1, Enemies.numChildren - 2, 1 do
 			assert(Enemies[n].x == 700 + (n-1) * 5, "Error: Enemy " .. n .. " X coordinate Is Incorrect")
 			assert(Enemies[n].y == 100, "Error: Enemy " .. n .. " Y coordinate Is Incorrect")
 			assert(Enemies[n].enemyType == "chaser", "Error: Enemy" .. n .. " Type is Not chaser")
@@ -386,15 +390,15 @@ function onGlobalCollision ( event )
 	local key 		= "key"
 	local door		= "door"
 	local fdoor 	= "fdoor"
+	local bomb		= "bomb"
+	local power		= "power"
 	if(o1.type == health and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		Player.hp = Player.hp + 10
 		statusBar:iHPB()
 	elseif(o1.type == mana and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		Player.mana = Player.mana + 10
 		statusBar:iMPB()
 	elseif(o1.type == key and o2.myName == pname) then
 		display.remove( o1 )
@@ -426,6 +430,9 @@ function placeEnemy(t,z)
 	enemy:spawn()
 	Enemies:insert(enemy)
 end
+
+
+
 ---------------------------------------------------------------------------------
 
 -- Listener setup

@@ -131,7 +131,7 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
-	
+
 	self.loadLevel()
 elseif phase == "did" then
 	if Player and Joystick then
@@ -144,7 +144,7 @@ elseif phase == "did" then
 				self:leaveLvl()
 				return
 			end
-		
+
 			statusBar:toFront()
 			Joystick:toFront()
 			pauseButton:toFront()
