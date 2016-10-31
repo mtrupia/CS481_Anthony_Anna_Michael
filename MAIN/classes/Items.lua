@@ -31,12 +31,32 @@ function newItem ( index, type, x, y )
       item.image = bombImage
     end
     item.img = display.newImage(item.image)
-    if(item.type == "bomb") then
-      item.img:scale(0.5,0.5)
-    end
     item:insert(item.img)
     if(item.type == "bomb") then
+      item.img:scale(.5,.5)
       physics.addBody( item, "dynamic")
+      timer.performWithDelay( 3000, function()
+        print("boom")
+        if(item) then
+          for n = 1, Enemies.numChildren, 1 do
+            if(Enemies[n]) then
+              local dis = getDistance(Enemies[n], item)
+              if(dis < 100) then
+                Enemies[n]:damageEnemy(30)
+                print("Hit Enemy: " .. n)
+              end
+            end
+          end
+          if(getDistance(Player,item) < 100) then
+            print("Hit Player")
+            Player:damagePlayer(30)
+            statusBar:dHPB()
+            statusBar:dHPB()
+            statusBar:dHPB()
+          end
+          item:destroy()
+        end
+      end, 1)
     else
       physics.addBody(item, "static")
     end
@@ -44,7 +64,18 @@ function newItem ( index, type, x, y )
   function item:destroy()
     self:removeSelf()
   end
+  function getDistance(objA, objB)
+    -- Get the length for each of the components x and y
+    if(objA.myName) then
+      print(objA.myName)
+    elseif(objA.type) then
+      print(objA.type)
+    end
+    local xDist = objB.x - objA.x
+    local yDist = objB.y - objA.y
 
+    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+  end
 
 
   return item

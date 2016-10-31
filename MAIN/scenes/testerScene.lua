@@ -18,9 +18,6 @@ physics.setDrawMode( "hybrid" )
 local pauseImg
 local backGround
 local walls
-local Player
-
-local Enemies
 local statusBar
 local Joystick
 local levelID
@@ -429,6 +426,10 @@ function placeEnemy(t,z)
 	enemy = EnemyLib.NewEnemy( {x = t, y = z} )
 	enemy:spawn()
 	Enemies:insert(enemy)
+end
+
+boom = function (bomb)
+	print("boom")
 end
 
 

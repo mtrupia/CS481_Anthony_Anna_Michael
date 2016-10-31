@@ -62,8 +62,8 @@ function NewPlayer ( props )
 	end
 
 	function player:damagePlayer( amt )
-		player.health = player.health - amt
-		if player.health <= 0 then
+		player.hp = player.hp - amt
+		if player.hp <= 0 then
 			player:killPlayer()
 		end
 	end
