@@ -5,7 +5,7 @@ local manaImage = "images/Mana.png"
 local keyImage = "images/Key.png"
 local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
-local bombImage = "images/Bomb.png"
+
 -- Variable to store Items
 local item
 
@@ -13,9 +13,10 @@ function newItem ( index, type, x, y )
   item = display.newGroup()
   item.x      = x or 0
   item.y      = y or 0
-  item.type   = type
+  item.type   = type or "key"
   item.index  = index or 0
   item.myName = type
+
   function item:spawn()
     if( item.type == "hp") then
       item.image = healthImage
@@ -25,58 +26,19 @@ function newItem ( index, type, x, y )
       item.image = keyImage
     elseif (item.type == "door") then
       item.image = doorImage
+      --item.circle = display.newCircle(item.x, item.y - 20, 8)
+      --item.circle:setFillColor(1,0,0)
     elseif (item.type == "fdoor") then
       item.image = fdoorImage
-    elseif (item.type == "bomb") then
-      item.image = bombImage
     end
+
     item.img = display.newImage(item.image)
     item:insert(item.img)
-    if(item.type == "bomb") then
-      item.img:scale(.5,.5)
-      physics.addBody( item, "dynamic")
-      timer.performWithDelay( 3000, function()
-        print("boom")
-        if(item) then
-          for n = 1, Enemies.numChildren, 1 do
-            if(Enemies[n]) then
-              local dis = getDistance(Enemies[n], item)
-              if(dis < 100) then
-                Enemies[n]:damageEnemy(30)
-                print("Hit Enemy: " .. n)
-              end
-            end
-          end
-          if(getDistance(Player,item) < 100) then
-            print("Hit Player")
-            Player:damagePlayer(30)
-            statusBar:dHPB()
-            statusBar:dHPB()
-            statusBar:dHPB()
-          end
-          item:destroy()
-        end
-      end, 1)
-    else
-      physics.addBody(item, "static")
-    end
+    physics.addBody(item, "static")
   end
   function item:destroy()
     self:removeSelf()
   end
-  function getDistance(objA, objB)
-    -- Get the length for each of the components x and y
-    if(objA.myName) then
-      print(objA.myName)
-    elseif(objA.type) then
-      print(objA.type)
-    end
-    local xDist = objB.x - objA.x
-    local yDist = objB.y - objA.y
-
-    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
-  end
-
 
   return item
 end

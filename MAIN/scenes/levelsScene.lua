@@ -18,6 +18,9 @@ physics.setGravity(0, 0)
 local pauseImg
 local backGround
 local walls
+local Player
+local Items
+local Enemies
 local Joystick
 local levelID
 local pauseButton
@@ -128,7 +131,7 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
-
+	
 	self.loadLevel()
 elseif phase == "did" then
 	if Player and Joystick then
@@ -138,7 +141,7 @@ elseif phase == "did" then
 				self:leaveLvl()
 				return
 			end
-
+		
 			statusBar:toFront()
 			Joystick:toFront()
 			pauseButton:toFront()
@@ -285,15 +288,9 @@ function scene:restartLvl( id )
 end
 
 function onGlobalCollision ( event )
-<<<<<<< HEAD
 	--if event.object1.myName and event.object2.myName then
 	--	print(event.object1.myName .. ":" .. event.object2.myName)
 	--end
-=======
-	if event.object1.myName and event.object2.myName then
-		--print(event.object1.myName .. ":" .. event.object2.myName)
-	end
->>>>>>> refs/remotes/origin/Anthony
 
 	local o1
 	local o2
