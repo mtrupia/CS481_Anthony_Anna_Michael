@@ -18,9 +18,6 @@ physics.setDrawMode( "hybrid" )
 local pauseImg
 local backGround
 local walls
-local Player
-local Items
-local Enemies
 local Joystick
 local levelID
 local pauseButton
@@ -292,7 +289,7 @@ end
 
 function onGlobalCollision ( event )
 	if event.object1.myName and event.object2.myName then
-		print(event.object1.myName .. ":" .. event.object2.myName)
+		--print(event.object1.myName .. ":" .. event.object2.myName)
 	end
 
 	local o1
