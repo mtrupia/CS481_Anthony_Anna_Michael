@@ -13,12 +13,9 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-<<<<<<< HEAD
 physics.setDrawMode( "hybrid" )
-=======
---physics.setDrawMode( "hybrid" )
 
->>>>>>> refs/remotes/origin/master
+
 -- Vars
 local pauseImg
 local backGround
@@ -68,10 +65,8 @@ end
 function scene:show( event )
 	sceneGroup = self.view
 	local phase = event.phase
-
 	if phase == "will" then
 		-- BG may change
-<<<<<<< HEAD
 		bg 			= event.params.bg or "images/testBG.png"
 		-- LevelID
 		levelID = event.params.levelID
@@ -116,9 +111,8 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
-
 	self.loadLevel()
-elseif phase == "did" then
+elseif (phase == "did") then
 	if Player and Joystick then
 		Runtime:addEventListener("collision", onGlobalCollision)
 		function begin( event )
@@ -197,34 +191,31 @@ elseif phase == "did" then
 						Items[n].y = Items[n].y - Player.speed
 					end
 				end
-			end
-=======
-		backGround		= event.params.bg or "images/testBG.png"
-		pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
-		
-		self:initLevel(event)
-		
-		self.loadLevel()
-	elseif phase == "did" then
-		if Player and Joystick then
-			Runtime:addEventListener("collision", onGlobalCollision)
-			Runtime:addEventListener("enterFrame", beginMovement)
->>>>>>> refs/remotes/origin/master
-		end
-		if pauseButton then
-			function pauseButton:touch ( event )
-				local phase = event.phase
-				if "ended" == phase then
-					physics.pause()
-					Runtime:removeEventListener("enterFrame", beginMovement)
-					composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
+				backGround		= event.params.bg or "images/testBG.png"
+				pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
+				self:initLevel(event)
+				self.loadLevel()
+			elseif phase == "did" then
+				if Player and Joystick then
+					Runtime:addEventListener("collision", onGlobalCollision)
+					Runtime:addEventListener("enterFrame", beginMovement)
+
+				end
+				if pauseButton then
+					function pauseButton:touch ( event )
+						local phase = event.phase
+						if "ended" == phase then
+							physics.pause()
+							Runtime:removeEventListener("enterFrame", beginMovement)
+							composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
+						end
+					end
+					pauseButton:addEventListener( "touch", pauseButton )
 				end
 			end
-			pauseButton:addEventListener( "touch", pauseButton )
 		end
 	end
 end
-
 function scene:hide( event )
 	sceneGroup 		= self.view
 	local phase 	= event.phase
@@ -234,12 +225,9 @@ function scene:hide( event )
 			pauseButton:removeEventListener("touch", pauseButton)
 		end
 		if Player then
-<<<<<<< HEAD
 			display.remove(placer)
 			Runtime:removeEventListener("enterFrame", begin)
-=======
 			Runtime:removeEventListener("enterFrame", beginMovement)
->>>>>>> refs/remotes/origin/master
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
 		end
@@ -296,28 +284,28 @@ function scene:initLevel( event )
 	statusBar:iMPB()
 	-- Joystick
 	Joystick = StickLib.NewStick(
-		{
-			x             = 10,
-			y             = screenH-(52),
-			thumbSize     = 20,
-			borderSize    = 32,
-			snapBackSpeed = .2,
-			R             = 0,
-			G             = 1,
-			B             = 1
-		}
-	)
-	sceneGroup:insert(Joystick)
-	Joystick.alpha = 0.2
-	-- Create some collision
-	walls = display.newGroup()
-	sceneGroup:insert(walls)
-	-- Pause Button Initialization
-	pauseButton 		= display.newImage(pauseImg)
-	pauseButton.x 		= display.contentWidth+20
-	pauseButton.y 		= 21
-	pauseButton.alpha = 0.5
-	sceneGroup:insert(pauseButton)
+	{
+		x             = 10,
+		y             = screenH-(52),
+		thumbSize     = 20,
+		borderSize    = 32,
+		snapBackSpeed = .2,
+		R             = 0,
+		G             = 1,
+		B             = 1
+	}
+)
+sceneGroup:insert(Joystick)
+Joystick.alpha = 0.2
+-- Create some collision
+walls = display.newGroup()
+sceneGroup:insert(walls)
+-- Pause Button Initialization
+pauseButton 		= display.newImage(pauseImg)
+pauseButton.x 		= display.contentWidth+20
+pauseButton.y 		= 21
+pauseButton.alpha = 0.5
+sceneGroup:insert(pauseButton)
 end
 
 function scene:unPause()
@@ -480,3 +468,4 @@ scene:addEventListener( "destroy", scene )
 ---------------------------------------------------------------------------------
 
 return scene
+end
