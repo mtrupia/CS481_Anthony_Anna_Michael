@@ -99,6 +99,5 @@ function newItem ( index, type, x, y )
       item:destroy()
     end
   end
-
   return item
 end

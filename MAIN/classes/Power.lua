@@ -16,11 +16,11 @@ local bounce			-- bounce of the Power (fun)
 
 
 function NewPower( props )
-	local power = display.newGroup()
-	powerImage 	= props.image or "images/brick.png"
-	powerLife 	= props.life or 500
+	local power 	= display.newGroup()
+	powerImage 		= props.image or "images/brick.png"
+	powerLife 		= props.life or 500
 	player			= props.player
-	powerSpeed	= props.speed or 250
+	powerSpeed		= props.speed or 250
 	density			= props.density or 3
 	friction		= props.friction or 0.500
 	bounce			= props.bounce or 1
@@ -31,9 +31,12 @@ function NewPower( props )
 
 	function power:destroy()
 		Runtime:removeEventListener("touch", Shoot)
+<<<<<<< HEAD
 		if(power) then
 			self:removeSelf()
 		end
+=======
+>>>>>>> refs/remotes/origin/master
 	end
 
 	function Shoot (event)
