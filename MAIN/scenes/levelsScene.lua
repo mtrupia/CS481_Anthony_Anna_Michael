@@ -69,9 +69,9 @@ function scene:show( event )
 		-- BG may change
 		backGround		= event.params.bg or "images/testBG.png"
 		pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
-		
+
 		self:initLevel(event)
-		
+
 		self.loadLevel()
 	elseif phase == "did" then
 		if Player and Joystick then

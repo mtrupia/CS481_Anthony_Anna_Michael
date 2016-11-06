@@ -100,6 +100,8 @@ function NewPlayer ( props )
 	end
 
 	function player:destroy()
+		display.remove(placer)
+		display.remove(placer.img)
 		Power:destroy()
 		self:removeSelf()
 	end
@@ -214,6 +216,34 @@ function NewPlayer ( props )
 			end
 		end
 	end
+
+	local placeBomb = function( event )
+		if(angle and statusBar.bomb.isVisible) then
+			if(angle <= 45 or angle > 315) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y - 60)
+				Items:insert(bomb)
+				bomb:spawn()
+			elseif(angle <= 135 and angle > 45) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x + 60, player.y)
+				Items:insert(bomb)
+				bomb:spawn()
+			elseif(angle <= 225 and angle > 135) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y + 60)
+				Items:insert(bomb)
+				bomb:spawn()
+			elseif(angle <= 315 and angle > 225) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x - 60, player.y)
+				Items:insert(bomb)
+				bomb:spawn()
+			end
+			statusBar.bomb.isVisible = false
+		end
+	end
+
+	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
+	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
+	placer.img:scale(0.5,0.5)
+	placer:addEventListener("touch", placeBomb )
 
 	return player
 end
