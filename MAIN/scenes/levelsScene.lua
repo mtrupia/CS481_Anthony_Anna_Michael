@@ -13,8 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-physics.setDrawMode( "hybrid" )
-
+--physics.setDrawMode( "hybrid" )
 
 -- Vars
 local pauseImg
@@ -65,157 +64,34 @@ end
 function scene:show( event )
 	sceneGroup = self.view
 	local phase = event.phase
+
 	if phase == "will" then
 		-- BG may change
-		bg 			= event.params.bg or "images/testBG.png"
-		-- LevelID
-		levelID = event.params.levelID
-		-- Player
-		Player = PlayerLib.NewPlayer( {} )
-		Items = display.newGroup()
-		sceneGroup:insert(Items)
-		sceneGroup:insert(Player)
-		Player:spawnPlayer()
-		-- Enemy
-		Enemies = display.newGroup()
-		sceneGroup:insert(Enemies)
-		-- StatusBar
-		statusBar = iniStatusBar(Player)
-		sceneGroup:insert(statusBar)
+		backGround		= event.params.bg or "images/testBG.png"
+		pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
 
-		statusBar:iHPB()
-		statusBar:iMPB()
+		self:initLevel(event)
 
-
-		-- Joystick
-		Joystick = StickLib.NewStick(
-		{
-			x             = 10,
-			y             = screenH-(52),
-			thumbSize     = 20,
-			borderSize    = 32,
-			snapBackSpeed = .2,
-			R             = 0,
-			G             = 1,
-			B             = 1
-		}
-	)
-	sceneGroup:insert(Joystick)
-	Joystick.alpha = 0.2
-	-- Create some collision
-	walls = display.newGroup()
-	sceneGroup:insert(walls)
-	-- Pause Button Initialization
-	pauseButton 			= display.newImage(pauseImg)
-	pauseButton.x 		= display.contentWidth+20
-	pauseButton.y 		= 21
-	pauseButton.alpha = 0.5
-	sceneGroup:insert(pauseButton)
-	self.loadLevel()
-elseif (phase == "did") then
-	if Player and Joystick then
-		Runtime:addEventListener("collision", onGlobalCollision)
-		function begin( event )
-			if (Player.hp <= 0) then
-				text = display.newText("YOU DIED", halfW, halfH, native.systemFont, 80)
-				text:toFront()
-				sceneGroup:insert(text)
-				self:leaveLvl()
-				return
-			end
-
-			statusBar:toFront()
-			Joystick:toFront()
-			pauseButton:toFront()
-			Player:move(Joystick)
-			for n=1, Enemies.numChildren, 1 do
-				Enemies[n]:move(Player)
-			end
-
-			--move world if outside border
-			if Player.x < borders-80 then	-- moving left
-				Player.x = borders-80
-				for n = 1, walls.numChildren, 1 do
-					walls[n].x = walls[n].x + Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].x = Enemies[n].x + Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].x = Items[n].x + Player.speed
-					end
+		self.loadLevel()
+	elseif phase == "did" then
+		if Player and Joystick then
+			Runtime:addEventListener("collision", onGlobalCollision)
+			Runtime:addEventListener("enterFrame", beginMovement)
+		end
+		if pauseButton then
+			function pauseButton:touch ( event )
+				local phase = event.phase
+				if "ended" == phase then
+					physics.pause()
+					Runtime:removeEventListener("enterFrame", beginMovement)
+					composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
 				end
 			end
-			if Player.x > screenW-borders then	-- moving right
-				Player.x = screenW-borders
-
-				for n = 1, walls.numChildren, 1 do
-					walls[n].x = walls[n].x - Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].x = Enemies[n].x - Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].x = Items[n].x - Player.speed
-					end
-				end
-			end
-			if Player.y < borders then	-- moving up
-				Player.y = borders
-
-				for n = 1, walls.numChildren, 1 do
-					walls[n].y = walls[n].y + Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].y = Enemies[n].y + Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].y = Items[n].y + Player.speed
-					end
-				end
-			end
-			if Player.y > screenH-borders then	-- moving down
-				Player.y = screenH-borders
-
-				for n = 1, walls.numChildren, 1 do
-					walls[n].y = walls[n].y - Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].y = Enemies[n].y - Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].y = Items[n].y - Player.speed
-					end
-				end
-				backGround		= event.params.bg or "images/testBG.png"
-				pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
-				self:initLevel(event)
-				self.loadLevel()
-			elseif phase == "did" then
-				if Player and Joystick then
-					Runtime:addEventListener("collision", onGlobalCollision)
-					Runtime:addEventListener("enterFrame", beginMovement)
-
-				end
-				if pauseButton then
-					function pauseButton:touch ( event )
-						local phase = event.phase
-						if "ended" == phase then
-							physics.pause()
-							Runtime:removeEventListener("enterFrame", beginMovement)
-							composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
-						end
-					end
-					pauseButton:addEventListener( "touch", pauseButton )
-				end
-			end
+			pauseButton:addEventListener( "touch", pauseButton )
 		end
 	end
 end
+
 function scene:hide( event )
 	sceneGroup 		= self.view
 	local phase 	= event.phase
@@ -225,8 +101,6 @@ function scene:hide( event )
 			pauseButton:removeEventListener("touch", pauseButton)
 		end
 		if Player then
-			display.remove(placer)
-			Runtime:removeEventListener("enterFrame", begin)
 			Runtime:removeEventListener("enterFrame", beginMovement)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
@@ -244,7 +118,6 @@ function scene:hide( event )
 			Items = nil
 		end
 		if statusBar then
-			display.remove(statusBar.bomb)
 			statusBar:destroy()
 			statusBar:removeSelf()
 		end
@@ -284,28 +157,28 @@ function scene:initLevel( event )
 	statusBar:iMPB()
 	-- Joystick
 	Joystick = StickLib.NewStick(
-	{
-		x             = 10,
-		y             = screenH-(52),
-		thumbSize     = 20,
-		borderSize    = 32,
-		snapBackSpeed = .2,
-		R             = 0,
-		G             = 1,
-		B             = 1
-	}
-)
-sceneGroup:insert(Joystick)
-Joystick.alpha = 0.2
--- Create some collision
-walls = display.newGroup()
-sceneGroup:insert(walls)
--- Pause Button Initialization
-pauseButton 		= display.newImage(pauseImg)
-pauseButton.x 		= display.contentWidth+20
-pauseButton.y 		= 21
-pauseButton.alpha = 0.5
-sceneGroup:insert(pauseButton)
+		{
+			x             = 10,
+			y             = screenH-(52),
+			thumbSize     = 20,
+			borderSize    = 32,
+			snapBackSpeed = .2,
+			R             = 0,
+			G             = 1,
+			B             = 1
+		}
+	)
+	sceneGroup:insert(Joystick)
+	Joystick.alpha = 0.2
+	-- Create some collision
+	walls = display.newGroup()
+	sceneGroup:insert(walls)
+	-- Pause Button Initialization
+	pauseButton 		= display.newImage(pauseImg)
+	pauseButton.x 		= display.contentWidth+20
+	pauseButton.y 		= 21
+	pauseButton.alpha = 0.5
+	sceneGroup:insert(pauseButton)
 end
 
 function scene:unPause()
@@ -398,6 +271,10 @@ function beginMovement( event )
 end
 
 function onGlobalCollision ( event )
+	--if event.object1.myName and event.object2.myName then
+	--	print(event.object1.myName .. ":" .. event.object2.myName)
+	--end
+
 	local o1
 	local o2
 	if(event.object1.type) then
@@ -439,9 +316,6 @@ function onGlobalCollision ( event )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
-		text = display.newText("YOU WIN", halfW, halfH, native.systemFont, 80)
-		text:toFront()
-		sceneGroup:insert(text)
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
 end
@@ -468,4 +342,3 @@ scene:addEventListener( "destroy", scene )
 ---------------------------------------------------------------------------------
 
 return scene
-end

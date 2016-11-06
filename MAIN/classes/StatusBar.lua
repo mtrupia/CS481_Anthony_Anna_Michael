@@ -70,10 +70,16 @@ function iniStatusBar(Player)
   statusBar.key:scale(0.5,0.5)
   statusBar.key.isVisible = false
 
+  -- BOMB
+  statusBar.bomb = display.newImage("images/Bomb.png", 420, 15)
+  statusBar:insert(statusBar.key)
+  statusBar.bomb:scale(0.5,0.5)
+
   -- increase HP Bar
   function statusBar:iHPB ()
-	if Player.hp < 0 then Player.hp = 0
-	elseif Player.hp > 100 then Player.hp = 100 end
+    Player.hp = Player.hp + 10
+    if Player.hp < 0 then Player.hp = 0
+    elseif Player.hp > 100 then Player.hp = 100 end
 
     --print("Function: statusBar:iHPB ran")
     if (Player.hp == 10) then
@@ -91,8 +97,9 @@ function iniStatusBar(Player)
   end
   -- decrease HP Bar
   function statusBar:dHPB()
-	if Player.hp < 0 then Player.hp = 0
-	elseif Player.hp > 100 then Player.hp = 100 end
+    Player.hp = Player.hp - 10
+    if Player.hp < 0 then Player.hp = 0
+    elseif Player.hp > 100 then Player.hp = 100 end
 
     --print("Function: statusBar:dHPB ran")
     if (Player.hp == 0) then
@@ -104,14 +111,13 @@ function iniStatusBar(Player)
     elseif (Player.hp < 100) then
       HPB.mid.width = HPB.mid.width - 12
       HPB.fin.isVisible = false
-      statusBar.HPB.mid.width = statusBar.HPB.mid.width - 12
-
     end
   end
 
   function statusBar:iMPB()
-	if Player.mana < 0 then Player.mana = 0
-	elseif Player.mana > 100 then Player.mana = 100 end
+    Player.mana = Player.mana + 10
+    if Player.mana < 0 then Player.mana = 0
+    elseif Player.mana > 100 then Player.mana = 100 end
 
     --print("Function: statusBar:iMPB ran")
     if (Player.mana == 10) then
@@ -130,10 +136,9 @@ function iniStatusBar(Player)
   end
 
   function statusBar:dMPB()
-	if Player.mana < 0 then Player.mana = 0
-	elseif Player.mana > 100 then Player.mana = 100 end
-
-    --print("Function: statusBar:dMPB ran")
+    Player.mana = Player.mana - 10
+    if Player.mana < 0 then Player.mana = 0
+    elseif Player.mana > 100 then Player.mana = 100 end
     if (Player.mana == 0) then
       MPB.begin.isVisible = false
     elseif(Player.mana == 10) then
@@ -143,7 +148,6 @@ function iniStatusBar(Player)
     elseif (Player.mana < 100) then
       MPB.mid.width = MPB.mid.width - 12
       MPB.fin.isVisible = false
-      statusBar.MPB.mid.width = statusBar.MPB.mid.width - 12
     end
   end
   function statusBar:destroy()
