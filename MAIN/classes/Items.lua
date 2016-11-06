@@ -36,9 +36,6 @@ function newItem ( index, type, x, y )
     item:insert(item.img)
     physics.addBody(item, "static")
   end
-  function item:destroy()
-    self:removeSelf()
-  end
 
   return item
 end

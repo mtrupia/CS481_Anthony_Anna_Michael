@@ -14,9 +14,11 @@ local scene = composer.newScene( sceneName )
 physics.start()
 physics.setGravity(0, 0)
 --physics.setDrawMode( "hybrid" )
+
 -- Vars
 local pauseImg
 local backGround
+
 local walls
 local Player
 local Items
@@ -24,19 +26,11 @@ local Enemies
 local Joystick
 local levelID
 local pauseButton
+
 local sceneGroup
-local text
 
 function scene:create( event )
-	local sceneGroup = self.view
-
-	backGround			= event.params.bg or "images/testBG.png"
-	pauseImg				= event.params.pauseImg or "images/pauseIcon.png"
-
-	-- Create background
-	bg 							= display.newImage(backGround)
-	bg.rotation 		= 90
-	sceneGroup:insert(bg)
+	sceneGroup = self.view
 end
 
 function scene:loadLevel()
@@ -51,9 +45,7 @@ function scene:loadLevel()
 
 	for i = 1, #level.enemies do
 		local b = level.enemies[i]
-		enemy = EnemyLib.NewEnemy( {x = b.x, y = b.y} )
-		enemy:spawn()
-		Enemies:insert(enemy)
+		placeEnemy(b.x, b.y)
 	end
 
 	for i = 1, #level.walls do
@@ -65,9 +57,7 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		newItem = ItemsLib.newItem(1, b.name, b.x, b.y)
-		Items:insert(newItem)
-		newItem:spawn()
+		placeItem(b.name, b.x, b.y)
 	end
 end
 
@@ -77,166 +67,41 @@ function scene:show( event )
 
 	if phase == "will" then
 		-- BG may change
-		bg 			= event.params.bg or "images/testBG.png"
-		-- LevelID
-		levelID = event.params.levelID
-		-- Player
-		Player = PlayerLib.NewPlayer( {} )
-		Items = display.newGroup()
-		sceneGroup:insert(Items)
-		sceneGroup:insert(Player)
-		Player:spawnPlayer()
-		-- Enemy
-		Enemies = display.newGroup()
-		sceneGroup:insert(Enemies)
-		-- StatusBar
-		statusBar = iniStatusBar(Player)
-		sceneGroup:insert(statusBar)
-
-		statusBar:iHPB()
-		statusBar:iMPB()
-
-
-		-- Joystick
-		Joystick = StickLib.NewStick(
-		{
-			x             = 10,
-			y             = screenH-(52),
-			thumbSize     = 20,
-			borderSize    = 32,
-			snapBackSpeed = .2,
-			R             = 0,
-			G             = 1,
-			B             = 1
-		}
-	)
-	sceneGroup:insert(Joystick)
-	Joystick.alpha = 0.2
-	-- Create some collision
-	walls = display.newGroup()
-	--for n = 1, levelID, 1 do
-	--	local crate
-	--	if n <= 5 then
-	--		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
-	--	else
-	--		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
-	--	end
-	--	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-	--	walls:insert(crate)
-	--end
-	sceneGroup:insert(walls)
-	-- Pause Button Initialization
-	pauseButton 			= display.newImage(pauseImg)
-	pauseButton.x 		= display.contentWidth+20
-	pauseButton.y 		= 21
-	pauseButton.alpha = 0.5
-	sceneGroup:insert(pauseButton)
-	
-	self.loadLevel()
-elseif phase == "did" then
-	if Player and Joystick then
-		Runtime:addEventListener("collision", onGlobalCollision)
-		function begin( event )
-			if (Player.hp <= 0) then
-				self:leaveLvl()
-				return
-			end
+		backGround		= event.params.bg or "images/testBG.png"
+		pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
 		
-			statusBar:toFront()
-			Joystick:toFront()
-			pauseButton:toFront()
-			Player:move(Joystick)
-			for n=1, Enemies.numChildren, 1 do
-				Enemies[n]:move(Player)
-			end
-
-			--move world if outside border
-			if Player.x < borders-80 then	-- moving left
-				Player.x = borders-80
-				for n = 1, walls.numChildren, 1 do
-					walls[n].x = walls[n].x + Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].x = Enemies[n].x + Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].x = Items[n].x + Player.speed
-					end
-				end
-			end
-			if Player.x > screenW-borders then	-- moving right
-				Player.x = screenW-borders
-
-				for n = 1, walls.numChildren, 1 do
-					walls[n].x = walls[n].x - Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].x = Enemies[n].x - Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].x = Items[n].x - Player.speed
-					end
-				end
-			end
-			if Player.y < borders then	-- moving up
-				Player.y = borders
-
-				for n = 1, walls.numChildren, 1 do
-					walls[n].y = walls[n].y + Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].y = Enemies[n].y + Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].y = Items[n].y + Player.speed
-					end
-				end
-			end
-			if Player.y > screenH-borders then	-- moving down
-				Player.y = screenH-borders
-
-				for n = 1, walls.numChildren, 1 do
-					walls[n].y = walls[n].y - Player.speed
-				end
-				for n = 1, Enemies.numChildren, 1 do
-					Enemies[n].y = Enemies[n].y - Player.speed
-				end
-				for n = 0, Items.numChildren, 1 do
-					if(Items[n]) then
-						Items[n].y = Items[n].y - Player.speed
-					end
-				end
-			end
+		self:initLevel(event)
+		
+		self.loadLevel()
+	elseif phase == "did" then
+		if Player and Joystick then
+			Runtime:addEventListener("collision", onGlobalCollision)
+			Runtime:addEventListener("enterFrame", beginMovement)
 		end
-		Runtime:addEventListener("enterFrame", begin)
-	end
-	if pauseButton then
-		function pauseButton:touch ( event )
-			local phase = event.phase
-			if "ended" == phase then
-				physics.pause()
-				Runtime:removeEventListener("enterFrame", begin)
-				composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
+		if pauseButton then
+			function pauseButton:touch ( event )
+				local phase = event.phase
+				if "ended" == phase then
+					physics.pause()
+					Runtime:removeEventListener("enterFrame", beginMovement)
+					composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
+				end
 			end
+			pauseButton:addEventListener( "touch", pauseButton )
 		end
-		pauseButton:addEventListener( "touch", pauseButton )
 	end
-end
 end
 
 function scene:hide( event )
-	local sceneGroup 	= self.view
-	local phase 			= event.phase
+	sceneGroup 		= self.view
+	local phase 	= event.phase
 
 	if event.phase == "will" then
 		if pauseButton then
 			pauseButton:removeEventListener("touch", pauseButton)
 		end
 		if Player then
-			Runtime:removeEventListener("enterFrame", begin)
+			Runtime:removeEventListener("enterFrame", beginMovement)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
 		end
@@ -260,23 +125,65 @@ function scene:hide( event )
 			Enemies:removeSelf()
 			Enemies = nil
 		end
-		if text then
-			text:removeSelf()
-			text = nil
-		end
 
 	elseif phase == "did" then
-
 	end
-end
-
-function scene:unPause()
-	physics.start()
-	Runtime:addEventListener("enterFrame", begin)
 end
 
 function scene:destroy( event )
 	local sceneGroup = self.view
+end
+
+function scene:initLevel( event )
+	-- Create background
+	bg = display.newImage(backGround)
+	bg.rotation 		= 90
+	sceneGroup:insert(bg)
+	-- LevelID
+	levelID = event.params.levelID
+	-- Player
+	Player = PlayerLib.NewPlayer( {} )
+	Items = display.newGroup()
+	sceneGroup:insert(Items)
+	sceneGroup:insert(Player)
+	Player:spawnPlayer()
+	-- Enemy
+	Enemies = display.newGroup()
+	sceneGroup:insert(Enemies)
+	-- StatusBar
+	statusBar = iniStatusBar(Player)
+	sceneGroup:insert(statusBar)
+	statusBar:iHPB()
+	statusBar:iMPB()
+	-- Joystick
+	Joystick = StickLib.NewStick(
+		{
+			x             = 10,
+			y             = screenH-(52),
+			thumbSize     = 20,
+			borderSize    = 32,
+			snapBackSpeed = .2,
+			R             = 0,
+			G             = 1,
+			B             = 1
+		}
+	)
+	sceneGroup:insert(Joystick)
+	Joystick.alpha = 0.2
+	-- Create some collision
+	walls = display.newGroup()
+	sceneGroup:insert(walls)
+	-- Pause Button Initialization
+	pauseButton 		= display.newImage(pauseImg)
+	pauseButton.x 		= display.contentWidth+20
+	pauseButton.y 		= 21
+	pauseButton.alpha = 0.5
+	sceneGroup:insert(pauseButton)
+end
+
+function scene:unPause()
+	physics.start()
+	Runtime:addEventListener("enterFrame", beginMovement)
 end
 
 function scene:leaveLvl()
@@ -285,6 +192,82 @@ end
 
 function scene:restartLvl( id )
 	composer.gotoScene( "scenes.levelsScene", { effect = "fade", time = 300, params = { levelID = levelID } } )
+end
+
+function beginMovement( event )
+	if (Player.hp <= 0) then
+		scene:leaveLvl()
+		return
+	end
+
+	statusBar:toFront()
+	Joystick:toFront()
+	pauseButton:toFront()
+	Player:move(Joystick)
+	for n=1, Enemies.numChildren, 1 do
+		Enemies[n]:enemyMove(Player)
+	end
+
+	--move world if outside border
+	if Player.x < borders-80 then	-- moving left
+		Player.x = borders-80
+		for n = 1, walls.numChildren, 1 do
+			walls[n].x = walls[n].x + Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].x = Enemies[n].x + Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].x = Items[n].x + Player.speed
+			end
+		end
+	end
+	if Player.x > screenW-borders then	-- moving right
+		Player.x = screenW-borders
+
+		for n = 1, walls.numChildren, 1 do
+			walls[n].x = walls[n].x - Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].x = Enemies[n].x - Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].x = Items[n].x - Player.speed
+			end
+		end
+	end
+	if Player.y < borders then	-- moving up
+		Player.y = borders
+
+		for n = 1, walls.numChildren, 1 do
+			walls[n].y = walls[n].y + Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].y = Enemies[n].y + Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].y = Items[n].y + Player.speed
+			end
+		end
+	end
+	if Player.y > screenH-borders then	-- moving down
+		Player.y = screenH-borders
+
+		for n = 1, walls.numChildren, 1 do
+			walls[n].y = walls[n].y - Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].y = Enemies[n].y - Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].y = Items[n].y - Player.speed
+			end
+		end
+	end
 end
 
 function onGlobalCollision ( event )
@@ -336,14 +319,16 @@ function onGlobalCollision ( event )
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	end
 end
+
 function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(type,x,y)
+	newItem = ItemsLib.newItem(1, type,x,y)
 	Items:insert(newItem)
 	newItem:spawn()
 end
+
 function placeEnemy(t,z)
-	enemy = EnemyLib.NewEnemy( {x = t, y = z} )
-	enemy:spawn()
+	enemy = PlayerLib.NewPlayer( {x = t, y = z} )
+	enemy:spawnEnemy()
 	Enemies:insert(enemy)
 end
 ---------------------------------------------------------------------------------
