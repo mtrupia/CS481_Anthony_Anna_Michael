@@ -24,21 +24,27 @@ sequenceData = {
 	{name = "death", frames={261,262,263,264,265,266}, time = 500, loopCount = 1}
 }
 -- Variables passed when Player is created
-local playerImage
 
 function NewPlayer ( props )
 	local player		= display.newGroup()
 	player.speed		= props.speed or 3
-	player.x			= props.x or halfW
-	player.y			= props.y or halfH
-	playerImage			= props.image or "flower.png"
-	player.myName 		= "player"
+	player.Image		= props.image or "flower.png"
 	player.hp 			= props.hp or 100
 	player.mana			= props.mana or 100
 	player.score		= props.score or 0
-
+	player.myName 		= props.name or "player"
+	player.x			= props.x or halfW
+	player.y			= props.y or halfH
+	
+	player.visible		= props.visible or false
+	player.index		= props.index or 0
+	player.enemyType	= props.enemyType or "chaser"
+	player.attackDamage	= props.attackDamage or 0
+	player.dmgReady 	= props.dmgReady or true
+	
 
 	function player:spawnPlayer()
+		player.dmgReady = false
 		playerSprite = display.newSprite(mySheet, sequenceData)
 		playerSprite:setSequence("forward")
 		player:insert(playerSprite)
@@ -47,25 +53,136 @@ function NewPlayer ( props )
 		Power = PowerLib.NewPower( { player = player } )
 		Power:begin()
 	end
-
-	function player:killPlayer()
-		if (player[1]) then
-			player[1]:removeSelf()
+	
+	function player:spawnEnemy()
+		player.myName = "enemy" .. player.index
+		if ( player.enemyType == "chaser" ) then
+			player.speed			= 1.0
+			player.Image	= "images/flower.png"
+			player.attackDamage	= 10
+			player.hp			= 50
+		elseif ( player.enemyType == "ranger" ) then
+			player.speed			= 0.5
+			player.Image	= "images/flower.png"
+			player.attackDamage	= 15
+			player.hp			= 50
+		elseif ( player.enemyType == "trapper" ) then
+			player.speed			= 0.5
+			player.Image	= "images/flower.png"
+			player.attackDamage	= 5
+			player.hp			= 50
+		elseif ( player.enemyType == "tank" ) then
+			player.speed			= 0.25
+			player.Image	= "images/flower.png"
+			player.attackDamage	= 5
+			player.hp			= 75
+		else
+			player.speed			= 0.5
+			player.Image	= "images/flower.png"
+			--error here
 		end
 
-		Power:destroy()
+		enemyImg = display.newImage(player.Image)
+		player:insert(enemyImg)
+		physics.addBody(player, {filter = enemyCollisionFilter})
+		player.isFixedRotation = true
+		Runtime:addEventListener("collision", onGlobalCollision)
+	end
+
+	function player:kill()
+		if (player) then
+			player:removeSelf()
+		end
+		
+		if player.myName == "player" then
+			Power:destroy()
+		end
 	end
 
 	function player:destroy()
+		display.remove(placer)
+		display.remove(placer.img)
 		Power:destroy()
 		self:removeSelf()
 	end
-
-	function player:damagePlayer( amt )
-		player.health = player.health - amt
-		if player.health <= 0 then
-			player:killPlayer()
+	
+	function player:useSpecial()
+		if ( player.enemyType == "chaser" ) then
+			print("useSpecial chaser")
+		elseif ( player.enemyType == "ranger" ) then
+			print("useSpecial ranger")
+		elseif ( player.enemyType == "trapper" ) then
+			print("useSpecial trapper")
+		elseif ( player.enemyType == "tank" ) then
+			print("useSpecial tank")
 		end
+	end
+	
+	function player:attack( p )
+		print("attack")
+		p:damage( player.attackDamage )
+	end
+
+	function player:damage( amt )
+		player.hp = player.hp - amt
+		if player.hp <= 0 then
+			player:kill()
+		end
+	end
+	
+	function onGlobalCollision ( event )
+		local o1n = event.object1.myName
+		local o2n = event.object2.myName
+		
+		
+		if ( o1n == player.myName or o2n == player.myName) and (o1n == "power" or o2n == "power") then
+			if o1n == "power" then
+				event.object2:damage( 100 ) --figure out what to do here
+			else
+				event.object1:damage( 100 )
+			end
+			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+		elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then 
+			if o1n == "player" then
+				event.object1.hp = event.object1.hp - 10
+				statusBar:dHPB()
+				event.object2.dmgReady = false
+				function allowDmg()
+					event.object2.dmgReady = true
+				end
+				timer.performWithDelay(250, allowDmg, 1)
+			else
+				event.object2.hp = event.object2.hp - 10
+				statusBar:dHPB()
+				event.object1.dmgReady = false
+				function allowDmg()
+					event.object1.dmgReady = true
+				end
+				timer.performWithDelay(250, allowDmg, 1)
+			end
+		end
+	end
+	
+	function player:visibility()
+		player.visible = true
+	end
+	
+	function player:enemyMove( p )
+		player:visibility()
+		if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
+			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
+			player.x=player.x + (p.x-player.x)/hyp
+			player.y=player.y + (p.y-player.y)/hyp
+		elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
+			print("move ranger")
+		elseif ( player[1] and p and player.visible and player.enemyType == "trapper" ) then
+			print("move trapper")
+		elseif ( player[1] and p and player.visible and player.enemyType == "tank" ) then
+			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
+			player.x=player.x + (p.x-player.x)/hyp
+			player.y=player.y + (p.y-player.y)/hyp
+		end
+
 	end
 
 	function player:move( joystick )
@@ -99,6 +216,34 @@ function NewPlayer ( props )
 			end
 		end
 	end
+
+	local placeBomb = function( event )
+		if(angle and statusBar.bomb.isVisible) then
+			if(angle <= 45 or angle > 315) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y - 60)
+				Items:insert(bomb)
+				bomb:spawn()
+			elseif(angle <= 135 and angle > 45) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x + 60, player.y)
+				Items:insert(bomb)
+				bomb:spawn()
+			elseif(angle <= 225 and angle > 135) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y + 60)
+				Items:insert(bomb)
+				bomb:spawn()
+			elseif(angle <= 315 and angle > 225) then
+				local bomb = ItemsLib.newItem(1,"bomb",player.x - 60, player.y)
+				Items:insert(bomb)
+				bomb:spawn()
+			end
+			statusBar.bomb.isVisible = false
+		end
+	end
+
+	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
+	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
+	placer.img:scale(0.5,0.5)
+	placer:addEventListener("touch", placeBomb )
 
 	return player
 end

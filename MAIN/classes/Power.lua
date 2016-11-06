@@ -16,11 +16,11 @@ local bounce			-- bounce of the Power (fun)
 
 
 function NewPower( props )
-	local power = display.newGroup()
-	powerImage 	= props.image or "images/brick.png"
-	powerLife 	= props.life or 500
+	local power 	= display.newGroup()
+	powerImage 		= props.image or "images/brick.png"
+	powerLife 		= props.life or 500
 	player			= props.player
-	powerSpeed	= props.speed or 250
+	powerSpeed		= props.speed or 250
 	density			= props.density or 3
 	friction		= props.friction or 0.500
 	bounce			= props.bounce or 1
@@ -31,7 +31,9 @@ function NewPower( props )
 
 	function power:destroy()
 		Runtime:removeEventListener("touch", Shoot)
-		self:removeSelf()
+		if(power) then
+			self:removeSelf()
+		end
 	end
 
 	function Shoot (event)
@@ -46,7 +48,6 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			player.mana = player.mana - 10
 			statusBar:dMPB()
 			function delete()
 				x = x + 1
