@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-physics.setDrawMode( "hybrid" )
+--physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround

@@ -8,7 +8,10 @@ local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
 -- Variable to store Items
 local item
-
+--Initialize Item
+-- Index [NEEDS TO BE REMOVED]
+-- Type: HP, MANA, KEY, DOOR, FDOOR, Bomb
+-- Coordinates: X, Y
 function newItem ( index, type, x, y )
   item = display.newGroup()
   item.x      = x or 0
@@ -16,6 +19,9 @@ function newItem ( index, type, x, y )
   item.type   = type
   item.index  = index or 0
   item.myName = type
+  -- Spawn the item
+  -- Special Case for Bomb: Just scale the iamge down and call the Boom function to make it go Boom. Bomb is dynamic
+  -- All other items are static
   function item:spawn()
     if( item.type == "hp") then
       item.image = healthImage
@@ -34,7 +40,7 @@ function newItem ( index, type, x, y )
     item:insert(item.img)
     if(item.type == "bomb") then
       item.img:scale(.5,.5)
-      physics.addBody( item, "dynamic")
+      physics.addBody( item, "dynamic",{density = 3.0})
       timer.performWithDelay( 3000, function()
       item:boom(item)
       end, 1)
@@ -45,18 +51,23 @@ function newItem ( index, type, x, y )
   function item:destroy()
     self:removeSelf()
   end
+  -- Calculates Distance between to objects as long as they have an X & Y
   function item:getDistance(objA, objB)
     -- Get the length for each of the components x and y
-    if(objA.myName) then
-      print(objA.myName)
-    elseif(objA.type) then
-      print(objA.type)
-    end
+    -- if(objA.myName) then
+    --   print(objA.myName)
+    -- elseif(objA.type) then
+    --   print(objA.type)
+    -- end
     local xDist = objB.x - objA.x
     local yDist = objB.y - objA.y
 
     return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
   end
+  -- Make the bomb go boom.
+  -- Bomb detonates after 3 Seconds.
+  -- Radius: 100
+  --
   function item:boom(item)
     print("boom")
     if(item) then
