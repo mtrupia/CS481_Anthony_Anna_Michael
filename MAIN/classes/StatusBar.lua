@@ -74,7 +74,7 @@ function iniStatusBar(Player)
   function statusBar:iHPB ()
 	if Player.hp < 0 then Player.hp = 0
 	elseif Player.hp > 100 then Player.hp = 100 end
-  
+
     --print("Function: statusBar:iHPB ran")
     if (Player.hp == 10) then
       HPB.begin.isVisible = true
@@ -93,7 +93,7 @@ function iniStatusBar(Player)
   function statusBar:dHPB()
 	if Player.hp < 0 then Player.hp = 0
 	elseif Player.hp > 100 then Player.hp = 100 end
-  
+
     --print("Function: statusBar:dHPB ran")
     if (Player.hp == 0) then
       HPB.begin.isVisible = false
@@ -102,19 +102,17 @@ function iniStatusBar(Player)
     elseif (Player.hp == 90) then
       HPB.fin.isVisible = false
     elseif (Player.hp < 100) then
-<<<<<<< HEAD
       HPB.mid.width = HPB.mid.width - 12
       HPB.fin.isVisible = false
-=======
       statusBar.HPB.mid.width = statusBar.HPB.mid.width - 12
->>>>>>> refs/remotes/origin/master
+
     end
   end
 
   function statusBar:iMPB()
 	if Player.mana < 0 then Player.mana = 0
 	elseif Player.mana > 100 then Player.mana = 100 end
-  
+
     --print("Function: statusBar:iMPB ran")
     if (Player.mana == 10) then
       MPB.begin.isVisible = true
@@ -134,7 +132,7 @@ function iniStatusBar(Player)
   function statusBar:dMPB()
 	if Player.mana < 0 then Player.mana = 0
 	elseif Player.mana > 100 then Player.mana = 100 end
-  
+
     --print("Function: statusBar:dMPB ran")
     if (Player.mana == 0) then
       MPB.begin.isVisible = false
@@ -143,12 +141,9 @@ function iniStatusBar(Player)
     elseif (Player.mana == 90) then
       MPB.fin.isVisible = false
     elseif (Player.mana < 100) then
-<<<<<<< HEAD
       MPB.mid.width = MPB.mid.width - 12
       MPB.fin.isVisible = false
-=======
       statusBar.MPB.mid.width = statusBar.MPB.mid.width - 12
->>>>>>> refs/remotes/origin/master
     end
   end
   function statusBar:destroy()

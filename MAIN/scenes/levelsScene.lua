@@ -114,16 +114,6 @@ function scene:show( event )
 	Joystick.alpha = 0.2
 	-- Create some collision
 	walls = display.newGroup()
-	--for n = 1, levelID, 1 do
-	--	local crate
-	--	if n <= 5 then
-	--		crate = display.newImage("images/crate.png", 50+75*(n-1), 100)
-	--	else
-	--		crate = display.newImage("images/crate.png", 50+75*(n-6), 300)
-	--	end
-	--	physics.addBody(crate, "static", { filter = worldCollisionFilter } )
-	--	walls:insert(crate)
-	--end
 	sceneGroup:insert(walls)
 	-- Pause Button Initialization
 	pauseButton 			= display.newImage(pauseImg)
@@ -131,7 +121,7 @@ function scene:show( event )
 	pauseButton.y 		= 21
 	pauseButton.alpha = 0.5
 	sceneGroup:insert(pauseButton)
-	
+
 	self.loadLevel()
 elseif phase == "did" then
 	if Player and Joystick then
@@ -144,7 +134,7 @@ elseif phase == "did" then
 				self:leaveLvl()
 				return
 			end
-		
+
 			statusBar:toFront()
 			Joystick:toFront()
 			pauseButton:toFront()
@@ -293,16 +283,6 @@ function scene:restartLvl( id )
 end
 
 function onGlobalCollision ( event )
-<<<<<<< HEAD
-	if event.object1.myName and event.object2.myName then
-		--print(event.object1.myName .. ":" .. event.object2.myName)
-	end
-=======
-	--if event.object1.myName and event.object2.myName then
-	--	print(event.object1.myName .. ":" .. event.object2.myName)
-	--end
->>>>>>> refs/remotes/origin/master
-
 	local o1
 	local o2
 	if(event.object1.type) then

@@ -48,7 +48,7 @@ function newItem ( index, type, x, y )
       item.img:scale(.5,.5)
       physics.addBody( item, "dynamic",{density = 3.0})
       timer.performWithDelay( 3000, function()
-      item:boom(item)
+        item:boom(item)
       end, 1)
     else
       physics.addBody(item, "static")
@@ -99,10 +99,6 @@ function newItem ( index, type, x, y )
       item:destroy()
     end
   end
-
-    return item
-  end
-
 
   return item
 end
