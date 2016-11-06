@@ -43,7 +43,7 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	level = require('levels.1')
+	level = require('levels.2')
 	
 	Player.x = level.player[1].x
 	Player.y = level.player[1].y
@@ -71,7 +71,7 @@ function scene:loadLevel()
 end
 
 function scene:saveLevel() 
-	package.loaded['levels.1'] = nil
+	package.loaded['levels.2'] = nil
 	local s = 'return {\n'
 
 	s = s .. '\tplayer = {\n'
@@ -127,7 +127,7 @@ function scene:saveLevel()
 	
     s = s .. '}\n'
 	
-    local path = system.pathForFile('levels/1.lua', system.ResourceDirectory)
+    local path = system.pathForFile('levels/2.lua', system.ResourceDirectory)
     local file = io.open(path, 'w')
     
 	if file then
@@ -135,7 +135,7 @@ function scene:saveLevel()
         io.close(file)
     end
     
-	print('level 1 saved')
+	print('level 2 saved')
 end
 
 function scene:show( event )
