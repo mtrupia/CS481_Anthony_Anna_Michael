@@ -18,11 +18,8 @@ physics.setGravity(0, 0)
 -- Vars
 local pauseImg
 local backGround
-
 local walls
 local Player
-local Items
-local Enemies
 local Joystick
 local levelID
 local pauseButton

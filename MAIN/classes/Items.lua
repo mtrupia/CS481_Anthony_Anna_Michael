@@ -46,17 +46,12 @@ function newItem ( index, type, x, y )
     self:removeSelf()
   end
   function item:getDistance(objA, objB)
-    -- Get the length for each of the components x and y
-    -- if(objA.myName) then
-    --   print(objA.myName)
-    -- elseif(objA.type) then
-    --   print(objA.type)
-    -- end
       local xDist = objB.x - objA.x
       local yDist = objB.y - objA.y
 
     return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
   end
+  --REALLY BUGGY IDK HOW TO FIX IT
   function item:boom(item)
     print("boom")
     if(item) then

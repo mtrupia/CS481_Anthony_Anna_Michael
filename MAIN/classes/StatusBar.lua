@@ -137,6 +137,7 @@ function iniStatusBar(Player)
 
   function statusBar:dMPB()
     Player.mana = Player.mana - 10
+    print("Player's Mana = " .. Player.mana)
     if Player.mana < 0 then Player.mana = 0
     elseif Player.mana > 100 then Player.mana = 100 end
     if (Player.mana == 0) then
