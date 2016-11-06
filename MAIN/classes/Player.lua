@@ -2,7 +2,7 @@ module (..., package.seeall)
 
 -- Player
 local Power
-local angle
+
 --Declare and set up Sprite Image Sheet and sequence data
 spriteOptions = {
 	height = 64,
@@ -64,8 +64,8 @@ function NewPlayer ( props )
 	end
 
 	function player:damagePlayer( amt )
-		player.hp = player.hp - amt
-		if player.hp <= 0 then
+		player.health = player.health - amt
+		if player.health <= 0 then
 			player:killPlayer()
 		end
 	end
@@ -101,6 +101,7 @@ function NewPlayer ( props )
 			end
 		end
 	end
+<<<<<<< HEAD
 	local placeBomb = function( event )
 		if(angle and statusBar.bomb.isVisible) then
 			if(angle <= 45 or angle > 315) then
@@ -128,6 +129,8 @@ function NewPlayer ( props )
 	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
 	placer.img:scale(0.5,0.5)
 	placer:addEventListener("touch", placeBomb )
+=======
+>>>>>>> refs/remotes/origin/master
 
 	return player
 end
