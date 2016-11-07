@@ -37,7 +37,9 @@ function NewPlayer ( props )
 
 	player.visible		= props.visible or false
 	player.index		= props.index or 0
-	player.enemyType	= props.enemyType or "chaser"
+	--player.enemyType	= props.enemyType or "chaser"
+	player.enemyType	= props.enemyType or "ranger"
+	
 	player.attackDamage	= props.attackDamage or 0
 	player.dmgReady 	= props.dmgReady or true
 
@@ -86,6 +88,10 @@ function NewPlayer ( props )
 		physics.addBody(player, {filter = enemyCollisionFilter})
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
+		
+		statusBar = iniStatusBar(player)
+		player:insert(statusBar)
+		statusBar:iHPB()
 	end
 
 	function player:kill()
@@ -168,16 +174,34 @@ function NewPlayer ( props )
 
 	function player:enemyMove( p )
 		player:visibility()
+		hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
+		dist=200
+		
 		if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
-			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 			player.x=player.x + (p.x-player.x)/hyp
 			player.y=player.y + (p.y-player.y)/hyp
 		elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
-			print("move ranger")
+			if (hyp>=dist) then  
+				--approach player
+				player.x=player.x + (p.x-player.x)/hyp
+				player.y=player.y + (p.y-player.y)/hyp
+			else  
+				--move away from player
+				player.x=player.x - (p.x-player.x)/hyp
+				player.y=player.y - (p.y-player.y)/hyp
+			end
 		elseif ( player[1] and p and player.visible and player.enemyType == "trapper" ) then
-			print("move trapper")
+			if (hyp>=dist) then  --approach player
+				player.x=player.x + (p.x-player.x)/hyp
+				player.y=player.y + (p.y-player.y)/hyp
+			else
+				--set trap
+				
+				--then move away
+				player.x=player.x - (p.x-player.x)/hyp
+				player.y=player.y - (p.y-player.y)/hyp
+			end
 		elseif ( player[1] and p and player.visible and player.enemyType == "tank" ) then
-			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 			player.x=player.x + (p.x-player.x)/hyp
 			player.y=player.y + (p.y-player.y)/hyp
 		end
