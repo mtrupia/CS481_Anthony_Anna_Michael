@@ -13,7 +13,7 @@ local scene = composer.newScene( sceneName )
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
-physics.setDrawMode( "hybrid" )
+--physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -96,7 +96,7 @@ function scene:show( event )
 		placeItem("key", 300, 100)
 		placeItem("door", 500, 100)
 		placeItem("fdoor", 500, 500)
-		--placeItem("bomb", 50, 200)
+		placeItem("bombP", 50, 200)
 
 
 		-- UNIT TESTING BEGINS HERE
@@ -374,6 +374,7 @@ function onGlobalCollision ( event )
 	local fdoor 	= "fdoor"
 	local bomb		= "bomb"
 	local power		= "power"
+	local bombP   = "bombP"
 	if(o1.type == health and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
@@ -399,7 +400,13 @@ function onGlobalCollision ( event )
 			composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 		end
 		timer.performWithDelay(3000, endLevel, 1)
+	elseif(o1.type == bombP and o2.myName == pname) then
+		statusBar.count = statusBar.count + 1
+		statusBar.bomb.count.text = "x".. statusBar.count
+		display.remove( o1 )
+		Items[o1.index] = nil
 	end
+
 end
 function placeItem(type, x, y)
 	newItem = ItemsLib.newItem(1,type,x,y)

@@ -1,6 +1,5 @@
 -- Created File For StatusBar
-
-
+_G.BombCount = 1
 -- HEALTH BAR LOCATION
 local HPBx =  display.contentWidth  - 460
 local HPBy =  display.contentHeight - 300
@@ -15,7 +14,7 @@ local options = {
 
 function iniStatusBar(Player)
   statusBar = display.newGroup()
-
+  statusBar.count = 1
   -- HP BAR
   statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
   HPB = statusBar.HPB
@@ -72,9 +71,9 @@ function iniStatusBar(Player)
 
   -- BOMB
   statusBar.bomb = display.newImage("images/Bomb.png", 420, 15)
-  statusBar:insert(statusBar.key)
+  statusBar:insert(statusBar.bomb)
   statusBar.bomb:scale(0.5,0.5)
-
+  statusBar.bomb.count = display.newText("x" .. statusBar.count, 420,15)
   -- increase HP Bar
   function statusBar:iHPB ()
     Player.hp = Player.hp + 10
@@ -137,7 +136,6 @@ function iniStatusBar(Player)
 
   function statusBar:dMPB()
     Player.mana = Player.mana - 10
-    print("Player's Mana = " .. Player.mana)
     if Player.mana < 0 then Player.mana = 0
     elseif Player.mana > 100 then Player.mana = 100 end
     if (Player.mana == 0) then
