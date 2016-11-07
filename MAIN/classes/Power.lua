@@ -13,7 +13,7 @@ local powerSpeed		-- speed of Power
 local density			-- density of the Power
 local friction			-- friction of the Power
 local bounce			-- bounce of the Power (fun)
-
+local ShootSound = audio.loadSound( "sounds/Shoot.wav")
 
 function NewPower( props )
 	local power 	= display.newGroup()
@@ -37,7 +37,9 @@ function NewPower( props )
 	end
 
 	function Shoot (event)
+
 		if "ended" == event.phase and player.mana > 0 then
+			audio.play( ShootSound )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
 			physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )
