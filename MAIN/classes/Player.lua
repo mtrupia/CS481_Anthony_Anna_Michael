@@ -42,6 +42,9 @@ function NewPlayer ( props )
 	
 	player.attackDamage	= props.attackDamage or 0
 	player.dmgReady 	= props.dmgReady or true
+	
+	player.items		= props.items
+	player.statusBar	= props.statusBar
 
 
 	function player:spawnPlayer()
@@ -51,7 +54,7 @@ function NewPlayer ( props )
 		player:insert(playerSprite)
 		physics.addBody(player, {filter = playerCollisionFilter})
 		-- Power
-		Power = PowerLib.NewPower( { player = player } )
+		Power = PowerLib.NewPower( { player = player} )
 		Power:begin()
 	end
 
@@ -89,9 +92,9 @@ function NewPlayer ( props )
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
 		
-		statusBar = iniStatusBar(player)
-		player:insert(statusBar)
-		statusBar:iHPB()
+		--statusBar = SBLib.iniStatusBar( {player = player} )
+		--player:insert(statusBar)
+		--statusBar:iHPB(player)
 	end
 
 	function player:kill()
@@ -105,8 +108,6 @@ function NewPlayer ( props )
 	end
 
 	function player:destroy()
-		display.remove(placer)
-		display.remove(placer.img)
 		Power:destroy()
 		self:removeSelf()
 	end
@@ -149,16 +150,14 @@ function NewPlayer ( props )
 			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 		elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
 			if o1n == "player" then
-				event.object1.hp = event.object1.hp - 10
-				statusBar:dHPB()
+				event.object1.statusBar:dHPB(event.object1)
 				event.object2.dmgReady = false
 				function allowDmg()
 					event.object2.dmgReady = true
 				end
 				timer.performWithDelay(250, allowDmg, 1)
 			else
-				event.object2.hp = event.object2.hp - 10
-				statusBar:dHPB()
+				event.object2.statusBar:dHPB(event.object2)
 				event.object1.dmgReady = false
 				function allowDmg()
 					event.object1.dmgReady = true
@@ -213,18 +212,18 @@ function NewPlayer ( props )
 			joystick:move(player, self.speed, false)
 			player.rotation = 0
 
-			angle = joystick:getAngle()
+			player.angle = joystick:getAngle()
 			moving = joystick:getMoving()
 
 			--Determine which animation to play based on the direction of the analog stick
 			--
-			if(angle <= 45 or angle > 315) then
+			if(player.angle <= 45 or player.angle > 315) then
 				seq = "forward"
-			elseif(angle <= 135 and angle > 45) then
+			elseif(player.angle <= 135 and player.angle > 45) then
 				seq = "right"
-			elseif(angle <= 225 and angle > 135) then
+			elseif(player.angle <= 225 and player.angle > 135) then
 				seq = "back"
-			elseif(angle <= 315 and angle > 225) then
+			elseif(player.angle <= 315 and player.angle > 225) then
 				seq = "left"
 			end
 
@@ -239,35 +238,6 @@ function NewPlayer ( props )
 			end
 		end
 	end
-
-	local placeBomb = function( event )
-		if(angle and statusBar.count > 0) then
-			if(angle <= 45 or angle > 315) then
-				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y - 60)
-				Items:insert(bomb)
-				bomb:spawn()
-			elseif(angle <= 135 and angle > 45) then
-				local bomb = ItemsLib.newItem(1,"bomb",player.x + 60, player.y)
-				Items:insert(bomb)
-				bomb:spawn()
-			elseif(angle <= 225 and angle > 135) then
-				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y + 60)
-				Items:insert(bomb)
-				bomb:spawn()
-			elseif(angle <= 315 and angle > 225) then
-				local bomb = ItemsLib.newItem(1,"bomb",player.x - 60, player.y)
-				Items:insert(bomb)
-				bomb:spawn()
-			end
-			statusBar.count = statusBar.count - 1
-			statusBar.bomb.count.text = "x" .. statusBar.count
-		end
-	end
-
-	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
-	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
-	placer.img:scale(0.5,0.5)
-	placer:addEventListener("touch", placeBomb )
 
 	return player
 end

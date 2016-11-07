@@ -48,7 +48,7 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			statusBar:dMPB()
+			player.statusBar:dMPB(player)
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]]) then

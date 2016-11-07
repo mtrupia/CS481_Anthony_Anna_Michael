@@ -23,9 +23,6 @@ function newItem ( index, type, x, y )
     if(item.type == "bomb") then
       item.img:scale(.5,.5)
       physics.addBody( item, "dynamic")
-      timer.performWithDelay( 3000, function()
-        item:boom(item)
-      end, 1)
     elseif (item.type == "bombP") then
 
       item.img:scale(.3,.3)
@@ -36,37 +33,20 @@ function newItem ( index, type, x, y )
     end
   end
   function item:destroy()
-    self:removeSelf()
+	if item then
+		self:removeSelf()
+	end
   end
   function item:getDistance(objA, objB)
-    local xDist = objB.x - objA.x
-    local yDist = objB.y - objA.y
+	if objA and objB then
+		local xDist = objB.x - objA.x
+		local yDist = objB.y - objA.y
 
-    return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+		return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+	end
+	return nil
   end
-  --REALLY BUGGY IDK HOW TO FIX IT
-  function item:boom(item)
-    print("boom")
-    if(item) then
-      for n = 0, Enemies.numChildren, 1 do
-        if(Enemies[n] and item) then
-          local dis = item:getDistance(Enemies[n], item)
-          if(dis < 100) then
-            Enemies[n]:damageEnemy(30)
-            print("Hit Enemy: " .. n)
-          end
-        end
-      end
-      if(item:getDistance(Player,item) < 100) then
-        print("Hit Player")
-        Player:damage(30)
-        statusBar:dHPB()
-        statusBar:dHPB()
-        statusBar:dHPB()
-      end
-      item:destroy()
-    end
-  end
+  
   function item:findImage()
     local image
     if( item.type == "hp") then
