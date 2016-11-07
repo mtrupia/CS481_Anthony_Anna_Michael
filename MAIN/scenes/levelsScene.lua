@@ -8,6 +8,8 @@ local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
+local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
+local OpenPlayed = false
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -170,34 +172,34 @@ function scene:initLevel( event )
 	statusBar:iMPB(Player)
 	-- Joystick
 	Joystick = StickLib.NewStick(
-		{
-			x             = 10,
-			y             = screenH-(52),
-			thumbSize     = 20,
-			borderSize    = 32,
-			snapBackSpeed = .2,
-			R             = 0,
-			G             = 1,
-			B             = 1
-		}
-	)
-	sceneGroup:insert(Joystick)
-	Joystick.alpha = 0.2
-	-- Create some collision
-	walls = display.newGroup()
-	sceneGroup:insert(walls)
-	-- Pause Button Initialization
-	pauseButton 		= display.newImage(pauseImg)
-	pauseButton.x 		= display.contentWidth+20
-	pauseButton.y 		= 21
-	pauseButton.alpha = 0.5
-	sceneGroup:insert(pauseButton)
-	-- bomb placer
-	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
-	sceneGroup:insert(placer)
-	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
-	placer.img:scale(0.5,0.5)
-	sceneGroup:insert(placer.img)
+	{
+		x             = 10,
+		y             = screenH-(52),
+		thumbSize     = 20,
+		borderSize    = 32,
+		snapBackSpeed = .2,
+		R             = 0,
+		G             = 1,
+		B             = 1
+	}
+)
+sceneGroup:insert(Joystick)
+Joystick.alpha = 0.2
+-- Create some collision
+walls = display.newGroup()
+sceneGroup:insert(walls)
+-- Pause Button Initialization
+pauseButton 		= display.newImage(pauseImg)
+pauseButton.x 		= display.contentWidth+20
+pauseButton.y 		= 21
+pauseButton.alpha = 0.5
+sceneGroup:insert(pauseButton)
+-- bomb placer
+placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
+sceneGroup:insert(placer)
+placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
+placer.img:scale(0.5,0.5)
+sceneGroup:insert(placer.img)
 end
 
 function scene:unPause()
@@ -396,10 +398,10 @@ function createBomb(x, y)
 	end
 
 	timer.performWithDelay( 3000,
-		function()
-			boom(bomb)
-		end,
-		1)
+	function()
+		boom(bomb)
+	end,
+	1)
 end
 
 function placeItem(type, x, y)

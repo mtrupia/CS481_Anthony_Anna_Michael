@@ -147,6 +147,7 @@ function NewPlayer ( props )
 				audio.play(HitSound)
 				event.object2:damage( 100 ) --figure out what to do here
 			else
+				audio.play(HitSound)
 				event.object1:damage( 100 )
 			end
 			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
