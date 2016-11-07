@@ -18,11 +18,8 @@ physics.setGravity(0, 0)
 -- Vars
 local pauseImg
 local backGround
-
 local walls
 local Player
-local Items
-local Enemies
 local Joystick
 local levelID
 local pauseButton
@@ -157,28 +154,28 @@ function scene:initLevel( event )
 	statusBar:iMPB()
 	-- Joystick
 	Joystick = StickLib.NewStick(
-		{
-			x             = 10,
-			y             = screenH-(52),
-			thumbSize     = 20,
-			borderSize    = 32,
-			snapBackSpeed = .2,
-			R             = 0,
-			G             = 1,
-			B             = 1
-		}
-	)
-	sceneGroup:insert(Joystick)
-	Joystick.alpha = 0.2
-	-- Create some collision
-	walls = display.newGroup()
-	sceneGroup:insert(walls)
-	-- Pause Button Initialization
-	pauseButton 		= display.newImage(pauseImg)
-	pauseButton.x 		= display.contentWidth+20
-	pauseButton.y 		= 21
-	pauseButton.alpha = 0.5
-	sceneGroup:insert(pauseButton)
+	{
+		x             = 10,
+		y             = screenH-(52),
+		thumbSize     = 20,
+		borderSize    = 32,
+		snapBackSpeed = .2,
+		R             = 0,
+		G             = 1,
+		B             = 1
+	}
+)
+sceneGroup:insert(Joystick)
+Joystick.alpha = 0.2
+-- Create some collision
+walls = display.newGroup()
+sceneGroup:insert(walls)
+-- Pause Button Initialization
+pauseButton 		= display.newImage(pauseImg)
+pauseButton.x 		= display.contentWidth+20
+pauseButton.y 		= 21
+pauseButton.alpha = 0.5
+sceneGroup:insert(pauseButton)
 end
 
 function scene:unPause()
@@ -291,6 +288,7 @@ function onGlobalCollision ( event )
 	local key 		= "key"
 	local door		= "door"
 	local fdoor 	= "fdoor"
+	local bombP   = "bombP"
 	if(o1.type == health and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
@@ -317,6 +315,10 @@ function onGlobalCollision ( event )
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+	elseif(o1.type == bombP and o2.myName == pname) then
+		statusBar.count = statusBar.count + 1
+		statusBar.bomb.count.text = "x".. statusBar.count
+		display.remove( o1 )
 	end
 end
 

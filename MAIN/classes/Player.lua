@@ -2,7 +2,6 @@ module (..., package.seeall)
 
 -- Player
 local Power
-
 --Declare and set up Sprite Image Sheet and sequence data
 spriteOptions = {
 	height = 64,
@@ -35,13 +34,15 @@ function NewPlayer ( props )
 	player.myName 		= props.name or "player"
 	player.x			= props.x or halfW
 	player.y			= props.y or halfH
-	
+
 	player.visible		= props.visible or false
 	player.index		= props.index or 0
-	player.enemyType	= props.enemyType or "chaser"
+	--player.enemyType	= props.enemyType or "chaser"
+	player.enemyType	= props.enemyType or "ranger"
+	
 	player.attackDamage	= props.attackDamage or 0
 	player.dmgReady 	= props.dmgReady or true
-	
+
 
 	function player:spawnPlayer()
 		player.dmgReady = false
@@ -53,7 +54,7 @@ function NewPlayer ( props )
 		Power = PowerLib.NewPower( { player = player } )
 		Power:begin()
 	end
-	
+
 	function player:spawnEnemy()
 		player.myName = "enemy" .. player.index
 		if ( player.enemyType == "chaser" ) then
@@ -87,13 +88,17 @@ function NewPlayer ( props )
 		physics.addBody(player, {filter = enemyCollisionFilter})
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
+		
+		statusBar = iniStatusBar(player)
+		player:insert(statusBar)
+		statusBar:iHPB()
 	end
 
 	function player:kill()
 		if (player) then
 			player:removeSelf()
 		end
-		
+
 		if player.myName == "player" then
 			Power:destroy()
 		end
@@ -105,7 +110,7 @@ function NewPlayer ( props )
 		Power:destroy()
 		self:removeSelf()
 	end
-	
+
 	function player:useSpecial()
 		if ( player.enemyType == "chaser" ) then
 			print("useSpecial chaser")
@@ -117,7 +122,7 @@ function NewPlayer ( props )
 			print("useSpecial tank")
 		end
 	end
-	
+
 	function player:attack( p )
 		print("attack")
 		p:damage( player.attackDamage )
@@ -129,12 +134,12 @@ function NewPlayer ( props )
 			player:kill()
 		end
 	end
-	
+
 	function onGlobalCollision ( event )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
-		
-		
+
+
 		if ( o1n == player.myName or o2n == player.myName) and (o1n == "power" or o2n == "power") then
 			if o1n == "power" then
 				event.object2:damage( 100 ) --figure out what to do here
@@ -142,7 +147,7 @@ function NewPlayer ( props )
 				event.object1:damage( 100 )
 			end
 			--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
-		elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then 
+		elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
 			if o1n == "player" then
 				event.object1.hp = event.object1.hp - 10
 				statusBar:dHPB()
@@ -162,23 +167,41 @@ function NewPlayer ( props )
 			end
 		end
 	end
-	
+
 	function player:visibility()
 		player.visible = true
 	end
-	
+
 	function player:enemyMove( p )
 		player:visibility()
+		hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
+		dist=200
+		
 		if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
-			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 			player.x=player.x + (p.x-player.x)/hyp
 			player.y=player.y + (p.y-player.y)/hyp
 		elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
-			print("move ranger")
+			if (hyp>=dist) then  
+				--approach player
+				player.x=player.x + (p.x-player.x)/hyp
+				player.y=player.y + (p.y-player.y)/hyp
+			else  
+				--move away from player
+				player.x=player.x - (p.x-player.x)/hyp
+				player.y=player.y - (p.y-player.y)/hyp
+			end
 		elseif ( player[1] and p and player.visible and player.enemyType == "trapper" ) then
-			print("move trapper")
+			if (hyp>=dist) then  --approach player
+				player.x=player.x + (p.x-player.x)/hyp
+				player.y=player.y + (p.y-player.y)/hyp
+			else
+				--set trap
+				
+				--then move away
+				player.x=player.x - (p.x-player.x)/hyp
+				player.y=player.y - (p.y-player.y)/hyp
+			end
 		elseif ( player[1] and p and player.visible and player.enemyType == "tank" ) then
-			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 			player.x=player.x + (p.x-player.x)/hyp
 			player.y=player.y + (p.y-player.y)/hyp
 		end
@@ -218,7 +241,7 @@ function NewPlayer ( props )
 	end
 
 	local placeBomb = function( event )
-		if(angle and statusBar.bomb.isVisible) then
+		if(angle and statusBar.count > 0) then
 			if(angle <= 45 or angle > 315) then
 				local bomb = ItemsLib.newItem(1,"bomb",player.x, player.y - 60)
 				Items:insert(bomb)
@@ -236,7 +259,8 @@ function NewPlayer ( props )
 				Items:insert(bomb)
 				bomb:spawn()
 			end
-			statusBar.bomb.isVisible = false
+			statusBar.count = statusBar.count - 1
+			statusBar.bomb.count.text = "x" .. statusBar.count
 		end
 	end
 

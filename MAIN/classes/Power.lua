@@ -37,7 +37,7 @@ function NewPower( props )
 	end
 
 	function Shoot (event)
-		if "began" == event.phase and player.mana > 0 then
+		if "ended" == event.phase and player.mana > 0 then
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
 			physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )
@@ -48,7 +48,6 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			player.mana = player.mana - 10
 			statusBar:dMPB()
 			function delete()
 				x = x + 1

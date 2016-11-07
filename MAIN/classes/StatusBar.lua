@@ -1,6 +1,5 @@
 -- Created File For StatusBar
-
-
+_G.BombCount = 1
 -- HEALTH BAR LOCATION
 local HPBx =  display.contentWidth  - 460
 local HPBy =  display.contentHeight - 300
@@ -15,55 +14,88 @@ local options = {
 
 function iniStatusBar(Player)
   statusBar = display.newGroup()
-
+  statusBar.count = 1
   -- HP BAR
-  statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
+  if (Player.myName == "player") then
+	statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
+  else
+	statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx-20, HPBy-40)
+  end
   HPB = statusBar.HPB
   statusBar:insert(HPB)
-  HPB:scale(.6,1)
+  if (Player.myName == "player") then
+	HPB:scale(.6,1)
+  else
+	HPB:scale(.18,.5)
+  end
+
   -- Circle for Beginning of Health Bar
-  HPB.begin = display.newCircle(-32,15.8,6.2)
+  if (Player.myName == "player") then
+	b1=-32
+	b2=15.8
+	b3=6.2
+  else
+	b1=HPBx+460
+	b2=HPBy+300
+	print(b1)
+	print(b2)
+	print(" ")
+	b3=50
+  end
+
+  HPB.begin = display.newCircle(b1,b2,b3)
   statusBar:insert(HPB.begin)
   HPB.begin:setFillColor(1,0,0)
   HPB.begin.isVisible = false
+
   -- Middle of Health Bar
-  HPB.mid = display.newRect(-31,16,10,12)
+  m1=-31
+  m2=16
+  m3=10
+  m4=12
+
+  HPB.mid = display.newRect(m1,m2,m3,m4)
   statusBar:insert(HPB.mid)
   HPB.mid:setFillColor(1,0,0)
   HPB.mid.isVisible = false
   HPB.mid.anchorX = 0
   HPB.mid.anchorY = 0.5
+
   -- Circle for End Of Health Bar
-  HPB.fin   = display.newCircle(73,15.8,6)
+  e1=73
+  e2=15.8
+  e3=6
+
+  HPB.fin   = display.newCircle(e1,e2,e3)
   statusBar:insert(HPB.fin)
   HPB.fin:setFillColor(1,0,0)
   HPB.fin.isVisible = false
   HPB:toFront()
 
-  -- MANA BAR
-  statusBar.MPB = display.newImage("images/EmptyBar.png", MPBx, MPBy)
-  MPB = statusBar.MPB
-  MPB:scale(.6,1)
-  statusBar:insert(MPB)
-  -- Circle for Beginning of Mana Bar
-  MPB.begin = display.newCircle(93,15.8,6.2)
-  statusBar:insert(MPB.begin)
-  MPB.begin:setFillColor(0,0,1)
-  MPB.begin.isVisible = false
-  -- Middle of Mana Bar
-  MPB.mid   = display.newRect(94,16,10,12)
-  statusBar:insert(MPB.mid)
-  MPB.mid:setFillColor(0,0,1)
-  MPB.mid.isVisible = false
-  MPB.mid.anchorX = 0
-  MPB.mid.anchorY = 0.5
-  -- Circle for End Of Mana Bar
-  MPB.fin   = display.newCircle(198,15.8,6)
-  statusBar:insert(MPB.fin)
-  MPB.fin:setFillColor(0,0,1)
-  MPB.fin.isVisible = false
-  MPB:toFront()
-
+  if (Player.myName == "player") then
+		-- MANA BAR
+		statusBar.MPB = display.newImage("images/EmptyBar.png", MPBx, MPBy)
+		MPB = statusBar.MPB
+		MPB:scale(.6,1)
+		statusBar:insert(MPB)
+		-- Circle for Beginning of Mana Bar
+		MPB.begin = display.newCircle(93,15.8,6.2)
+		statusBar:insert(MPB.begin)
+		MPB.begin:setFillColor(0,0,1)
+		MPB.begin.isVisible = false
+		-- Middle of Mana Bar
+		MPB.mid   = display.newRect(94,16,10,12)
+		statusBar:insert(MPB.mid)
+		MPB.mid:setFillColor(0,0,1)
+		MPB.mid.isVisible = false
+		MPB.mid.anchorX = 0
+		MPB.mid.anchorY = 0.5
+		-- Circle for End Of Mana Bar
+		MPB.fin   = display.newCircle(198,15.8,6)
+		statusBar:insert(MPB.fin)
+		MPB.fin:setFillColor(0,0,1)
+		MPB.fin.isVisible = false
+		MPB:toFront()
   -- KEY
   statusBar.key = display.newImage("images/Key.png", 220, 15)
   statusBar:insert(statusBar.key)
@@ -72,9 +104,10 @@ function iniStatusBar(Player)
 
   -- BOMB
   statusBar.bomb = display.newImage("images/Bomb.png", 420, 15)
-  statusBar:insert(statusBar.key)
+  statusBar:insert(statusBar.bomb)
   statusBar.bomb:scale(0.5,0.5)
-
+  statusBar.bomb.count = display.newText("x" .. statusBar.count, 420,15)
+  end
   -- increase HP Bar
   function statusBar:iHPB ()
     Player.hp = Player.hp + 10
