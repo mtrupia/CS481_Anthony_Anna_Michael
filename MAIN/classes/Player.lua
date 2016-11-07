@@ -38,7 +38,7 @@ function NewPlayer ( props )
 	player.visible		= props.visible or false
 	player.index		= props.index or 0
 	--player.enemyType	= props.enemyType or "chaser"
-	player.enemyType	= props.enemyType or "ranger"
+	player.enemyType	= props.enemyType or "chaser"
 	
 	player.attackDamage	= props.attackDamage or 0
 	player.dmgReady 	= props.dmgReady or true
@@ -167,44 +167,61 @@ function NewPlayer ( props )
 		end
 	end
 
-	function player:visibility()
-		player.visible = true
+	function player:visibility(p)
+		ready = false
+	
+		x1 = player.x
+		y1 = player.y
+		
+		x2 = p.x
+		y2 = p.y
+			
+		if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400 then
+			ready = true
+		end
+		
+		if ready then
+			player.visible = true
+		elseif not (ready) then
+			player.visible = false
+		end
 	end
 
 	function player:enemyMove( p )
-		player:visibility()
-		hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
-		dist=200
-		
-		if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
-			player.x=player.x + (p.x-player.x)/hyp
-			player.y=player.y + (p.y-player.y)/hyp
-		elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
-			if (hyp>=dist) then  
-				--approach player
+		player:visibility(p)
+		if player.visible then
+			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
+			dist=200
+			
+			if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
 				player.x=player.x + (p.x-player.x)/hyp
 				player.y=player.y + (p.y-player.y)/hyp
-			else  
-				--move away from player
-				player.x=player.x - (p.x-player.x)/hyp
-				player.y=player.y - (p.y-player.y)/hyp
-			end
-		elseif ( player[1] and p and player.visible and player.enemyType == "trapper" ) then
-			if (hyp>=dist) then  --approach player
+			elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
+				if (hyp>=dist) then  
+					--approach player
+					player.x=player.x + (p.x-player.x)/hyp
+					player.y=player.y + (p.y-player.y)/hyp
+				else  
+					--move away from player
+					player.x=player.x - (p.x-player.x)/hyp
+					player.y=player.y - (p.y-player.y)/hyp
+				end
+			elseif ( player[1] and p and player.visible and player.enemyType == "trapper" ) then
+				if (hyp>=dist) then  --approach player
+					player.x=player.x + (p.x-player.x)/hyp
+					player.y=player.y + (p.y-player.y)/hyp
+				else
+					--set trap
+					
+					--then move away
+					player.x=player.x - (p.x-player.x)/hyp
+					player.y=player.y - (p.y-player.y)/hyp
+				end
+			elseif ( player[1] and p and player.visible and player.enemyType == "tank" ) then
 				player.x=player.x + (p.x-player.x)/hyp
 				player.y=player.y + (p.y-player.y)/hyp
-			else
-				--set trap
-				
-				--then move away
-				player.x=player.x - (p.x-player.x)/hyp
-				player.y=player.y - (p.y-player.y)/hyp
 			end
-		elseif ( player[1] and p and player.visible and player.enemyType == "tank" ) then
-			player.x=player.x + (p.x-player.x)/hyp
-			player.y=player.y + (p.y-player.y)/hyp
 		end
-
 	end
 
 	function player:move( joystick )
