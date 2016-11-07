@@ -7,7 +7,7 @@
 local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
-
+local BoomSound = audio.loadSound("sounds/Boom.wav")
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -382,7 +382,7 @@ function placeBomb( event )
 			elseif(Player.angle <= 315 and Player.angle > 225) then
 				createBomb(Player.x - 60, Player.y)
 			end
-			
+
 			statusBar.count = statusBar.count - 1
 			statusBar.bomb.count.text = "x" .. statusBar.count
 		end
@@ -442,9 +442,10 @@ function createBomb(x, y)
 	local bomb = ItemsLib.newItem(1,"bomb",x, y)
 	Items:insert(bomb)
 	bomb:spawn()
-	
+
 	function boom(item)
 		print("boom")
+		audio.play( BoomSound )
 		if(item) then
 			if Enemies then
 				for n = 0, Enemies.numChildren, 1 do
@@ -470,11 +471,11 @@ function createBomb(x, y)
 			end
 		end
 	end
-	
-	timer.performWithDelay( 3000, 
+
+	timer.performWithDelay( 3000,
 		function()
 			boom(bomb)
-		end, 
+		end,
 		1)
 end
 

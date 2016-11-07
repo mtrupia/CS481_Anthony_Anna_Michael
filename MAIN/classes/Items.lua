@@ -8,7 +8,6 @@ local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
 -- Variable to store Items
 local item
-
 function newItem ( index, type, x, y )
   item = display.newGroup()
   item.x      = x or 0
@@ -17,8 +16,8 @@ function newItem ( index, type, x, y )
   item.index  = index or 0
   item.myName = type
   function item:spawn()
-    item.image = item.findImage()
-    item.img = display.newImage(item.image)
+    item.image  = item.findImage()
+    item.img    = display.newImage(item.image)
     item:insert(item.img)
     if(item.type == "bomb") then
       item.img:scale(.5,.5)
@@ -34,7 +33,7 @@ function newItem ( index, type, x, y )
   end
   function item:destroy()
 	if item then
-		self:removeSelf()
+		item:removeSelf()
 	end
   end
   function item:getDistance(objA, objB)
@@ -46,7 +45,7 @@ function newItem ( index, type, x, y )
 	end
 	return nil
   end
-  
+
   function item:findImage()
     local image
     if( item.type == "hp") then
@@ -64,6 +63,5 @@ function newItem ( index, type, x, y )
     end
     return image
   end
-
   return item
 end

@@ -1,7 +1,4 @@
 module (..., package.seeall)
-
--- Created File For StatusBar
-_G.BombCount = 1
 -- HEALTH BAR LOCATION
 local HPBx =  display.contentWidth  - 460
 local HPBy =  display.contentHeight - 300
