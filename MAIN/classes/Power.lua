@@ -13,14 +13,14 @@ local powerSpeed		-- speed of Power
 local density			-- density of the Power
 local friction			-- friction of the Power
 local bounce			-- bounce of the Power (fun)
-
+local ShootSound = audio.loadSound( "sounds/Shoot.wav")
 
 function NewPower( props )
-	local power = display.newGroup()
-	powerImage 	= props.image or "images/brick.png"
-	powerLife 	= props.life or 500
+	local power 	= display.newGroup()
+	powerImage 		= props.image or "images/brick.png"
+	powerLife 		= props.life or 500
 	player			= props.player
-	powerSpeed	= props.speed or 250
+	powerSpeed		= props.speed or 250
 	density			= props.density or 3
 	friction		= props.friction or 0.500
 	bounce			= props.bounce or 1
@@ -31,11 +31,15 @@ function NewPower( props )
 
 	function power:destroy()
 		Runtime:removeEventListener("touch", Shoot)
-		self:removeSelf()
+		if(power) then
+			self:removeSelf()
+		end
 	end
 
 	function Shoot (event)
-		if "began" == event.phase and player.mana > 0 then
+
+		if "ended" == event.phase and player.mana > 0 then
+			audio.play( ShootSound )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
 			physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )
@@ -46,8 +50,7 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			player.mana = player.mana - 10
-			statusBar:dMPB()
+			player.statusBar:dMPB(player)
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]]) then
