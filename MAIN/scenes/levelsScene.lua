@@ -51,13 +51,52 @@ function scene:loadLevel()
 		placeEnemy(b.x, b.y)
 	end
 
+	minX=0
+	minY=0
+	maxX=0
+	maxY=0
+	
 	for i = 1, #level.walls do
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
 		physics.addBody(crate, "static", { filter = editFilter } )
 		walls:insert(crate)
+		if b.x<minX then
+			minX=b.x
+		end
+		if b.x>maxX then
+			maxX=b.x
+		end
+		if b.y<minY then
+			minY=b.y
+		end
+		if b.y>maxY then
+			maxY=b.y
+		end
 	end
-
+	
+	minX=minX-30
+	maxX=maxX+30
+	minY=minY-30
+	maxY=maxY+30
+	
+	wallArr = {}
+	for i=0, maxX-minX do
+		wallArr[i]={}
+		for j=0, maxY-minY do
+			wallArr[i][j] = false
+		end
+	end
+	for i=1, #level.walls do
+		local b=level.walls[i]
+		
+		for j=b.x-minX-30, b.x-minX+30 do
+			for k=b.y-minY-30, b.y-minY+30 do
+				wallArr[j][k]=true
+			end
+		end
+	end
+	
 	for i = 1, #level.items do
 		local b = level.items[i]
 		placeItem(b.name, b.x, b.y)
