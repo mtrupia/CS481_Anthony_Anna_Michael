@@ -7,7 +7,9 @@
 local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
-
+local BoomSound = audio.loadSound( "sounds/Boom.wav" )
+--local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
+local OpenPlayed = false
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -23,6 +25,10 @@ local Player
 local Joystick
 local levelID
 local pauseButton
+local Items
+local Enemies
+local statusBar
+local placer
 
 local sceneGroup
 
@@ -31,7 +37,7 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	if (levelID > 2) then
+	if (levelID > 3) then
 		level = require('levels.1')
 	else
 		level = require('levels.' .. levelID)
@@ -75,6 +81,9 @@ function scene:show( event )
 			Runtime:addEventListener("collision", onGlobalCollision)
 			Runtime:addEventListener("enterFrame", beginMovement)
 		end
+		if placer then
+			placer:addEventListener("touch", placeBomb )
+		end
 		if pauseButton then
 			function pauseButton:touch ( event )
 				local phase = event.phase
@@ -96,11 +105,18 @@ function scene:hide( event )
 	if event.phase == "will" then
 		if pauseButton then
 			pauseButton:removeEventListener("touch", pauseButton)
+			pauseButton = nil;
+		end
+		if placer then
+			placer:removeEventListener("touch", placeBomb )
+			placer:removeSelf()
+			placer = nil
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Player:destroy()
+			Player = nil;
 		end
 		if Joystick then
 			Joystick:delete()
@@ -117,6 +133,7 @@ function scene:hide( event )
 		if statusBar then
 			statusBar:destroy()
 			statusBar:removeSelf()
+			statusBar = nil
 		end
 		if Enemies then
 			Enemies:removeSelf()
@@ -139,8 +156,8 @@ function scene:initLevel( event )
 	-- LevelID
 	levelID = event.params.levelID
 	-- Player
-	Player = PlayerLib.NewPlayer( {} )
 	Items = display.newGroup()
+	Player = PlayerLib.NewPlayer( {} )
 	sceneGroup:insert(Items)
 	sceneGroup:insert(Player)
 	Player:spawnPlayer()
@@ -148,16 +165,17 @@ function scene:initLevel( event )
 	Enemies = display.newGroup()
 	sceneGroup:insert(Enemies)
 	-- StatusBar
-	statusBar = iniStatusBar(Player)
+	statusBar = SBLib.iniStatusBar(Player)
 	sceneGroup:insert(statusBar)
-	statusBar:iHPB()
-	statusBar:iMPB()
+	Player.statusBar = statusBar
+	statusBar:iHPB(Player)
+	statusBar:iMPB(Player)
 	-- Joystick
 	Joystick = StickLib.NewStick(
 	{
 		x             = 10,
 		y             = screenH-(52),
-		thumbSize     = 20,
+		thumbSize     = 40,
 		borderSize    = 32,
 		snapBackSpeed = .2,
 		R             = 0,
@@ -176,6 +194,12 @@ pauseButton.x 		= display.contentWidth+20
 pauseButton.y 		= 21
 pauseButton.alpha = 0.5
 sceneGroup:insert(pauseButton)
+-- bomb placer
+placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
+sceneGroup:insert(placer)
+placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
+placer.img:scale(0.5,0.5)
+sceneGroup:insert(placer.img)
 end
 
 function scene:unPause()
@@ -267,6 +291,25 @@ function beginMovement( event )
 	end
 end
 
+function placeBomb( event )
+	if "ended" == event.phase then
+		if(Player.angle and statusBar.count > 0) then
+			if(Player.angle <= 45 or Player.angle > 315) then
+				createBomb(Player.x, Player.y - 60)
+			elseif(Player.angle <= 135 and Player.angle > 45) then
+				createBomb(Player.x + 60, Player.y)
+			elseif(Player.angle <= 225 and Player.angle > 135) then
+				createBomb(Player.x, Player.y + 60)
+			elseif(Player.angle <= 315 and Player.angle > 225) then
+				createBomb(Player.x - 60, Player.y)
+			end
+
+			statusBar.count = statusBar.count - 1
+			statusBar.bomb.count.text = "x" .. statusBar.count
+		end
+	end
+end
+
 function onGlobalCollision ( event )
 	--if event.object1.myName and event.object2.myName then
 	--	print(event.object1.myName .. ":" .. event.object2.myName)
@@ -293,15 +336,13 @@ function onGlobalCollision ( event )
 		display.remove( o1 )
 		Items[o1.index] = nil
 		for n = 1, 5, 1 do
-			Player.hp = Player.hp + 10
-			statusBar:iHPB()
+			statusBar:iHPB(Player)
 		end
 	elseif(o1.type == mana and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
 		for n = 1, 5, 1 do
-			Player.mana = Player.mana + 10
-			statusBar:iMPB()
+			statusBar:iMPB(Player)
 		end
 	elseif(o1.type == key and o2.myName == pname) then
 		display.remove( o1 )
@@ -320,6 +361,47 @@ function onGlobalCollision ( event )
 		statusBar.bomb.count.text = "x".. statusBar.count
 		display.remove( o1 )
 	end
+end
+
+function createBomb(x, y)
+	local bomb = ItemsLib.newItem(1,"bomb",x, y)
+	Items:insert(bomb)
+	bomb:spawn()
+
+	function boom(item)
+		audio.play(BoomSound)
+		print("boom")
+		if(item) then
+			if Enemies then
+				for n = 0, Enemies.numChildren, 1 do
+					if(Enemies[n] and item) then
+						local dis = item:getDistance(Enemies[n], item)
+						if(dis < 100) then
+							Enemies[n]:damage(100)
+							print("Hit Enemy: " .. n)
+						end
+					end
+				end
+			end
+			if Player and item then
+				if(item:getDistance(Player,item) < 100) then
+					print("Hit Player")
+					statusBar:dHPB(Player)
+					statusBar:dHPB(Player)
+					statusBar:dHPB(Player)
+				end
+			end
+			if item then
+				item:destroy()
+			end
+		end
+	end
+
+	timer.performWithDelay( 3000,
+	function()
+		boom(bomb)
+	end,
+	1)
 end
 
 function placeItem(type, x, y)
