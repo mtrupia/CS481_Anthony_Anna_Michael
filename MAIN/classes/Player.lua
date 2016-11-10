@@ -2,6 +2,7 @@ module (..., package.seeall)
 
 -- Player
 local Power
+local enemyPower
 local HitSound = audio.loadSound("sounds/Hit.wav")
 --Declare and set up Sprite Image Sheet and sequence data
 spriteOptions = {
@@ -85,16 +86,13 @@ function NewPlayer ( props )
 			player.Image				= "images/flower.png"
 			--error here
 		end
-
+		
+		enemyPower = PowerLib.NewPower( { player = player} )
 		enemyImg = display.newImage(player.Image)
 		player:insert(enemyImg)
 		physics.addBody(player, {filter = enemyCollisionFilter})
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
-
-		--statusBar = SBLib.iniStatusBar( {player = player} )
-		--player:insert(statusBar)
-		--statusBar:iHPB(player)
 	end
 
 	function player:kill()
@@ -195,6 +193,7 @@ function NewPlayer ( props )
 			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 			dist=200
 			
+			--enemyPower:enemyShoot(player, p)
 			if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
 				player.x=player.x + (p.x-player.x)/hyp
 				player.y=player.y + (p.y-player.y)/hyp

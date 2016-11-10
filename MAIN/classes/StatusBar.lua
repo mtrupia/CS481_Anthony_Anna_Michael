@@ -15,65 +15,31 @@ function iniStatusBar(player)
   statusBar = display.newGroup()
   statusBar.count = 1
   -- HP BAR
-  if player.myName == "player" then
-	  if (player.myName == "player") then
-		statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
-	  else
-		statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx-20, HPBy-40)
-	  end
-	  HPB = statusBar.HPB
-	  statusBar:insert(HPB)
-	  if (player.myName == "player") then
-		HPB:scale(.6,1)
-	  else
-		HPB:scale(.18,.5)
-	  end
+  statusBar.HPB = display.newImage("images/EmptyBar.png", HPBx, HPBy)
+  HPB = statusBar.HPB
+  statusBar:insert(HPB)
+  HPB:scale(.6,1)
 
-	  -- Circle for Beginning of Health Bar
-	  if (player.myName == "player") then
-		b1=-32
-		b2=15.8
-		b3=6.2
-	  else
-		b1=HPBx+460
-		b2=HPBy+300
-		--print(b1)
-		--print(b2)
-		--print("")
-		b3=50
-	  end
+  HPB.begin = display.newCircle(-32,15.8,6.2)
+  statusBar:insert(HPB.begin)
+  HPB.begin:setFillColor(1,0,0)
+  HPB.begin.isVisible = false
+  
+  -- Middle of Health Bar
+  HPB.mid = display.newRect(-31,16,10,12)
+  statusBar:insert(HPB.mid)
+  HPB.mid:setFillColor(1,0,0)
+  HPB.mid.isVisible = false
+  HPB.mid.anchorX = 0
+  HPB.mid.anchorY = 0.5
 
-	  HPB.begin = display.newCircle(b1,b2,b3)
-	  statusBar:insert(HPB.begin)
-	  HPB.begin:setFillColor(1,0,0)
-	  HPB.begin.isVisible = false
+  -- Circle for End Of Health Bar
+  HPB.fin   = display.newCircle(73,15.8,6)
+  statusBar:insert(HPB.fin)
+  HPB.fin:setFillColor(1,0,0)
+  HPB.fin.isVisible = false
+  HPB:toFront()
 
-	  -- Middle of Health Bar
-	  m1=-31
-	  m2=16
-	  m3=10
-	  m4=12
-
-	  HPB.mid = display.newRect(m1,m2,m3,m4)
-	  statusBar:insert(HPB.mid)
-	  HPB.mid:setFillColor(1,0,0)
-	  HPB.mid.isVisible = false
-	  HPB.mid.anchorX = 0
-	  HPB.mid.anchorY = 0.5
-
-	  -- Circle for End Of Health Bar
-	  e1=73
-	  e2=15.8
-	  e3=6
-
-	  HPB.fin   = display.newCircle(e1,e2,e3)
-	  statusBar:insert(HPB.fin)
-	  HPB.fin:setFillColor(1,0,0)
-	  HPB.fin.isVisible = false
-	  HPB:toFront()
-	end
-
-  if (player.myName == "player") then
 		-- MANA BAR
 		statusBar.MPB = display.newImage("images/EmptyBar.png", MPBx, MPBy)
 		MPB = statusBar.MPB
@@ -109,7 +75,7 @@ function iniStatusBar(player)
 	  statusBar.bomb:scale(0.5,0.5)
 	  statusBar.bomb.count = display.newText("x" .. statusBar.count, 420,15)
 	  statusBar:insert(statusBar.bomb.count)
-  end
+
 
   -- increase HP Bar
   function statusBar:iHPB (player)
