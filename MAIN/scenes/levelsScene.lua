@@ -32,6 +32,8 @@ local placer
 
 local sceneGroup
 
+levelArr = nil
+
 function scene:create( event )
 	sceneGroup = self.view
 end
@@ -79,12 +81,14 @@ function scene:loadLevel()
 	maxX=maxX+30
 	minY=minY-30
 	maxY=maxY+30
+	--print(maxX-minX)
+	--print(maxY-minY)
 	
-	wallArr = {}
+	levelArr = {}
 	for i=0, maxX-minX do
-		wallArr[i]={}
+		levelArr[i]={}
 		for j=0, maxY-minY do
-			wallArr[i][j] = false
+			levelArr[i][j] = false
 		end
 	end
 	for i=1, #level.walls do
@@ -92,7 +96,7 @@ function scene:loadLevel()
 		
 		for j=b.x-minX-30, b.x-minX+30 do
 			for k=b.y-minY-30, b.y-minY+30 do
-				wallArr[j][k]=true
+				levelArr[j][k]=true
 			end
 		end
 	end

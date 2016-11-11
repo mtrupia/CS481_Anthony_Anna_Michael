@@ -183,21 +183,40 @@ function NewPlayer ( props )
 		end
 
 		function player:visibility(p)
-			ready = false
-
+			arrChk=true
 			x1 = player.x
 			y1 = player.y
 
 			x2 = p.x
 			y2 = p.y
-
-			if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400 then
-				ready = true
+			
+			xdist = math.abs(x1 - x2)
+			ydist = math.abs(y1 - y2)
+			
+			slope = ydist / xdist
+			inc = math.max(xdist, ydist) % 30
+			b = y1 - slope * x1
+			--print(x1)
+			--print(y1)
+			--print(slope)
+			--print(b)
+			--determine if on screen
+			--adjust for screen location
+			for i=1, inc do
+				xchk = 30 * i / math.sqrt(slope * slope + 1)
+				ychk = slope * xchk + b
+				--print("---")
+				--print(xchk)
+				--print(ychk)
+				--print("---")
+				--if levelArr[xchk][ychk]==true then
+					--arrChk = false
+				--end
 			end
-
-			if ready then
+			
+			if (math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400) and (arrChk == true) then
 				player.visible = true
-			elseif not (ready) then
+			else
 				player.visible = false
 			end
 		end
