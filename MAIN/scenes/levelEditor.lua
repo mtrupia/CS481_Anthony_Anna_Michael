@@ -61,7 +61,7 @@ function scene:loadLevel()
 end
 
 function scene:saveLevel() 
-	package.loaded['levels.3'] = nil
+	package.loaded['levels.4'] = nil
 	local s = 'return {\n'
 
 	s = s .. '\tplayer = {\n'

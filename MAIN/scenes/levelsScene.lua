@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------
 --
--- levelsScene.lua	: Loads the levels of the game ( SO FAR ONLY 1 :( )
+-- levelsScene.lua	: Loads the levels of the game
 --
 ---------------------------------------------------------------------------------
 
@@ -28,7 +28,8 @@ local pauseButton
 local Items
 local Enemies
 local statusBar
-local placer
+local bombPlacer
+local shieldPlacer
 
 local sceneGroup
 
@@ -81,16 +82,51 @@ function scene:show( event )
 			Runtime:addEventListener("collision", onGlobalCollision)
 			Runtime:addEventListener("enterFrame", beginMovement)
 		end
-		if placer then
-			placer:addEventListener("touch", placeBomb )
+		if bombPlacer then
+			function bombPlacer:touch ( event )
+				if "began" == event.phase then
+					tTarget = bombPlacer
+				elseif "ended" == event.phase and event.target == tTarget then
+					if(Player.angle and statusBar.count > 0) then
+						if(Player.angle <= 45 or Player.angle > 315) then
+							createBomb(Player.x, Player.y - 60)
+						elseif(Player.angle <= 135 and Player.angle > 45) then
+							createBomb(Player.x + 60, Player.y)
+						elseif(Player.angle <= 225 and Player.angle > 135) then
+							createBomb(Player.x, Player.y + 60)
+						elseif(Player.angle <= 315 and Player.angle > 225) then
+							createBomb(Player.x - 60, Player.y)
+						end
+
+						statusBar.count = statusBar.count - 1
+						statusBar.bomb.count.text = "x" .. statusBar.count
+					end
+					tTarget = nil
+				end
+			end
+			bombPlacer:addEventListener("touch", bombPlacer )
+		end
+		if shieldPlacer then
+			function shieldPlacer:touch ( event )
+				if event.phase == "began" then
+					tTarget = shieldPlacer
+				elseif event.phase == "ended" and event.target == tTarget then
+					Player:useShield()
+					tTarget = nil
+				end
+			end
+			shieldPlacer:addEventListener( "touch", shieldPlacer )
 		end
 		if pauseButton then
 			function pauseButton:touch ( event )
 				local phase = event.phase
-				if "ended" == phase then
+				if "began" == phase then
+					tTarget = pauseButton
+				elseif "ended" == phase and event.target == tTarget then
 					physics.pause()
 					Runtime:removeEventListener("enterFrame", beginMovement)
 					composer.showOverlay( "scenes.pauseScene", { isModal = true, effect = "fade", time = 300 } )
+					tTarget = nil
 				end
 			end
 			pauseButton:addEventListener( "touch", pauseButton )
@@ -107,10 +143,15 @@ function scene:hide( event )
 			pauseButton:removeEventListener("touch", pauseButton)
 			pauseButton = nil;
 		end
-		if placer then
-			placer:removeEventListener("touch", placeBomb )
-			placer:removeSelf()
-			placer = nil
+		if bombPlacer then
+			bombPlacer:removeEventListener("touch", bombPlacer )
+			bombPlacer:removeSelf()
+			bombPlacer = nil
+		end
+		if shieldPlacer then
+			shieldPlacer:removeEventListener( "touch", shieldPlacer )
+			shieldPlacer:removeSelf()
+			shieldPlacer = nil
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
@@ -192,12 +233,23 @@ pauseButton.x 		= display.contentWidth+20
 pauseButton.y 		= 21
 pauseButton.alpha = 0.5
 sceneGroup:insert(pauseButton)
--- bomb placer
-placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
-sceneGroup:insert(placer)
-placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
-placer.img:scale(0.5,0.5)
-sceneGroup:insert(placer.img)
+-- bomb bombPlacer
+	playerLevel = require('levels.player').levels
+	
+	if playerLevel >= 2 then
+		shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
+		sceneGroup:insert(shieldPlacer)
+		shieldPlacer.img = display.newImage("images/shield.png", display.contentWidth - 50, display.contentHeight - 40)
+		shieldPlacer.img:scale(0.5,0.5)
+		sceneGroup:insert(shieldPlacer.img)
+	end
+	if playerLevel >= 3 then
+		bombPlacer = display.newCircle( display.contentWidth, display.contentHeight - 40, 20)
+		sceneGroup:insert(bombPlacer)
+		bombPlacer.img = display.newImage("images/Bomb.png", display.contentWidth, display.contentHeight - 40)
+		bombPlacer.img:scale(0.5,0.5)
+		sceneGroup:insert(bombPlacer.img)
+	end
 end
 
 function scene:unPause()
@@ -289,25 +341,6 @@ function beginMovement( event )
 	end
 end
 
-function placeBomb( event )
-	if "ended" == event.phase then
-		if(Player.angle and statusBar.count > 0) then
-			if(Player.angle <= 45 or Player.angle > 315) then
-				createBomb(Player.x, Player.y - 60)
-			elseif(Player.angle <= 135 and Player.angle > 45) then
-				createBomb(Player.x + 60, Player.y)
-			elseif(Player.angle <= 225 and Player.angle > 135) then
-				createBomb(Player.x, Player.y + 60)
-			elseif(Player.angle <= 315 and Player.angle > 225) then
-				createBomb(Player.x - 60, Player.y)
-			end
-
-			statusBar.count = statusBar.count - 1
-			statusBar.bomb.count.text = "x" .. statusBar.count
-		end
-	end
-end
-
 function onGlobalCollision ( event )
 	--if event.object1.myName and event.object2.myName then
 	--	print(event.object1.myName .. ":" .. event.object2.myName)
@@ -349,11 +382,30 @@ function onGlobalCollision ( event )
 			Items[o1.index] = nil
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
+		-- player wins!
+		updatePlayerLevel()
+		
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	elseif(o1.type == bombP and o2.myName == pname) then
 		statusBar.count = statusBar.count + 1
 		statusBar.bomb.count.text = "x".. statusBar.count
 		display.remove( o1 )
+	end
+end
+
+function updatePlayerLevel()
+	package.loaded['levels.player'] = nil
+	
+	local s = 'return {\n'
+	s = s .. '\tlevels = ' .. tostring(levelID + 1) .. '\n'
+	s = s .. '}'
+	
+	local path = system.pathForFile('levels/player.lua', system.ResourceDirectory)
+	local file = io.open(path, 'w')
+	
+	if file then
+		file:write(s)
+		io.close(file)
 	end
 end
 

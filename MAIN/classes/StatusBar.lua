@@ -50,7 +50,7 @@ local ManasequenceData = {
 
 function newStatusBar (player)
 	statusBar = display.newGroup()
-	statusBar.count = 1
+	statusBar.count = 0
 	-- HP BAR
 	if player.myName == "player" then
 		-- Make Health Bar Sprite
@@ -100,7 +100,7 @@ function newStatusBar (player)
 		player.mana = player.mana + amt
 		
 		if player.mana < 0 then player.mana = 0
-		elseif player.mana > 100 then player.mana = 10 end
+		elseif player.mana > 100 then player.mana = 100 end
 		
 		if player.myName == "player" then
 			statusBar.ManaBar:setSequence( ""..player.mana )

@@ -14,7 +14,7 @@ local bgImg = "images/tealBG.png"
 local titleImg = "images/gameTitle.png"
 
 local levelsButton = {}
-local levels = 10
+local levels = 0
 local backButton
 
 function scene:create( event )
@@ -35,6 +35,9 @@ function scene:show( event )
   local sceneGroup = self.view
   local phase = event.phase
   if phase == "will" then
+	playerlevel = require('levels.player')
+	levels = playerlevel.levels
+	
     for n = 1, levels, 1 do
       if n<=5 then
         levelsButton[n] = display.newText(n, (n-1)*120, display.contentHeight/2, native.systemFont, 32)

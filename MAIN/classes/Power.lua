@@ -35,11 +35,20 @@ function NewPower( props )
 			self:removeSelf()
 		end
 	end
+	
+	function power:Shield()
+		if player.mana > 20 and not player.hasShield then
+			player.statusBar:setMana(player, -20)
+			player.hasShield = true
+			player.Shield = display.newCircle( 0, 5, 40)
+			player.Shield:setFillColor(1, 1, 0)
+			player.Shield.alpha = 0.2
+			player:insert(player.Shield)
+		end
+	end
 
 	function Shoot (event)
-
-		if "ended" == event.phase and player.mana > 0 then
-			print(player.myName)
+		if "began" == event.phase and player.mana > 0 and event.target == tTarget then
 			audio.play( ShootSound )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
@@ -52,6 +61,12 @@ function NewPower( props )
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
 			player.statusBar:setMana(player, -10)
+			
+			if player.hasShield and player.mana <= 0 then
+				player.hasShield = false
+				player:remove(player.Shield)
+			end
+			
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]]) then
@@ -59,6 +74,7 @@ function NewPower( props )
 				end
 			end
 			timer.performWithDelay(powerLife, delete)
+			tTarget = nil
 		end
 	end
 

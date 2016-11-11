@@ -8,8 +8,6 @@ playerOptions = {
 	height = 64,
 	width = 64,
 	numFrames = 273,
-	sheetContentWidth = 832,
-	sheetContentHeight = 1344
 }
 mySheet = graphics.newImageSheet("images/playerSprite.png", playerOptions)
 sequenceDataP = {
@@ -26,13 +24,13 @@ sequenceDataP = {
 
 -- Enemy Sprite
 local enemyOptions = {
-	width = 28,
-	height = 34,
-	numFrames = 9
+	width = 29,
+	height = 36,
+	numFrames = 8
 }
 local enemySheet = graphics.newImageSheet("images/enemySprite.png", enemyOptions)
 enemyData = {
-	{ name = "walk", start = 1, count = 8, time = 1000, loopCount = 0 }
+	{ name = "walk", start = 1, count = 8, time = 1000, loopCount = 1 }
 }
 
 -- Variables passed when Player is created
@@ -47,6 +45,7 @@ function NewPlayer ( props )
 	player.myName 			= props.name or "player"
 	player.x						= props.x or halfW
 	player.y						= props.y or halfH
+	player.hasShield	= props.hasShield or false
 
 	player.visible			= props.visible or false
 	player.index				= props.index or 0
@@ -68,6 +67,10 @@ function NewPlayer ( props )
 		-- Power
 		Power = PowerLib.NewPower( { player = player} )
 		Power:begin()
+	end
+	
+	function player:useShield()
+		Power:Shield()
 	end
 
 	function player:spawnEnemy()
@@ -165,14 +168,30 @@ function NewPlayer ( props )
 				--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 			elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
 				if o1n == "player" then
-					event.object1.statusBar:setHP(event.object1, -10)
+					if event.object1.hasShield then
+						event.object1.statusBar:setMana(event.object1, -10)
+						if event.object1.mana <= 0 then
+							event.object1.hasShield = false
+							event.object1:remove(event.object1.Shield)
+						end
+					else
+						event.object1.statusBar:setHP(event.object1, -10)
+					end
 					event.object2.dmgReady = false
 					function allowDmg()
 						event.object2.dmgReady = true
 					end
 					timer.performWithDelay(250, allowDmg, 1)
 				else
-					event.object2.statusBar:setHP(event.object2, -10)
+					if event.object2.hasShield then
+						event.object2.statusBar:setMana(event.object2, -10)
+						if event.object2.mana <= 0 then
+							event.object2.hasShield = false
+							event.object2:remove(event.object2.Shield)
+						end
+					else
+						event.object2.statusBar:setHP(event.object2, -10)
+					end
 					event.object1.dmgReady = false
 					function allowDmg()
 						event.object1.dmgReady = true

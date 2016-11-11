@@ -32,5 +32,7 @@ ItemsLib    = require("classes.Items")
 PowerLib 	= require("classes.Power")
 SBLib       = require("classes.StatusBar")
 
+-- touches
+tTarget = nil
 -- load Welcome Screen
 composer.gotoScene( "scenes.welcomeScene" )
