@@ -165,11 +165,9 @@ function scene:initLevel( event )
 	Enemies = display.newGroup()
 	sceneGroup:insert(Enemies)
 	-- StatusBar
-	statusBar = SBLib.iniStatusBar(Player)
+	statusBar = SBLib.newStatusBar(Player)
 	sceneGroup:insert(statusBar)
 	Player.statusBar = statusBar
-	statusBar:iHPB(Player)
-	statusBar:iMPB(Player)
 	-- Joystick
 	Joystick = StickLib.NewStick(
 	{
@@ -335,15 +333,11 @@ function onGlobalCollision ( event )
 	if(o1.type == health and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		for n = 1, 5, 1 do
-			statusBar:iHPB(Player)
-		end
+		statusBar:setHP(Player, 50)
 	elseif(o1.type == mana and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
-		for n = 1, 5, 1 do
-			statusBar:iMPB(Player)
-		end
+		statusBar:setMana(Player, 50)
 	elseif(o1.type == key and o2.myName == pname) then
 		display.remove( o1 )
 		Items[o1.index] = nil
@@ -386,9 +380,7 @@ function createBomb(x, y)
 			if Player and item then
 				if(item:getDistance(Player,item) < 100) then
 					print("Hit Player")
-					statusBar:dHPB(Player)
-					statusBar:dHPB(Player)
-					statusBar:dHPB(Player)
+					statusBar:setHP(Player, -30)
 				end
 			end
 			if item then

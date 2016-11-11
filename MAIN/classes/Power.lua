@@ -18,7 +18,7 @@ local ShootSound = audio.loadSound( "sounds/Shoot.wav")
 function NewPower( props )
 	local power 	= display.newGroup()
 	powerImage 		= props.image or "images/brick.png"
-	powerLife 		= props.life or 500
+	powerLife 		= props.life or 1000
 	player			= props.player
 	powerSpeed		= props.speed or 250
 	density			= props.density or 3
@@ -39,6 +39,7 @@ function NewPower( props )
 	function Shoot (event)
 
 		if "ended" == event.phase and player.mana > 0 then
+			print(player.myName)
 			audio.play( ShootSound )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
@@ -50,7 +51,7 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			player.statusBar:dMPB(player)
+			player.statusBar:setMana(player, -10)
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]]) then

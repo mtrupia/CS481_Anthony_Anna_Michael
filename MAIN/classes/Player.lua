@@ -25,17 +25,14 @@ sequenceDataP = {
 }
 
 -- Enemy Sprite
-local sheetInfo = require("Sprites.Sprite")
-local enemySheet = graphics.newImageSheet( "Sprites/Sprite.png", sheetInfo:getSheet() )
-local sequenceDataE = {
-	{
-		name = "walk",
-		sheet = enemySheet,
-		start = sheetInfo:getFrameIndex("1"),
-		count = 8,
-		time  = 1000,
-		loopCount = 0
-	}
+local enemyOptions = {
+	width = 28,
+	height = 34,
+	numFrames = 9
+}
+local enemySheet = graphics.newImageSheet("images/enemySprite.png", enemyOptions)
+enemyData = {
+	{ name = "walk", start = 1, count = 8, time = 1000, loopCount = 0 }
 }
 
 -- Variables passed when Player is created
@@ -74,7 +71,7 @@ function NewPlayer ( props )
 	end
 
 	function player:spawnEnemy()
-		player.myName = "enemy" .. player.index
+		player.myName = "enemy"
 		if ( player.enemyType == "chaser" ) then
 			player.speed				= 1.0
 			player.attackDamage	= 10
@@ -100,7 +97,7 @@ function NewPlayer ( props )
 			--error here
 		end
 
-		player.enemySprite	= display.newSprite(enemySheet, sequenceDataE)
+		player.enemySprite	= display.newSprite(enemySheet, enemyData)
 		player.enemySprite:setSequence("walk")
 		player.enemySprite:play()
 		player:insert(player.enemySprite)
@@ -168,14 +165,14 @@ function NewPlayer ( props )
 				--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
 			elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
 				if o1n == "player" then
-					event.object1.statusBar:dHPB(event.object1)
+					event.object1.statusBar:setHP(event.object1, -10)
 					event.object2.dmgReady = false
 					function allowDmg()
 						event.object2.dmgReady = true
 					end
 					timer.performWithDelay(250, allowDmg, 1)
 				else
-					event.object2.statusBar:dHPB(event.object2)
+					event.object2.statusBar:setHP(event.object2, -10)
 					event.object1.dmgReady = false
 					function allowDmg()
 						event.object1.dmgReady = true
