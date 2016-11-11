@@ -35,6 +35,7 @@ function scene:show( event )
   local sceneGroup = self.view
   local phase = event.phase
   if phase == "will" then
+	
 	playerlevel = require('levels.player')
 	levels = playerlevel.levels
 	

@@ -383,7 +383,9 @@ function onGlobalCollision ( event )
 		end
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		-- player wins!
-		updatePlayerLevel()
+		if require('levels.player').levels == levelID then
+			updatePlayerLevel()
+		end
 		
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	elseif(o1.type == bombP and o2.myName == pname) then
@@ -402,6 +404,7 @@ function updatePlayerLevel()
 	
 	local path = system.pathForFile('levels/player.lua', system.ResourceDirectory)
 	local file = io.open(path, 'w')
+	
 	
 	if file then
 		file:write(s)
