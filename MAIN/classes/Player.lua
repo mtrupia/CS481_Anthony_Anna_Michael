@@ -55,13 +55,12 @@ function NewPlayer ( props )
 	player.visible			= props.visible or false
 	player.index				= props.index or 0
 	--player.enemyType	= props.enemyType or "chaser"
-	player.enemyType	= props.enemyType or "chaser"
+	player.enemyType	= props.enemyType or "ranger"
 	player.attackDamage	= props.attackDamage or 0
 	player.dmgReady 		= props.dmgReady or true
 
 	player.items				= props.items
 	player.statusBar		= props.statusBar
-
 
 	function player:spawnPlayer()
 		player.dmgReady = false
@@ -100,8 +99,6 @@ function NewPlayer ( props )
 			player.Image				= "images/flower.png"
 			--error here
 		end
-		
-		enemyPower = PowerLib.NewPower( { player = player} )
 
 		player.enemySprite	= display.newSprite(enemySheet, sequenceDataE)
 		player.enemySprite:setSequence("walk")
@@ -210,7 +207,7 @@ function NewPlayer ( props )
 			if player.visible then
 				hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 				dist=200
-				--enemyPower:enemyShoot(player, p)
+				Power:enemyShoot(player, p)
 				if(player.x > p.x ) then
 					player.enemySprite.xScale = 1
 					player.enemySprite:play()

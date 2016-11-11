@@ -7,7 +7,7 @@ local n = 0
 local alivePowers = {}
 local x = 0
 local enemyShootCount = 0
-local enemyShootMax = 0
+local enemyShootMax = 1
 
 -- Variables passed when Power is created
 local powerLife			-- in ms
@@ -40,6 +40,7 @@ function NewPower( props )
 	end
 
 	function Shoot (event)
+	print(player.myName)
 	if player.myName == "player" then
 		if "ended" == event.phase and player.mana > 0 then
 			audio.play( ShootSound )
