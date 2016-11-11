@@ -100,18 +100,14 @@ function NewPlayer ( props )
 			player.Image				= "images/flower.png"
 			--error here
 		end
-<<<<<<< HEAD
 		
 		enemyPower = PowerLib.NewPower( { player = player} )
-		enemyImg = display.newImage(player.Image)
-		player:insert(enemyImg)
-=======
 
 		player.enemySprite	= display.newSprite(enemySheet, sequenceDataE)
 		player.enemySprite:setSequence("walk")
 		player.enemySprite:play()
 		player:insert(player.enemySprite)
->>>>>>> refs/remotes/origin/master
+
 		physics.addBody(player, {filter = enemyCollisionFilter})
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
