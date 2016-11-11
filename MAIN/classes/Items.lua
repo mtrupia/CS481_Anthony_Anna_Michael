@@ -32,18 +32,18 @@ function newItem ( index, type, x, y )
     end
   end
   function item:destroy()
-	if item then
-		item:removeSelf()
-	end
+    if item then
+      item:removeSelf()
+    end
   end
   function item:getDistance(objA, objB)
-	if objA and objB then
-		local xDist = objB.x - objA.x
-		local yDist = objB.y - objA.y
+    if objA and objB then
+      local xDist = objB.x - objA.x
+      local yDist = objB.y - objA.y
 
-		return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
-	end
-	return nil
+      return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+    end
+    return nil
   end
 
   function item:findImage()

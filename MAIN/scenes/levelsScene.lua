@@ -8,7 +8,7 @@ local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
-local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
+--local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
 local OpenPlayed = false
 ---------------------------------------------------------------------------------
 
