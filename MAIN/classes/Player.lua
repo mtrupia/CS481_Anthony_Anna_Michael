@@ -205,26 +205,12 @@ function NewPlayer ( props )
 			end
 		end
 
-<<<<<<< HEAD
-	function player:enemyMove( p )
-		player:visibility(p)
-		if player.visible then
-			hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
-			dist=200
-			
-			--enemyPower:enemyShoot(player, p)
-			if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
-				player.x=player.x + (p.x-player.x)/hyp
-				player.y=player.y + (p.y-player.y)/hyp
-			elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
-				if (hyp>=dist) then  
-					--approach player
-=======
 		function player:enemyMove( p )
 			player:visibility(p)
 			if player.visible then
 				hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 				dist=200
+				--enemyPower:enemyShoot(player, p)
 				if(player.x > p.x ) then
 					player.enemySprite.xScale = 1
 					player.enemySprite:play()
@@ -233,7 +219,6 @@ function NewPlayer ( props )
 					player.enemySprite:play()
 				end
 				if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
->>>>>>> refs/remotes/origin/master
 					player.x=player.x + (p.x-player.x)/hyp
 					player.y=player.y + (p.y-player.y)/hyp
 				elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
