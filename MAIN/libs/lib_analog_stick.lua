@@ -102,7 +102,9 @@ function NewStick( Props )
                 self.Border    = nil
                 self.Thumb     = nil
                 if self.Timer ~= nil then timer.cancel(self.Timer); self.Timer = nil end
-                self:removeSelf()
+				if Group then
+					self:removeSelf()
+				end
         end
         
         ---------------------------------------------

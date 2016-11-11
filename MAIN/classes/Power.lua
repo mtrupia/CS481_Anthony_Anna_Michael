@@ -6,6 +6,9 @@ local powers = {}
 local n = 0
 local alivePowers = {}
 local x = 0
+local enemyShootCount = 0
+local enemyShootMax = 0
+
 -- Variables passed when Power is created
 local powerLife			-- in ms
 local player			-- where shall the power come from
@@ -13,7 +16,7 @@ local powerSpeed		-- speed of Power
 local density			-- density of the Power
 local friction			-- friction of the Power
 local bounce			-- bounce of the Power (fun)
-
+local ShootSound = audio.loadSound( "sounds/Shoot.wav")
 
 function NewPower( props )
 	local power 	= display.newGroup()
@@ -37,7 +40,9 @@ function NewPower( props )
 	end
 
 	function Shoot (event)
-		if "began" == event.phase and player.mana > 0 then
+	if player.myName == "player" then
+		if "ended" == event.phase and player.mana > 0 then
+			audio.play( ShootSound )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
 			physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )
@@ -48,16 +53,45 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			statusBar:dMPB()
+			player.statusBar:dMPB(player)
 			function delete()
 				x = x + 1
-				if (powers[alivePowers[x]]) then
+				if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "power") then
 					powers[alivePowers[x]]:removeSelf()
 				end
 			end
 			timer.performWithDelay(powerLife, delete)
 		end
 	end
+	end
 
+	function power:enemyShoot (enemy, target)
+		if enemyShootCount < enemyShootMax then
+		enemyShootCount=enemyShootCount + 1
+		
+		audio.play( ShootSound )
+		n = n + 1
+		powers[n] = display.newImage(powerImage, enemy.x, enemy.y)
+		physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )		
+		powers[n].myName = "enemyPower"
+		
+		deltaX=enemy.x - target.x
+		deltaY=enemy.y - target.y
+		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		
+		powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
+		alivePowers[n] = n
+
+		function delete()
+			x = x + 1
+			if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "enemyPower") then
+				powers[alivePowers[x]]:removeSelf()
+				enemyShootCount=enemyShootCount-1
+			end
+		end
+		timer.performWithDelay(powerLife, delete)
+		end
+	end
 	return power
 end
