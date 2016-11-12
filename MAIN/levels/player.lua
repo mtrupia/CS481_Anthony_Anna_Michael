@@ -1,3 +1,3 @@
 return {
-	levels = 2
+	levels = 3
 }
