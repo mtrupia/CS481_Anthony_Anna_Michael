@@ -2,6 +2,7 @@ module (..., package.seeall)
 
 -- Player
 local Power
+local enemyPower
 local HitSound = audio.loadSound("sounds/Hit.wav")
 --Declare and set up Sprite Image Sheet and sequence data
 playerOptions = {
@@ -46,17 +47,14 @@ function NewPlayer ( props )
 	player.x						= props.x or halfW
 	player.y						= props.y or halfH
 	player.hasShield	= props.hasShield or false
-
 	player.visible			= props.visible or false
 	player.index				= props.index or 0
-	--player.enemyType	= props.enemyType or "chaser"
 	player.enemyType	= props.enemyType or "chaser"
 	player.attackDamage	= props.attackDamage or 0
 	player.dmgReady 		= props.dmgReady or true
 
 	player.items				= props.items
 	player.statusBar		= props.statusBar
-
 
 	function player:spawnPlayer()
 		player.dmgReady = false
@@ -77,22 +75,22 @@ function NewPlayer ( props )
 		player.myName = "enemy"
 		if ( player.enemyType == "chaser" ) then
 			player.speed				= 1.0
-			player.attackDamage	= 10
+			player.attackDamage	= 2.5
 			player.hp						= 50
 		elseif ( player.enemyType == "ranger" ) then
 			player.speed				= 0.5
 			player.Image				= "images/flower.png"
-			player.attackDamage	= 15
+			player.attackDamage	= 5
 			player.hp						= 50
 		elseif ( player.enemyType == "trapper" ) then
 			player.speed				= 0.5
 			player.Image				= "images/flower.png"
-			player.attackDamage	= 5
+			player.attackDamage	= 1
 			player.hp						= 50
 		elseif ( player.enemyType == "tank" ) then
 			player.speed				= 0.25
 			player.Image				= "images/flower.png"
-			player.attackDamage	= 5
+			player.attackDamage	= 1
 			player.hp						= 75
 		else
 			player.speed				= 0.5
@@ -104,13 +102,12 @@ function NewPlayer ( props )
 		player.enemySprite:setSequence("walk")
 		player.enemySprite:play()
 		player:insert(player.enemySprite)
+
 		physics.addBody(player, {filter = enemyCollisionFilter})
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
-
-		--statusBar = SBLib.iniStatusBar( {player = player} )
-		--player:insert(statusBar)
-		--statusBar:iHPB(player)
+		
+		player.shootReady = true
 	end
 
 	function player:kill()
@@ -160,12 +157,13 @@ function NewPlayer ( props )
 		if ( o1n == player.myName or o2n == player.myName) and (o1n == "power" or o2n == "power") then
 			if o1n == "power" then
 				audio.play(HitSound)
-				event.object2:damage( 100 ) --figure out what to do here
-				else
-					audio.play(HitSound)
-					event.object1:damage( 100 )
-				end
+				event.object2:damage( 100 ) --figure out how much damage
+			else
+				audio.play(HitSound)
+				event.object1:damage( 100 )
+			end
 				--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+
 				-- If enemy and player collide
 			elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
 				if o1n == "player" then
@@ -198,35 +196,78 @@ function NewPlayer ( props )
 						event.object1.dmgReady = true
 					end
 					timer.performWithDelay(250, allowDmg, 1)
-				end
+
+			end
+		elseif ( o1n == "player" or o2n == "player" ) and (o1n == "enemyPower" or o2n == "enemyPower") then
+			if (o1n == "player") and (event.object2.hit ~= true) then
+					if event.object1.hasShield then
+						event.object1.statusBar:setMana(event.object1, -10)
+						if event.object1.mana <= 0 then
+							event.object1.hasShield = false
+							event.object1:remove(event.object1.Shield)
+						end
+					else
+						event.object1.statusBar:setHP(event.object1, -10)
+					end
+				event.object2.hit=true
+			elseif (o2n == "player") and (event.object1.hit ~= true) then
+					if event.object2.hasShield then
+						event.object2.statusBar:setMana(event.object2, -10)
+						if event.object2.mana <= 0 then
+							event.object2.hasShield = false
+							event.object2:remove(event.object2.Shield)
+						end
+					else
+						event.object2.statusBar:setHP(event.object2, -10)
+					end
+				event.object1.hit=true
 			end
 		end
+		
+	end
 
 		function player:visibility(p)
-			ready = false
-
+			arrChk=true
 			x1 = player.x
 			y1 = player.y
 
 			x2 = p.x
 			y2 = p.y
-
-			if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400 then
-				ready = true
+			
+			xdist = math.abs(x1 - x2)
+			ydist = math.abs(y1 - y2)
+			
+			slope = ydist / xdist
+			inc = math.max(xdist, ydist) % 30
+			b = y1 - slope * x1
+			--determine if on screen
+			--adjust for screen location
+			for i=1, inc do
+				xchk = 30 * i / math.sqrt(slope * slope + 1)
+				ychk = slope * xchk + b
 			end
-
-			if ready then
+			
+			if (math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400) and (arrChk == true) then
 				player.visible = true
-			elseif not (ready) then
+			else
 				player.visible = false
 			end
 		end
-
+		
 		function player:enemyMove( p )
 			player:visibility(p)
 			if player.visible then
 				hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 				dist=200
+				if (player.shootReady == true) then
+					Power:enemyShoot(player, p)
+					player.shootReady = false
+					function allowShoot()
+						player.shootReady = true
+					end
+					timer.performWithDelay(1000, allowShoot, 1)
+				end
+				
 				if(player.x > p.x ) then
 					player.enemySprite.xScale = 1
 					player.enemySprite:play()
@@ -234,7 +275,9 @@ function NewPlayer ( props )
 					player.enemySprite.xScale = -1
 					player.enemySprite:play()
 				end
+				
 				if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
+					--approach player
 					player.x=player.x + (p.x-player.x)/hyp
 					player.y=player.y + (p.y-player.y)/hyp
 				elseif ( player[1] and p and player.visible and player.enemyType == "ranger" ) then
@@ -259,6 +302,7 @@ function NewPlayer ( props )
 						player.y=player.y - (p.y-player.y)/hyp
 					end
 				elseif ( player[1] and p and player.visible and player.enemyType == "tank" ) then
+					--approach player
 					player.x=player.x + (p.x-player.x)/hyp
 					player.y=player.y + (p.y-player.y)/hyp
 				end
