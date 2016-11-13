@@ -9,10 +9,11 @@ local bombImage = "images/Bomb.png"
 local composer = require("composer")
 ---------------------------------------------------------------------------------
 -- Class: Item
--- Functions: initialize, test
+-- Functions: initialize, test, getDistance
 ---------------------------------------------------------------------------------
 local Item = class('Item')
 local sb
+local player
 function Item:initialize( x, y, name )
   self.x = x
   self.y = y
@@ -27,6 +28,21 @@ function Item:test()
   --Loop that prints members of the object
   for key,value in pairs(self) do
     print("found member " .. key);
+  end
+end
+
+function Item:getDistance(a)
+  if self and a then
+    local xDist = a.x - self.x
+    local yDist = a.y - self.y
+    return math.sqrt( (xDist ^ 2) + (yDist^2) )
+  end
+  return nil
+end
+
+function Item:destroy()
+  if self then
+    display.remove( self.image )
   end
 end
 ---------------------------------------------------------------------------------
@@ -191,5 +207,59 @@ function FDoor.collision(self, event)
     --updatePlayerLevel()
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
     composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
+  end
+end
+---------------------------------------------------------------------------------
+-- End of SubClass:  FDoor
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+-- Subclass: Bomb
+-- Functions: initialize, spawn
+---------------------------------------------------------------------------------
+Bomb = class('Bomb', Item)
+function Bomb:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "Bomb")
+  return Bomb.spawn(self)
+end
+
+function Bomb.spawn(self)
+  local pot = self
+  pot.image = display.newImage(bombImage, pot.x, pot.y)
+  pot.image:scale(.5,.5)
+  physics.addBody(pot.image, "dynamic")
+  return pot.image
+end
+---------------------------------------------------------------------------------
+-- End of SubClass:  Bomb
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+-- Subclass: BombP
+-- Functions: initialize, spawn
+---------------------------------------------------------------------------------
+BombP = class('BombP', Item)
+function BombP:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "BombP")
+  return BombP.spawn(self)
+end
+
+function BombP.spawn(self)
+  local pot = self
+  pot.image = display.newImage(bombImage, pot.x, pot.y)
+  pot.image:scale(.3,.3)
+  physics.addBody(pot.image, "static")
+  pot.image.collision = function(self,event)
+    BombP.collision(self,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function BombP.collision(self, event)
+  if(event.other.myName == "player") then
+    sb.count = sb.count + 1
+    sb.bomb.count.text = "x" .. sb.count
+    display.remove(self)
   end
 end
