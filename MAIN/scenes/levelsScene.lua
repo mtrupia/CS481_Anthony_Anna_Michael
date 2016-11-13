@@ -61,7 +61,6 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		--Temporary fix just so the level will load
 		if(b.name == "hp") then b.name = HP end
 		if(b.name == "mana") then b.name = Mana end
 		if(b.name == "key") then b.name = Key end
