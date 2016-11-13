@@ -21,7 +21,7 @@ physics.setGravity(0, 0)
 local pauseImg
 local backGround
 local walls
---local Player
+local Player
 local Joystick
 local levelID
 local pauseButton
@@ -77,6 +77,7 @@ function scene:loadLevel()
 			maxY=b.y
 		end
 	end
+
 	
 	minX=minX-30
 	maxX=maxX+30
@@ -110,7 +111,6 @@ function scene:loadLevel()
 		if(b.name == "key") then b.name = Key end
 		if(b.name == "door") then b.name = Door end
 		if(b.name == "fdoor") then b.name = FDoor end
-		if(b.name == "bombP") then b.name = BombP end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -407,8 +407,10 @@ function updatePlayerLevel()
 end
 
 function createBomb(x, y)
-	local bomb = Bomb:new(x,y,statusBar)
-	Items:insert(bomb.image)
+	local bomb = ItemsLib.newItem(1,"bomb",x, y)
+	Items:insert(bomb)
+	bomb:spawn()
+
 	function boom(item)
 		audio.play(BoomSound)
 		print("boom")
@@ -416,7 +418,7 @@ function createBomb(x, y)
 			if Enemies then
 				for n = 0, Enemies.numChildren, 1 do
 					if(Enemies[n] and item) then
-						local dis = item:getDistance(Enemies[n])
+						local dis = item:getDistance(Enemies[n], item)
 						if(dis < 100) then
 							Enemies[n]:damage(100)
 							print("Hit Enemy: " .. n)

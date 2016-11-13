@@ -21,6 +21,7 @@ _G.screenH 		= display.contentHeight
 _G.halfW 		= screenW/2
 _G.halfH 		= screenH/2
 _G.borders = 140			-- TODO: move this!
+
 -- Physics and filters
 _G.physics = require("physics")
 _G.worldCollisionFilter 	= {categoryBits = 1, maskBits = 30}

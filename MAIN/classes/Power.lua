@@ -71,6 +71,7 @@ function NewPower( props )
 				player:remove(player.Shield)
 			end
 			
+			
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "power") then

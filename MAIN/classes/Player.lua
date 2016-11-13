@@ -47,7 +47,6 @@ function NewPlayer ( props )
 	player.x						= props.x or halfW
 	player.y						= props.y or halfH
 	player.hasShield	= props.hasShield or false
-
 	player.visible			= props.visible or false
 	player.index				= props.index or 0
 	player.enemyType	= props.enemyType or "chaser"
@@ -265,7 +264,7 @@ function NewPlayer ( props )
 				player.visible = false
 			end
 		end
-
+		
 		function player:enemyMove( p )
 			player:visibility(p)
 			if player.visible then
