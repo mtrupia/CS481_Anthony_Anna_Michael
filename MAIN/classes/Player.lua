@@ -240,22 +240,11 @@ function NewPlayer ( props )
 			slope = ydist / xdist
 			inc = math.max(xdist, ydist) % 30
 			b = y1 - slope * x1
-			--print(x1)
-			--print(y1)
-			--print(slope)
-			--print(b)
 			--determine if on screen
 			--adjust for screen location
 			for i=1, inc do
 				xchk = 30 * i / math.sqrt(slope * slope + 1)
 				ychk = slope * xchk + b
-				--print("---")
-				--print(xchk)
-				--print(ychk)
-				--print("---")
-				--if levelArr[xchk][ychk]==true then
-					--arrChk = false
-				--end
 			end
 			
 			if (math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400) and (arrChk == true) then

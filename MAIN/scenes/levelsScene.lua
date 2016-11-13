@@ -83,8 +83,6 @@ function scene:loadLevel()
 	maxX=maxX+30
 	minY=minY-30
 	maxY=maxY+30
-	--print(maxX-minX)
-	--print(maxY-minY)
 	
 	levelArr = {}
 	for i=0, maxX-minX do
