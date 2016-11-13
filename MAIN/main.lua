@@ -21,10 +21,11 @@ halfH 	= screenH/2
 borders = 140
 -- Physics
 physics = require("physics")
-worldCollisionFilter 	= {categoryBits = 1, maskBits = 14}
-playerCollisionFilter 	= { categoryBits = 2, maskBits = 9 }
-powerCollisionFilter 	= { categoryBits = 4, maskBits = 13 }
+worldCollisionFilter 	= {categoryBits = 1, maskBits = 30}
+playerCollisionFilter 	= { categoryBits = 2, maskBits = 25 }
+powerCollisionFilter 	= { categoryBits = 4, maskBits = 29 }
 enemyCollisionFilter 	= { categoryBits = 8, maskBits = 15 }
+enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 7 } --fix
 -- Classes   ('require('classes.cannon').newCannon') <--- change to
 StickLib 	= require("libs.lib_analog_stick")
 PlayerLib 	= require("classes.Player")

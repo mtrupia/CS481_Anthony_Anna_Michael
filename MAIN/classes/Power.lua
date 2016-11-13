@@ -6,8 +6,6 @@ local powers = {}
 local n = 0
 local alivePowers = {}
 local x = 0
-local enemyShootCount = 0
-local enemyShootMax = 1
 
 -- Variables passed when Power is created
 local powerLife			-- in ms
@@ -27,6 +25,7 @@ function NewPower( props )
 	density			= props.density or 3
 	friction		= props.friction or 0.500
 	bounce			= props.bounce or 1
+	power.dmgReady = true
 
 	function power:begin()
 		Runtime:addEventListener("touch", Shoot)
@@ -67,17 +66,17 @@ function NewPower( props )
 	end
 
 	function power:enemyShoot (enemy, target)
-		if enemyShootCount < enemyShootMax then
-		enemyShootCount=enemyShootCount + 1
+		--if enemyShootCount < enemyShootMax then
+		--enemyShootCount=enemyShootCount + 1
 		
 		audio.play( ShootSound )
 		n = n + 1
 		powers[n] = display.newImage(powerImage, enemy.x, enemy.y)
-		physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )		
+		physics.addBody( powers[n], { density=0.00000000001, friction=friction, bounce=bounce, filter=enemyPowerCollisionFilter } )		
 		powers[n].myName = "enemyPower"
 		
-		deltaX=enemy.x - target.x
-		deltaY=enemy.y - target.y
+		deltaX=target.x - enemy.x
+		deltaY=target.y - enemy.y
 		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 		
@@ -88,11 +87,12 @@ function NewPower( props )
 			x = x + 1
 			if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "enemyPower") then
 				powers[alivePowers[x]]:removeSelf()
-				enemyShootCount=enemyShootCount-1
+				--enemyShootCount=enemyShootCount-1
 			end
 		end
 		timer.performWithDelay(powerLife, delete)
-		end
+		--end
 	end
+	
 	return power
 end
