@@ -45,7 +45,7 @@ function Power:Shield()
 end
 
 function Shoot (event)
-  if event.phase == "began" and self.player.mana > 0 and event.target == tTarget then --What is tTarget
+  if event.phase == "began" and self.player.mana > 0 and event.target == tTarget then
     audio.play( ShootSound )
     n = n + 1
     powers[n] = display.newImage(powerImage, self.player.x, self.player.y)
