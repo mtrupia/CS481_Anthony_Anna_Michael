@@ -189,6 +189,7 @@ function FDoor.collision(self, event)
     sb.key.isVisible = false
     display.remove(self)
     --updatePlayerLevel()
-    composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+    --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
+    composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
   end
 end
