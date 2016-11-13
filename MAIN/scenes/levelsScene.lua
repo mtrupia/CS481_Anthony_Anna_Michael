@@ -84,7 +84,6 @@ function scene:show( event )
 		self.loadLevel()
 	elseif phase == "did" then
 		if Player and Joystick then
-			Runtime:addEventListener("collision", onGlobalCollision)
 			Runtime:addEventListener("enterFrame", beginMovement)
 		end
 		if bombPlacer then
@@ -346,57 +345,6 @@ function beginMovement( event )
 	end
 end
 
-function onGlobalCollision ( event )
-	--if event.object1.myName and event.object2.myName then
-	--	print(event.object1.myName .. ":" .. event.object2.myName)
-	--end
-
-	local o1
-	local o2
-	if(event.object1.type) then
-		o1 = event.object1
-		o2 = event.object2
-	else
-		o1 = event.object2
-		o2 = event.object1
-	end
-	local index
-	local pname 	= "player"
-	local health 	= "hp"
-	local mana 		= "mana"
-	local key 		= "key"
-	local door		= "door"
-	local fdoor 	= "fdoor"
-	local bombP   = "bombP"
-	if(o1.type == health and o2.myName == pname) then
-		display.remove( o1 )
-		Items[o1.index] = nil
-		statusBar:setHP(Player, 50)
-	elseif(o1.type == mana and o2.myName == pname) then
-		display.remove( o1 )
-		Items[o1.index] = nil
-		statusBar:setMana(Player, 50)
-	elseif(o1.type == key and o2.myName == pname) then
-		display.remove( o1 )
-		Items[o1.index] = nil
-		statusBar.key.isVisible = true
-	elseif(o1.type == door and o2.myName == pname) then
-		if(statusBar.key.isVisible) then
-			statusBar.key.isVisible = false
-			display.remove( o1 )
-			Items[o1.index] = nil
-		end
-	elseif(o1.type == fdoor and o2.myName == pname) then
-		-- player wins!
-		updatePlayerLevel()
-
-		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
-	elseif(o1.type == bombP and o2.myName == pname) then
-		statusBar.count = statusBar.count + 1
-		statusBar.bomb.count.text = "x".. statusBar.count
-		display.remove( o1 )
-	end
-end
 
 function updatePlayerLevel()
 	package.loaded['levels.player'] = nil
@@ -407,7 +355,6 @@ function updatePlayerLevel()
 
 	local path = system.pathForFile('levels/player.lua', system.ResourceDirectory)
 	local file = io.open(path, 'w')
-
 	if file then
 		file:write(s)
 		io.close(file)
