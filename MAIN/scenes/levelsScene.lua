@@ -61,6 +61,11 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
+		if(b.name == "hp") then b.name = HP end
+		if(b.name == "mana") then b.name = Mana end
+		if(b.name == "key") then b.name = Key end
+		if(b.name == "door") then b.name = Door end
+		if(b.name == "fdoor") then b.name = FDoor end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -235,7 +240,7 @@ pauseButton.alpha = 0.5
 sceneGroup:insert(pauseButton)
 -- bomb bombPlacer
 	playerLevel = require('levels.player').levels
-	
+
 	if playerLevel >= 2 then
 		shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
 		sceneGroup:insert(shieldPlacer)
@@ -384,7 +389,7 @@ function onGlobalCollision ( event )
 	elseif(o1.type == fdoor and o2.myName == pname) then
 		-- player wins!
 		updatePlayerLevel()
-		
+
 		composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 	elseif(o1.type == bombP and o2.myName == pname) then
 		statusBar.count = statusBar.count + 1
@@ -395,14 +400,14 @@ end
 
 function updatePlayerLevel()
 	package.loaded['levels.player'] = nil
-	
+
 	local s = 'return {\n'
 	s = s .. '\tlevels = ' .. tostring(levelID + 1) .. '\n'
 	s = s .. '}'
-	
+
 	local path = system.pathForFile('levels/player.lua', system.ResourceDirectory)
 	local file = io.open(path, 'w')
-	
+
 	if file then
 		file:write(s)
 		io.close(file)
@@ -449,9 +454,8 @@ function createBomb(x, y)
 end
 
 function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(1, type,x,y)
-	Items:insert(newItem)
-	newItem:spawn()
+	local item = type:new(x,y,statusBar)
+	Items:insert(item.image)
 end
 
 function placeEnemy(t,z)
