@@ -9,7 +9,7 @@ playerOptions = {
 	width = 64,
 	numFrames = 273,
 }
-mySheet = graphics.newImageSheet("images/playerSprite.png", playerOptions)
+local mySheet = graphics.newImageSheet("images/playerSprite.png", playerOptions)
 sequenceDataP = {
 	{name = "forward", 				frames={105,106,107,108,109,110,111,112}, 		time = 500, loopCount = 1},
 	{name = "right", 					frames={144,145,146,147,148,149,150,151,152}, time = 500, loopCount = 1},
@@ -68,7 +68,7 @@ function NewPlayer ( props )
 		Power = PowerLib.NewPower( { player = player} )
 		Power:begin()
 	end
-	
+
 	function player:useShield()
 		Power:Shield()
 	end
@@ -156,7 +156,7 @@ function NewPlayer ( props )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
 
-
+		-- If power hits an enemy
 		if ( o1n == player.myName or o2n == player.myName) and (o1n == "power" or o2n == "power") then
 			if o1n == "power" then
 				audio.play(HitSound)
@@ -166,6 +166,7 @@ function NewPlayer ( props )
 					event.object1:damage( 100 )
 				end
 				--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
+				-- If enemy and player collide
 			elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
 				if o1n == "player" then
 					if event.object1.hasShield then
