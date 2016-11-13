@@ -9,10 +9,8 @@ playerOptions = {
 	height = 64,
 	width = 64,
 	numFrames = 273,
-	sheetContentWidth = 832,
-	sheetContentHeight = 1344
 }
-mySheet = graphics.newImageSheet("images/playerSprite.png", playerOptions)
+local mySheet = graphics.newImageSheet("images/playerSprite.png", playerOptions)
 sequenceDataP = {
 	{name = "forward", 				frames={105,106,107,108,109,110,111,112}, 		time = 500, loopCount = 1},
 	{name = "right", 					frames={144,145,146,147,148,149,150,151,152}, time = 500, loopCount = 1},
@@ -26,17 +24,14 @@ sequenceDataP = {
 }
 
 -- Enemy Sprite
-local sheetInfo = require("Sprites.Sprite")
-local enemySheet = graphics.newImageSheet( "Sprites/Sprite.png", sheetInfo:getSheet() )
-local sequenceDataE = {
-	{
-		name = "walk",
-		sheet = enemySheet,
-		start = sheetInfo:getFrameIndex("1"),
-		count = 8,
-		time  = 1000,
-		loopCount = 0
-	}
+local enemyOptions = {
+	width = 29,
+	height = 36,
+	numFrames = 8
+}
+local enemySheet = graphics.newImageSheet("images/enemySprite.png", enemyOptions)
+enemyData = {
+	{ name = "walk", start = 1, count = 8, time = 1000, loopCount = 1 }
 }
 
 -- Variables passed when Player is created
@@ -51,6 +46,7 @@ function NewPlayer ( props )
 	player.myName 			= props.name or "player"
 	player.x						= props.x or halfW
 	player.y						= props.y or halfH
+	player.hasShield	= props.hasShield or false
 
 	player.visible			= props.visible or false
 	player.index				= props.index or 0
@@ -72,8 +68,12 @@ function NewPlayer ( props )
 		Power:begin()
 	end
 
+	function player:useShield()
+		Power:Shield()
+	end
+
 	function player:spawnEnemy()
-		player.myName = "enemy" .. player.index
+		player.myName = "enemy"
 		if ( player.enemyType == "chaser" ) then
 			player.speed				= 1.0
 			player.attackDamage	= 2.5
@@ -99,7 +99,7 @@ function NewPlayer ( props )
 			--error here
 		end
 
-		player.enemySprite	= display.newSprite(enemySheet, sequenceDataE)
+		player.enemySprite	= display.newSprite(enemySheet, enemyData)
 		player.enemySprite:setSequence("walk")
 		player.enemySprite:play()
 		player:insert(player.enemySprite)
@@ -154,6 +154,7 @@ function NewPlayer ( props )
 		local o1n = event.object1.myName
 		local o2n = event.object2.myName
 
+		-- If power hits an enemy
 		if ( o1n == player.myName or o2n == player.myName) and (o1n == "power" or o2n == "power") then
 			if o1n == "power" then
 				audio.play(HitSound)
@@ -163,28 +164,63 @@ function NewPlayer ( props )
 				event.object1:damage( 100 )
 			end
 				--print("Collision: Object 1 =", event.object1.myName, "Object 2 =", event.object2.myName)
-		elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
-			if o1n == "player" then
-				event.object1.statusBar:dHPB(event.object1)
-				event.object2.dmgReady = false
-				function allowDmg()
-					event.object2.dmgReady = true
-				end
-				timer.performWithDelay(250, allowDmg, 1)
-			else
-				event.object2.statusBar:dHPB(event.object2)
-				event.object1.dmgReady = false
-				function allowDmg()
-					event.object1.dmgReady = true
-				end
-				timer.performWithDelay(250, allowDmg, 1)
+
+				-- If enemy and player collide
+			elseif ( o1n == player.myName or o2n == player.myName) and (o1n == "player" or o2n == "player") and (event.object1.dmgReady or event.object2.dmgReady) then
+				if o1n == "player" then
+					if event.object1.hasShield then
+						event.object1.statusBar:setMana(event.object1, -10)
+						if event.object1.mana <= 0 then
+							event.object1.hasShield = false
+							event.object1:remove(event.object1.Shield)
+						end
+					else
+						event.object1.statusBar:setHP(event.object1, -10)
+					end
+					event.object2.dmgReady = false
+					function allowDmg()
+						event.object2.dmgReady = true
+					end
+					timer.performWithDelay(250, allowDmg, 1)
+				else
+					if event.object2.hasShield then
+						event.object2.statusBar:setMana(event.object2, -10)
+						if event.object2.mana <= 0 then
+							event.object2.hasShield = false
+							event.object2:remove(event.object2.Shield)
+						end
+					else
+						event.object2.statusBar:setHP(event.object2, -10)
+					end
+					event.object1.dmgReady = false
+					function allowDmg()
+						event.object1.dmgReady = true
+					end
+					timer.performWithDelay(250, allowDmg, 1)
+
 			end
 		elseif ( o1n == "player" or o2n == "player" ) and (o1n == "enemyPower" or o2n == "enemyPower") then
 			if (o1n == "player") and (event.object2.hit ~= true) then
-				event.object1.statusBar:dHPB(event.object1)
+					if event.object1.hasShield then
+						event.object1.statusBar:setMana(event.object1, -10)
+						if event.object1.mana <= 0 then
+							event.object1.hasShield = false
+							event.object1:remove(event.object1.Shield)
+						end
+					else
+						event.object1.statusBar:setHP(event.object1, -10)
+					end
 				event.object2.hit=true
 			elseif (o2n == "player") and (event.object1.hit ~= true) then
-				event.object2.statusBar:dHPB(event.object2)
+					if event.object2.hasShield then
+						event.object2.statusBar:setMana(event.object2, -10)
+						if event.object2.mana <= 0 then
+							event.object2.hasShield = false
+							event.object2:remove(event.object2.Shield)
+						end
+					else
+						event.object2.statusBar:setHP(event.object2, -10)
+					end
 				event.object1.hit=true
 			end
 		end

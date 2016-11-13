@@ -19,7 +19,7 @@ local ShootSound = audio.loadSound( "sounds/Shoot.wav")
 function NewPower( props )
 	local power 	= display.newGroup()
 	powerImage 		= props.image or "images/brick.png"
-	powerLife 		= props.life or 500
+	powerLife 		= props.life or 1000
 	player			= props.player
 	powerSpeed		= props.speed or 250
 	density			= props.density or 3
@@ -37,11 +37,22 @@ function NewPower( props )
 			self:removeSelf()
 		end
 	end
+	
+	function power:Shield()
+		if player.mana > 20 and not player.hasShield then
+			player.statusBar:setMana(player, -20)
+			player.hasShield = true
+			player.Shield = display.newCircle( 0, 5, 40)
+			player.Shield:setFillColor(1, 1, 0)
+			player.Shield.alpha = 0.2
+			player:insert(player.Shield)
+		end
+	end
 
 	function Shoot (event)
-	print(player.myName)
+
 	if player.myName == "player" then
-		if "ended" == event.phase and player.mana > 0 then
+		if "began" == event.phase and player.mana > 0 and event.target == tTarget then
 			audio.play( ShootSound )
 			n = n + 1
 			powers[n] = display.newImage(powerImage, player.x, player.y)
@@ -53,7 +64,13 @@ function NewPower( props )
 			normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
-			player.statusBar:dMPB(player)
+			player.statusBar:setMana(player, -10)
+			
+			if player.hasShield and player.mana <= 0 then
+				player.hasShield = false
+				player:remove(player.Shield)
+			end
+			
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "power") then
@@ -61,6 +78,7 @@ function NewPower( props )
 				end
 			end
 			timer.performWithDelay(powerLife, delete)
+			tTarget = nil
 		end
 	end
 	end
