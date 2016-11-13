@@ -33,7 +33,8 @@ enemyData = {
 }
 ---------------------------------------------------------------------------------
 -- Class: Player
--- Functions:
+-- Functions: initialize, spawn, useShielf, kill, destroy,
+--            attack, damage, collision, visibility, move
 ---------------------------------------------------------------------------------
 local Player = class('Player')
 function Player:initialize( props )
@@ -49,6 +50,7 @@ function Player:initialize( props )
   self.index			= props.index or 0
   self.items      = props.items
   self.statusBar  = props.statusBar
+  self.dmgReady   = props.dmgReady
 end
 
 function Player:spawn()
@@ -72,24 +74,24 @@ function Player:kill()
   Power:destroy()
 end
 
-function player:destroy()
+function Player:destroy()
   Power:destroy()
   self:removeSelf()
 end
 
-function player:attack( p )
+function Player:attack( p )
   print("attack")
   p:damage( player.attackDamage)
 end
 
-function player:damage( amt )
+function Player:damage( amt )
   self.hp = self.hp - amt
   if self.hp <= 0 then
     self:kill()
   end
 end
 
-function player:collision ( event )
+function Player:collision ( event )
   if event.other.myName == "chaser" and event.other.dmgReady then
     if self.hasShield then
       self.statusBar:setMana(self, -10)
@@ -108,7 +110,7 @@ function player:collision ( event )
   end
 end
 
-function player:visibility(p)
+function Player:visibility(p)
   local ready = false
   local x1 = self.x
   local y1 = self.y
@@ -126,7 +128,7 @@ function player:visibility(p)
   end
 end
 
-function player:move ( joystick )
+function Player:move ( joystick )
   local seq
   if (self[1] and joystick) then
     joystick:move(self,self.speed,false)
@@ -152,7 +154,21 @@ function player:move ( joystick )
 
     -- If analog stick is moving, animate the sprite
     if(moving) then
-      player[1]:play()
+      self[1]:play()
     end
   end
 end
+
+Chaser = class('Chaser', Player)
+function Chaser:initialize(props)
+  Player:initialize(props)
+  self.enemyType    = props.enemyType or "chaser"
+  self.dmgReady     = props.dmgReady or true
+  self.Items        = props.items
+  self.statusBar    = props.statusBar
+  self.speed        = 1.0
+  self.attackDamage = 10
+  self.hp           = 50
+end
+
+function Chaser:spawn()

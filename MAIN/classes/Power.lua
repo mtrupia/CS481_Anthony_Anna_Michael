@@ -35,7 +35,7 @@ function NewPower( props )
 			self:removeSelf()
 		end
 	end
-	
+
 	function power:Shield()
 		if player.mana > 20 and not player.hasShield then
 			player.statusBar:setMana(player, -20)
@@ -61,12 +61,12 @@ function NewPower( props )
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
 			player.statusBar:setMana(player, -10)
-			
+
 			if player.hasShield and player.mana <= 0 then
 				player.hasShield = false
 				player:remove(player.Shield)
 			end
-			
+
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]]) then
