@@ -6,6 +6,7 @@ local powers = {}
 local n = 0
 local alivePowers = {}
 local x = 0
+
 -- Variables passed when Power is created
 local powerLife			-- in ms
 local player			-- where shall the power come from
@@ -24,6 +25,7 @@ function NewPower( props )
 	density			= props.density or 3
 	friction		= props.friction or 0.500
 	bounce			= props.bounce or 1
+	power.dmgReady = true
 
 	function power:begin()
 		Runtime:addEventListener("touch", Shoot)
@@ -48,6 +50,8 @@ function NewPower( props )
 	end
 
 	function Shoot (event)
+
+	if player.myName == "player" then
 		if "began" == event.phase and player.mana > 0 and event.target == tTarget then
 			audio.play( ShootSound )
 			n = n + 1
@@ -67,9 +71,10 @@ function NewPower( props )
 				player:remove(player.Shield)
 			end
 			
+			
 			function delete()
 				x = x + 1
-				if (powers[alivePowers[x]]) then
+				if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "power") then
 					powers[alivePowers[x]]:removeSelf()
 				end
 			end
@@ -77,6 +82,36 @@ function NewPower( props )
 			tTarget = nil
 		end
 	end
+	end
 
+	function power:enemyShoot (enemy, target)
+		--if enemyShootCount < enemyShootMax then
+		--enemyShootCount=enemyShootCount + 1
+		
+		audio.play( ShootSound )
+		n = n + 1
+		powers[n] = display.newImage(powerImage, enemy.x, enemy.y)
+		physics.addBody( powers[n], { density=0.00000000001, friction=friction, bounce=bounce, filter=enemyPowerCollisionFilter } )		
+		powers[n].myName = "enemyPower"
+		
+		deltaX=target.x - enemy.x
+		deltaY=target.y - enemy.y
+		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		
+		powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
+		alivePowers[n] = n
+
+		function delete()
+			x = x + 1
+			if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "enemyPower") then
+				powers[alivePowers[x]]:removeSelf()
+				--enemyShootCount=enemyShootCount-1
+			end
+		end
+		timer.performWithDelay(powerLife, delete)
+		--end
+	end
+	
 	return power
 end
