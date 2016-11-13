@@ -21,7 +21,7 @@ physics.setGravity(0, 0)
 local pauseImg
 local backGround
 local walls
-local Player
+--local Player
 local Joystick
 local levelID
 local pauseButton
@@ -32,8 +32,6 @@ local bombPlacer
 local shieldPlacer
 
 local sceneGroup
-
-levelArr = nil
 
 function scene:create( event )
 	sceneGroup = self.view
@@ -54,53 +52,13 @@ function scene:loadLevel()
 		placeEnemy(b.x, b.y)
 	end
 
-	minX=0
-	minY=0
-	maxX=0
-	maxY=0
-	
 	for i = 1, #level.walls do
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
 		physics.addBody(crate, "static", { filter = editFilter } )
 		walls:insert(crate)
-		if b.x<minX then
-			minX=b.x
-		end
-		if b.x>maxX then
-			maxX=b.x
-		end
-		if b.y<minY then
-			minY=b.y
-		end
-		if b.y>maxY then
-			maxY=b.y
-		end
 	end
 
-	
-	minX=minX-30
-	maxX=maxX+30
-	minY=minY-30
-	maxY=maxY+30
-	
-	levelArr = {}
-	for i=0, maxX-minX do
-		levelArr[i]={}
-		for j=0, maxY-minY do
-			levelArr[i][j] = false
-		end
-	end
-	for i=1, #level.walls do
-		local b=level.walls[i]
-		
-		for j=b.x-minX-30, b.x-minX+30 do
-			for k=b.y-minY-30, b.y-minY+30 do
-				levelArr[j][k]=true
-			end
-		end
-	end
-	
 	for i = 1, #level.items do
 		local b = level.items[i]
 		--Temporary fix just so the level will load
@@ -109,6 +67,7 @@ function scene:loadLevel()
 		if(b.name == "key") then b.name = Key end
 		if(b.name == "door") then b.name = Door end
 		if(b.name == "fdoor") then b.name = FDoor end
+		if(b.name == "bombP") then b.name = BombP end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -405,10 +364,8 @@ function updatePlayerLevel()
 end
 
 function createBomb(x, y)
-	local bomb = ItemsLib.newItem(1,"bomb",x, y)
-	Items:insert(bomb)
-	bomb:spawn()
-
+	local bomb = Bomb:new(x,y,statusBar)
+	Items:insert(bomb.image)
 	function boom(item)
 		audio.play(BoomSound)
 		print("boom")
@@ -416,7 +373,7 @@ function createBomb(x, y)
 			if Enemies then
 				for n = 0, Enemies.numChildren, 1 do
 					if(Enemies[n] and item) then
-						local dis = item:getDistance(Enemies[n], item)
+						local dis = item:getDistance(Enemies[n])
 						if(dis < 100) then
 							Enemies[n]:damage(100)
 							print("Hit Enemy: " .. n)
