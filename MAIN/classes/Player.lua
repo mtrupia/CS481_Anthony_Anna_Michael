@@ -198,8 +198,8 @@ function NewPlayer ( props )
 					timer.performWithDelay(250, allowDmg, 1)
 
 			end
-		elseif ( o1n == "player" or o2n == "player" ) and (o1n == "enemyPower" or o2n == "enemyPower") then  --enemy shooting and player collision
-			if (o1n == "player") and (event.object2.hit ~= true) then --prevent multiple hits of same bullet
+		elseif ( o1n == "player" or o2n == "player" ) and (o1n == "enemyPower" or o2n == "enemyPower") then
+			if (o1n == "player") and (event.object2.hit ~= true) then
 					if event.object1.hasShield then
 						event.object1.statusBar:setMana(event.object1, -10)
 						if event.object1.mana <= 0 then
@@ -210,7 +210,7 @@ function NewPlayer ( props )
 						event.object1.statusBar:setHP(event.object1, -10)
 					end
 				event.object2.hit=true
-			elseif (o2n == "player") and (event.object1.hit ~= true) then --prevent multiple hits of same bullet
+			elseif (o2n == "player") and (event.object1.hit ~= true) then
 					if event.object2.hasShield then
 						event.object2.statusBar:setMana(event.object2, -10)
 						if event.object2.mana <= 0 then
@@ -227,7 +227,6 @@ function NewPlayer ( props )
 	end
 
 		function player:visibility(p)
-			--under construction
 			arrChk=true
 			x1 = player.x
 			y1 = player.y
@@ -241,11 +240,22 @@ function NewPlayer ( props )
 			slope = ydist / xdist
 			inc = math.max(xdist, ydist) % 30
 			b = y1 - slope * x1
+			--print(x1)
+			--print(y1)
+			--print(slope)
+			--print(b)
 			--determine if on screen
 			--adjust for screen location
 			for i=1, inc do
 				xchk = 30 * i / math.sqrt(slope * slope + 1)
 				ychk = slope * xchk + b
+				--print("---")
+				--print(xchk)
+				--print(ychk)
+				--print("---")
+				--if levelArr[xchk][ychk]==true then
+					--arrChk = false
+				--end
 			end
 			
 			if (math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400) and (arrChk == true) then
@@ -256,22 +266,19 @@ function NewPlayer ( props )
 		end
 		
 		function player:enemyMove( p )
-			player:visibility(p) --update visibility
-			
+			player:visibility(p)
 			if player.visible then
 				hyp=math.sqrt((p.x-player.x)^2 + (p.y-player.y)^2)
 				dist=200
 				if (player.shootReady == true) then
-					--shoot
 					Power:enemyShoot(player, p)
 					player.shootReady = false
-					function allowShoot() --delay before shooting again
+					function allowShoot()
 						player.shootReady = true
 					end
 					timer.performWithDelay(1000, allowShoot, 1)
 				end
 				
-				--enemy sprite stuff
 				if(player.x > p.x ) then
 					player.enemySprite.xScale = 1
 					player.enemySprite:play()
@@ -280,7 +287,6 @@ function NewPlayer ( props )
 					player.enemySprite:play()
 				end
 				
-				--enemy movement
 				if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
 					--approach player
 					player.x=player.x + (p.x-player.x)/hyp
