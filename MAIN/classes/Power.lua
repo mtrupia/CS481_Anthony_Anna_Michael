@@ -85,9 +85,6 @@ function NewPower( props )
 	end
 
 	function power:enemyShoot (enemy, target)
-		--if enemyShootCount < enemyShootMax then
-		--enemyShootCount=enemyShootCount + 1
-		
 		audio.play( ShootSound )
 		n = n + 1
 		powers[n] = display.newImage(powerImage, enemy.x, enemy.y)
@@ -106,11 +103,9 @@ function NewPower( props )
 			x = x + 1
 			if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "enemyPower") then
 				powers[alivePowers[x]]:removeSelf()
-				--enemyShootCount=enemyShootCount-1
 			end
 		end
 		timer.performWithDelay(powerLife, delete)
-		--end
 	end
 	
 	return power
