@@ -1,4 +1,4 @@
-module (..., package.seeall)
+local class = require 'classes.middleclass'
 -- Image Variables for Items
 local healthImage = "images/Health.png"
 local manaImage = "images/Mana.png"
@@ -6,62 +6,190 @@ local keyImage = "images/Key.png"
 local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
--- Variable to store Items
-local item
-function newItem ( index, type, x, y )
-  item = display.newGroup()
-  item.x      = x or 0
-  item.y      = y or 0
-  item.type   = type
-  item.index  = index or 0
-  item.myName = type
-  function item:spawn()
-    item.image  = item.findImage()
-    item.img    = display.newImage(item.image)
-    item:insert(item.img)
-    if(item.type == "bomb") then
-      item.img:scale(.5,.5)
-      physics.addBody( item, "dynamic")
-    elseif (item.type == "bombP") then
+local composer = require("composer")
+---------------------------------------------------------------------------------
+-- Class: Item
+-- Functions: initialize, test
+---------------------------------------------------------------------------------
+local Item = class('Item')
+local sb
+function Item:initialize( x, y, name )
+  self.x = x
+  self.y = y
+  self.myName = name
+  return self
+end
 
-      item.img:scale(.3,.3)
-      physics.addBody(item, "static")
+function Item:test()
+  print("Name  = " .. self.myName)
+  print("X     = " .. self.x)
+  print("Y     = " .. self.y)
+  --Loop that prints members of the object
+  for key,value in pairs(self) do
+    print("found member " .. key);
+  end
+end
+---------------------------------------------------------------------------------
+-- End of Class: Item
+---------------------------------------------------------------------------------
 
-    else
-      physics.addBody(item, "static")
-    end
-  end
-  function item:destroy()
-    if item then
-      item:removeSelf()
-    end
-  end
-  function item:getDistance(objA, objB)
-    if objA and objB then
-      local xDist = objB.x - objA.x
-      local yDist = objB.y - objA.y
+---------------------------------------------------------------------------------
+-- Subclass: HP
+-- Functions: initialize, spawn, collision
+---------------------------------------------------------------------------------
+HP = class('HP', Item)
+function HP:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "HP")
+  return HP.spawn(self)
+end
 
-      return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
-    end
-    return nil
+function HP.spawn(self)
+  local pot = self
+  pot.image = display.newImage(healthImage, pot.x, pot.y)
+  physics.addBody(pot.image, "static")
+  pot.image.collision = function(self,event)
+    HP.collision(self,event)
   end
+  self.image:addEventListener("collision")
+  return pot.image
+end
 
-  function item:findImage()
-    local image
-    if( item.type == "hp") then
-      image = healthImage
-    elseif (item.type == "mana") then
-      image = manaImage
-    elseif (item.type == "key") then
-      image = keyImage
-    elseif (item.type == "door") then
-      image = doorImage
-    elseif (item.type == "fdoor") then
-      image = fdoorImage
-    elseif (item.type == "bomb" or item.type == "bombP") then
-      image = bombImage
-    end
-    return image
+function HP.collision(self, event)
+  if(event.other.myName == "player") then
+    display.remove(self)
+    sb:setHP(Player,50)
   end
-  return item
+end
+---------------------------------------------------------------------------------
+-- End of SubClass: HP
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+-- Subclass: Mana
+-- Functions: initialize, spawn, collision
+---------------------------------------------------------------------------------
+Mana = class('Mana', Item)
+function Mana:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "Mana")
+  return Mana.spawn(self)
+end
+
+function Mana.spawn(self)
+  local pot = self
+  pot.image = display.newImage(manaImage, pot.x, pot.y)
+  physics.addBody(pot.image, "static")
+  pot.image.collision = function(self,event)
+    Mana.collision(self,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function Mana.collision(self, event)
+  if(event.other.myName == "player") then
+    display.remove(self)
+    sb:setMana(Player,50)
+  end
+end
+---------------------------------------------------------------------------------
+-- End of SubClass: Mana
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+-- Subclass: Key
+-- Functions: initialize, spawn, collision
+---------------------------------------------------------------------------------
+
+Key = class('Key', Item)
+function Key:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "Key")
+  return Key.spawn(self)
+end
+
+function Key.spawn(self)
+  local pot = self
+  pot.image = display.newImage(keyImage, pot.x, pot.y)
+  physics.addBody(pot.image, "static")
+  pot.image.collision = function(self,event)
+    Key.collision(self,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function Key.collision(self, event)
+  if(event.other.myName == "player") then
+    display.remove(self)
+    sb.key.isVisible = true
+  end
+end
+---------------------------------------------------------------------------------
+-- End of SubClass: Key
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+-- Subclass: Door
+-- Functions: initialize, spawn, collision
+---------------------------------------------------------------------------------
+Door = class('Door', Item)
+function Door:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "Door")
+  return Door.spawn(self)
+end
+
+function Door.spawn(self)
+  local pot = self
+  pot.image = display.newImage(doorImage, pot.x, pot.y)
+  physics.addBody(pot.image, "static")
+  pot.image.collision = function(self,event)
+    Door.collision(self,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function Door.collision(self, event)
+  if(event.other.myName == "player" and sb.key.isVisible) then
+    sb.key.isVisible = false
+    display.remove(self)
+  end
+end
+---------------------------------------------------------------------------------
+-- End of SubClass:  Door
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+-- Subclass: FDoor
+-- Functions: initialize, spawn, collision
+---------------------------------------------------------------------------------
+FDoor = class('FDoor', Item)
+function FDoor:initialize(x,y, statusBar)
+  sb = statusBar
+  Item.initialize(self, x, y, "FDoor")
+  return FDoor.spawn(self)
+end
+
+function FDoor.spawn(self)
+  local pot = self
+  pot.image = display.newImage(fdoorImage, pot.x, pot.y)
+  physics.addBody(pot.image, "static")
+  pot.image.collision = function(self,event)
+    FDoor.collision(self,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function FDoor.collision(self, event)
+  if(event.other.myName == "player") then
+    sb.key.isVisible = false
+    display.remove(self)
+    --updatePlayerLevel()
+    --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
+    composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
+  end
 end
