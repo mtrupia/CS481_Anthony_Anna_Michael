@@ -186,6 +186,16 @@ function scene:initLevel(event)
 	assert(Player.sprite.dmgReady == false, "Error: Player dmgReady is Incorrect")
 	assert(Player.sprite.speed == 3, "Error: Player speed is Incorrect")
 	assert(Player.sprite.attReady == true, "Error: Player attReady is Incorrect")
+	local tester = Player.sprite.statusBar
+	assert(tester.healthPos.x == screenW - 460, "Error: Player.sprite.statusBar.healthPos.x is Incorrect")
+	assert(tester.healthPos.y == screenH - 300, "Error: Player.sprite.statusBar.healthPos.y is Incorrect")
+	assert(tester.healthPos.scaleX == 2, "Error: Player.sprite.statusBar.healthPos.scaleX is Incorrect")
+	assert(tester.healthPos.scaleY == 1, "Error: Player.sprite.statusBar.healthPos.scaleY is Incorrect")
+	assert(tester.manaPos.x == screenW - 335, "Error: Player.sprite.statusBar.manaPos.x is Incorrect")
+	assert(tester.manaPos.y == screenH - 300, "Error: Player.sprite.statusBar.manaPos.y is Incorrect")
+	assert(tester.manaPos.scaleX == 2, "Error: Player.sprite.statusBar.manaPos.scaleX is Incorrect")
+	assert(tester.manaPos.scaleY == 1, "Error: Player.sprite.statusBar.manaPos.scaleY is Incorrect")
+	assert(tester.target.name == "player", "Error: Player.sprite.statusBar.target.name is Incorrect")
 
 	function Joystick:move()
 		--Left
