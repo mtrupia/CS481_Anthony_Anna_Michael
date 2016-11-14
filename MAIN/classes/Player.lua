@@ -265,7 +265,7 @@ function NewPlayer ( props )
 					function allowShoot()
 						player.shootReady = true
 					end
-					timer.performWithDelay(1000, allowShoot, 1)
+					timer.performWithDelay(2500, allowShoot, 1)
 				end
 
 				if(player.x > p.x ) then
