@@ -51,19 +51,19 @@ local function setEnemyStats( e )
 	if t == "tank" then
 		e.speed		= 0.25
 		e.damage	= 10
-		e.hp		= 100
+		e.hp			= 100
 	elseif t == "ranger" then
 		e.speed		= 0.55
 		e.damage	= 20
-		e.hp		= 50
+		e.hp			= 50
 	elseif t == "trapper" then
 		e.speed		= 0.5
 		e.damage	= 10
-		e.hp		= 75
+		e.hp			= 75
 	elseif t == "chaser" then
 		e.speed		= 1
 		e.damage	= 10
-		e.hp		= 100
+		e.hp			= 100
 	end
 end
 
