@@ -8,8 +8,7 @@ local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
---local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
-local OpenPlayed = false
+local GameOverSound = audio.loadSound( "sounds/GameOver.wav")
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -40,7 +39,7 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	if (levelID > 3) then
+	if (levelID > 5) then
 		level = require('levels.1')
 	else
 		level = require('levels.' .. levelID)
@@ -63,12 +62,12 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		if(b.name == "hp") then b.name = HP end
-		if(b.name == "mana") then b.name = Mana end
-		if(b.name == "key") then b.name = Key end
-		if(b.name == "door") then b.name = Door end
-		if(b.name == "fdoor") then b.name = FDoor end
-		if(b.name == "bombP") then b.name = BombP end
+		if(b.name == "hp" or b.name == "HP") then b.name = HP end
+		if(b.name == "mana" or b.name == "Mana") then b.name = Mana end
+		if(b.name == "key" or b.name == "Key") then b.name = Key end
+		if(b.name == "door" or b.name == "Door") then b.name = Door end
+		if(b.name == "fdoor" or b.name == "FDoor") then b.name = FDoor end
+		if(b.name == "bombP" or b.name == "BombP") then b.name = BombP end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -237,22 +236,22 @@ pauseButton.y 		= 21
 pauseButton.alpha = 0.5
 sceneGroup:insert(pauseButton)
 -- bomb bombPlacer
-	playerLevel = require('levels.player').levels
+playerLevel = require('levels.player').levels
 
-	if playerLevel >= 2 then
-		shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
-		sceneGroup:insert(shieldPlacer)
-		shieldPlacer.img = display.newImage("images/shield.png", display.contentWidth - 50, display.contentHeight - 40)
-		shieldPlacer.img:scale(0.5,0.5)
-		sceneGroup:insert(shieldPlacer.img)
-	end
-	if playerLevel >= 3 then
-		bombPlacer = display.newCircle( display.contentWidth, display.contentHeight - 40, 20)
-		sceneGroup:insert(bombPlacer)
-		bombPlacer.img = display.newImage("images/Bomb.png", display.contentWidth, display.contentHeight - 40)
-		bombPlacer.img:scale(0.5,0.5)
-		sceneGroup:insert(bombPlacer.img)
-	end
+if playerLevel >= 2 then
+	shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
+	sceneGroup:insert(shieldPlacer)
+	shieldPlacer.img = display.newImage("images/shield.png", display.contentWidth - 50, display.contentHeight - 40)
+	shieldPlacer.img:scale(0.5,0.5)
+	sceneGroup:insert(shieldPlacer.img)
+end
+if playerLevel >= 3 then
+	bombPlacer = display.newCircle( display.contentWidth, display.contentHeight - 40, 20)
+	sceneGroup:insert(bombPlacer)
+	bombPlacer.img = display.newImage("images/Bomb.png", display.contentWidth, display.contentHeight - 40)
+	bombPlacer.img:scale(0.5,0.5)
+	sceneGroup:insert(bombPlacer.img)
+end
 end
 
 function scene:unPause()
@@ -270,6 +269,7 @@ end
 
 function beginMovement( event )
 	if (Player.sprite.health <= 0) then
+		audio.play(GameOverSound)
 		scene:leaveLvl()
 		return
 	end
