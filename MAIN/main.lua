@@ -26,9 +26,9 @@ _G.physics = require("physics")
 _G.worldCollisionFilter 		= {	categoryBits = 1, maskBits = 30 }
 _G.playerCollisionFilter 		= { categoryBits = 2, maskBits = 57 }
 _G.powerCollisionFilter 		= { categoryBits = 4, maskBits = 9 }
-_G.enemyCollisionFilter 		= { categoryBits = 8, maskBits = 15 }
+_G.enemyCollisionFilter 		= { categoryBits = 8, maskBits = 47 }
 _G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 3 }
-_G.itemCollisionFilter			= { categoryBits = 32, maskBits = 2 }
+_G.itemCollisionFilter			= { categoryBits = 32, maskBits = 10 }
 -- Classes 
 _G.StickLib 	= require( "classes.Analog" )
 _G.NpcLib		= require( "classes.Npc" )
