@@ -10,7 +10,7 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "images/Key.png"
+local bgImg = "images/blackBG.png"
 local titleImg = "images/gameTitle.png"
 
 local pauseState = "continue"
@@ -75,7 +75,7 @@ function scene:show( event )
         	end
         	continueButton:addEventListener( "touch", continueButton )
 		end
-    end
+    end 
 end
 
 function scene:hide( event )
@@ -101,7 +101,7 @@ function scene:hide( event )
 		if continueButton then
 			continueButton:removeEventListener( "touch", continueButton )
 		end
-    end
+    end 
 end
 
 
