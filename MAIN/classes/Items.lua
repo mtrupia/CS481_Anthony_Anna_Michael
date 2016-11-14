@@ -7,6 +7,11 @@ local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
 local composer = require("composer")
+
+local BombPSound = audio.loadSound("sounds/BombP.wav")
+local DoorSound = audio.loadSound("sounds/Door.wav")
+local FDoorSound = audio.loadSound("sounds/FDoor.wav")
+local HealthSound = audio.loadSound("sounds/Health.wav")
 ---------------------------------------------------------------------------------
 -- Class: Item
 -- Functions: initialize, test, getDistance
@@ -76,7 +81,7 @@ end
 function HP.collision(self, event)
   if(event.other.name == "player") then
     display.remove(self.image)
-
+    audio.play(HealthSound)
     self.exists = false
     sb:setHealth(100)
   end
@@ -184,6 +189,7 @@ function Door.collision(self, event)
   if(event.other.name == "player" and sb.sprite.key.isVisible) then
     sb.sprite.key.isVisible = false
     display.remove(self.image)
+    audio.play(DoorSound)
     self.exists = false
   end
 end
@@ -218,11 +224,12 @@ end
 function FDoor.collision(self, event)
   if(event.other.name == "player") then
     display.remove(self.image)
+    audio.play(FDoorSound)
     self.exists = false
     --updatePlayerLevel()
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
     ItemsList = nil
-    composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
+    composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
   end
 end
 ---------------------------------------------------------------------------------
@@ -281,6 +288,7 @@ function BombP.collision(self, event)
     sb.sprite.count = sb.sprite.count + 1
     sb.sprite.bomb.count.text = "x" .. sb.sprite.count
     display.remove(self.image)
+    audio.play(BombPSound)
     self.exists = false
   end
 end
