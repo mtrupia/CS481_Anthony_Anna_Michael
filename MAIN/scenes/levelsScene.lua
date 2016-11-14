@@ -9,7 +9,6 @@ local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
 --local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
-local OpenPlayed = false
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -40,7 +39,7 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	if (levelID > 3) then
+	if (levelID > 4) then
 		level = require('levels.1')
 	else
 		level = require('levels.' .. levelID)
@@ -63,12 +62,12 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
-		if(b.name == "hp") then b.name = HP end
-		if(b.name == "mana") then b.name = Mana end
-		if(b.name == "key") then b.name = Key end
-		if(b.name == "door") then b.name = Door end
-		if(b.name == "fdoor") then b.name = FDoor end
-		if(b.name == "bombP") then b.name = BombP end
+		if(b.name == "hp" or b.name == "HP") then b.name = HP end
+		if(b.name == "mana" or b.name == "Mana") then b.name = Mana end
+		if(b.name == "key" or b.name == "Key") then b.name = Key end
+		if(b.name == "door" or b.name == "Door") then b.name = Door end
+		if(b.name == "fdoor" or b.name == "FDoor") then b.name = FDoor end
+		if(b.name == "bombP" or b.name == "BombP") then b.name = BombP end
 		placeItem(b.name, b.x, b.y)
 	end
 end

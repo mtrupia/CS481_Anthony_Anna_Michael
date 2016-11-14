@@ -156,6 +156,16 @@ end
 local function damageEnemy(e, p)
 	if e.hasShield then
 		-- enemies with shields
+		if e.name == "enemy" then
+			e.hasShield = false
+			e:remove(e.Shield)
+		else
+			e.statusBar:setMana(-10)
+			if e.mana <= 0 then
+				e.hasShield = false
+				e:remove(e.Shield)
+			end
+		end
 	else
 		if e.name == "enemy" then
 			-- damage enemy

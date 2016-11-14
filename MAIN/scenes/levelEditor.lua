@@ -7,6 +7,7 @@
 local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
+local BoomSound = audio.loadSound( "sounds/Boom.wav" )
 
 ---------------------------------------------------------------------------------
 
@@ -16,14 +17,15 @@ physics.setGravity(0, 0)
 -- Vars
 local pauseImage
 local backGround
+
 local walls 
 local Player
 local Enemies
 local Items
 local Joystick
-local statusBar
+
 local pauseButton
-local placer
+
 local editType
 local editImg
 local editFilter
@@ -32,12 +34,15 @@ local editName
 local key
 local pos
 
+local e = {}
+local en = 1
+
 function scene:create( event )
 	sceneGroup = self.view
 end
 
 function scene:loadLevel()
-	level = require('levels.3')
+	level = require('levels.edit')
 	
 	Player.x = level.player[1].x
 	Player.y = level.player[1].y
@@ -56,12 +61,18 @@ function scene:loadLevel()
 	
 	for i = 1, #level.items do
 		local b = level.items[i]
+		if(b.name == "hp" or b.name == "HP") then b.name = HP end
+		if(b.name == "mana" or b.name == "Mana") then b.name = Mana end
+		if(b.name == "key" or b.name == "Key") then b.name = Key end
+		if(b.name == "door" or b.name == "Door") then b.name = Door end
+		if(b.name == "fdoor" or b.name == "FDoor") then b.name = FDoor end
+		if(b.name == "bombP" or b.name == "BombP") then b.name = BombP end
 		placeItem(b.name, b.x, b.y)
 	end
 end
 
 function scene:saveLevel() 
-	package.loaded['levels.4'] = nil
+	package.loaded['levels.edit'] = nil
 	local s = 'return {\n'
 
 	s = s .. '\tplayer = {\n'
@@ -91,7 +102,7 @@ function scene:saveLevel()
     for i = 1, Items.numChildren do
         local b = Items[i]
 		if b.x then
-			s = s .. '\t\t{name = \'' .. b.myName .. '\', x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
+			s = s .. '\t\t{name = \'' .. b.name .. '\', x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
 			if i < Items.numChildren then
 				s = s .. ',\n'
 			else
@@ -117,7 +128,7 @@ function scene:saveLevel()
 	
     s = s .. '}\n'
 	
-    local path = system.pathForFile('levels/3.lua', system.ResourceDirectory)
+    local path = system.pathForFile('levels/edit.lua', system.ResourceDirectory)
     local file = io.open(path, 'w')
     
 	if file then
@@ -125,7 +136,7 @@ function scene:saveLevel()
         io.close(file)
     end
     
-	print('level 3 saved')
+	print('edit lvl saved')
 end
 
 function scene:show( event )
@@ -148,7 +159,7 @@ function scene:show( event )
 			function pauseButton:touch ( event )
         		local phase = event.phase
         		if "ended" == phase then
-        			composer.gotoScene( "scenes.settingsScene", { effect = "fade", time = 300 } )
+        			composer.gotoScene( "scenes.settingsScene")
         		end
         	end
         	pauseButton:addEventListener( "touch", pauseButton )
@@ -157,20 +168,21 @@ function scene:show( event )
 end
 
 function scene:hide( event )
-    sceneGroup = self.view
-    local phase = event.phase
+	sceneGroup 		= self.view
+	local phase 	= event.phase
 
-    if event.phase == "will" then
+	if phase == "will" then
 		if pauseButton then
 			pauseButton:removeEventListener("touch", pauseButton)
-			pauseButton = nil
+			pauseButton = nil;
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
+			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Runtime:removeEventListener("mouse", onMouseEvent)
 			Runtime:removeEventListener("key", onKeyEvent)
 			Player:destroy()
-			Player = nil
+			Player = nil;
 		end
 		if Joystick then
 			Joystick:delete()
@@ -180,99 +192,94 @@ function scene:hide( event )
 			walls:removeSelf()
 			walls = nil
 		end
-		if Enemies then
-			Enemies:removeSelf()
-			Enemies = nil
-		end
 		if Items then
 			Items:removeSelf()
 			Items = nil
 		end
-		if editType then
-			editType:removeSelf()
-			editType = nil
+		if Enemies then
+			for n = 1, en, 1 do
+				if e[n] then
+					e[n]:destroy()
+					e[n] = nil
+				end
+			end
+			Enemies:removeSelf()
+			Enemies = nil
+			e = {}
+			en = 1
 		end
-		if placer then 
-			placer:removeSelf()
-			placer = nil
-		end
-    elseif phase == "did" then
-	
-    end 
-end
 
-function scene:destroy( event )
-	sceneGroup = self.view
+	elseif phase == "did" then
+	end
 end
 
 function beginMovement( event )
-	if (Player.hp <= 0) then
+	if (Player.sprite.health <= 0) then
 		scene:leaveLvl()
 		return
 	end
-
-	statusBar:toFront()
+	Player.sprite.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
 
 	--move world if outside border
-	if Player.x < borders-80 then	-- moving left
-		Player.x = borders-80
+	if Player.sprite.x < borders-80 then	-- moving left
+		Player.sprite.x = borders-80
 		for n = 1, walls.numChildren, 1 do
-			walls[n].x = walls[n].x + Player.speed
+			walls[n].x = walls[n].x + Player.sprite.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].x = Enemies[n].x + Player.speed
+			Enemies[n].x = Enemies[n].x + Player.sprite.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].x = Items[n].x + Player.speed
+				Items[n].x = Items[n].x + Player.sprite.speed
 			end
 		end
 	end
-	if Player.x > screenW-borders then	-- moving right
-		Player.x = screenW-borders
+	if Player.sprite.x > screenW-borders then	-- moving right
+		Player.sprite.x = screenW-borders
 
 		for n = 1, walls.numChildren, 1 do
-			walls[n].x = walls[n].x - Player.speed
+			walls[n].x = walls[n].x - Player.sprite.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].x = Enemies[n].x - Player.speed
+			Enemies[n].x = Enemies[n].x - Player.sprite.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].x = Items[n].x - Player.speed
+				Items[n].x = Items[n].x - Player.sprite.speed
 			end
 		end
 	end
-	if Player.y < borders then	-- moving up
-		Player.y = borders
+	if Player.sprite.y < borders then	-- moving up
+		Player.sprite.y = borders
 
 		for n = 1, walls.numChildren, 1 do
-			walls[n].y = walls[n].y + Player.speed
+			walls[n].y = walls[n].y + Player.sprite.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].y = Enemies[n].y + Player.speed
+			Enemies[n].y = Enemies[n].y + Player.sprite.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].y = Items[n].y + Player.speed
+				Items[n].y = Items[n].y + Player.sprite.speed
 			end
 		end
 	end
-	if Player.y > screenH-borders then	-- moving down
-		Player.y = screenH-borders
+	if Player.sprite.y > screenH-borders then	-- moving down
+		Player.sprite.y = screenH-borders
 
 		for n = 1, walls.numChildren, 1 do
-			walls[n].y = walls[n].y - Player.speed
+			walls[n].y = walls[n].y - Player.sprite.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].y = Enemies[n].y - Player.speed
+			Enemies[n].y = Enemies[n].y - Player.sprite.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].y = Items[n].y - Player.speed
+				Items[n].y = Items[n].y - Player.sprite.speed
 			end
 		end
 	end
@@ -397,25 +404,31 @@ function onMouseEvent( event )
 				elseif editType == Enemies then
 					placeEnemy(event.x, event.y)
 				elseif editType == Items then
-					newItem = ItemsLib.newItem(1, editName, event.x, event.y)
-					Items:insert(newItem)
-					newItem:spawn()
+					if(editName == "hp") then editName = HP end
+					if(editName == "mana") then editName = Mana end
+					if(editName == "key") then editName = Key end
+					if(editName == "door") then editName = Door end
+					if(editName == "fdoor") then editName = FDoor end
+					if(editName == "bombP") then editName = BombP end
+					placeItem(editName, event.x, event.y)
 				end
 			end
 		end
 	elseif event.isMiddleButtonDown then
 		id = 0
-		for n = 1, editType.numChildren, 1 do
-			x1 = editType[n].x
-			x2 = event.x
-			y1 = editType[n].y
-			y2 = event.y
-			
-			if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 30 then
-				id = n
+		if editType.numChildren > 0 then
+			for n = 1, editType.numChildren, 1 do
+				x1 = editType[n].x
+				x2 = event.x
+				y1 = editType[n].y
+				y2 = event.y
+				
+				if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 30 then
+					id = n
+				end
 			end
+			editType:remove(id)
 		end
-		editType:remove(id)
 	end
 end
 
@@ -424,35 +437,29 @@ function scene:initLevel( event )
 	bg = display.newImage(backGround)
 	bg.rotation = 90
 	sceneGroup:insert(bg)
-	-- Player
-	Player = PlayerLib.NewPlayer( {} )
-	sceneGroup:insert(Player)
-	Player:spawnPlayer()
-	-- Enemy
-	Enemies = display.newGroup()
-	sceneGroup:insert(Enemies)
 	-- Items
 	Items = display.newGroup()
 	sceneGroup:insert(Items)
-	-- StatusBar
-	statusBar = SBLib.iniStatusBar(Player)
-	sceneGroup:insert(statusBar)
-	Player.statusBar = statusBar
-	statusBar:iHPB(Player)
-	statusBar:iMPB(Player)
+	--Player
+	Player = NpcLib.new("player", {})
+	Player:spawn()
+	sceneGroup:insert(Player.sprite)
+	--Enemies
+	Enemies = display.newGroup()
+	sceneGroup:insert(Enemies)
 	
 	-- Joystick
 	Joystick = StickLib.NewStick(
 		{
 			x             = 10,
 			y             = screenH-(52),
-			thumbSize     = 20,
-			borderSize    = 32, 
-			snapBackSpeed = .2, 
+			thumbSize     = 40,
+			borderSize    = 32,
+			snapBackSpeed = .2,
 			R             = 0,
 			G             = 1,
 			B             = 1
-		} 
+		}
 	)
 	sceneGroup:insert(Joystick)
 	Joystick.alpha = 0.2
@@ -465,58 +472,70 @@ function scene:initLevel( event )
 	pauseButton.y = 21
 	pauseButton.alpha = 0.2
 	sceneGroup:insert(pauseButton)
-	-- bomb placer
-	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
-	sceneGroup:insert(placer)
-	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
-	placer.img:scale(0.5,0.5)
-	sceneGroup:insert(placer.img)
 end
 
 function createBomb(x, y)
-	local bomb = ItemsLib.newItem(1,"bomb",x, y)
-	Items:insert(bomb)
-	bomb:spawn()
-	
+	print("hi")
+	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
+	Items:insert(bomb.image)
+
 	function boom(item)
+		audio.play(BoomSound)
 		print("boom")
 		if(item) then
-			for n = 0, Enemies.numChildren, 1 do
-				if(Enemies[n] and item) then
-					local dis = item:getDistance(Enemies[n], item)
-					if(dis < 100) then
-						Enemies[n]:damage(100)
-						print("Hit Enemy: " .. n)
+			if Enemies then
+				for n = 1, en, 1 do
+					if(e[n] and item) then
+						if e[n].sprite then
+							if e[n].sprite[1] then
+								local dis = item:getDistance(e[n].sprite, item)
+								if(dis < 100) then
+									e[n]:attack(100)
+									print("Hit Enemy: " .. n)
+								end
+							end
+						end
 					end
 				end
 			end
-			if(item:getDistance(Player,item) < 100) then
-				print("Hit Player")
-				statusBar:dHPB(Player)
-				statusBar:dHPB(Player)
-				statusBar:dHPB(Player)
+			if Player and item then
+				if(item:getDistance(Player.sprite,item) < 100) then
+					print("Hit Player")
+					if Player.sprite.hasShield then
+						Player.sprite.statusBar:setMana(-30)
+
+						if Player.sprite.mana <= 0 then
+							Player.sprite.hasShield = false
+							Player.sprite:remove(Player.sprite.Shield)
+						end
+					else
+						Player.sprite.statusBar:setHealth(-30)
+					end
+				end
 			end
-			item:destroy()
+			if item then
+				item:destroy()
+			end
 		end
 	end
-	
-	timer.performWithDelay( 3000, 
-		function()
-			boom(bomb)
-		end, 
-		1)
+
+	timer.performWithDelay( 3000,
+	function()
+		boom(bomb)
+	end,
+	1)
 end
 
 function placeItem(type, x, y)
-	newItem = ItemsLib.newItem(1, type,x,y)
-	Items:insert(newItem)
-	newItem:spawn()
+	local item = type:new(x, y, Player.sprite.statusBar)
+	Items:insert(item.image)
 end
 
 function placeEnemy(t,z)
-	enemy = PlayerLib.NewPlayer( {x = t, y = z} )
-	enemy:spawnEnemy()
-	Enemies:insert(enemy)
+	e[en] = NpcLib.new( "enemy", {x = t, y = z} )
+	e[en]:spawn()
+	Enemies:insert(e[en].sprite)
+	en = en + 1
 end
 
 ---------------------------------------------------------------------------------
@@ -525,7 +544,6 @@ end
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
-scene:addEventListener( "destroy", scene )
 
 ---------------------------------------------------------------------------------
 

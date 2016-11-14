@@ -48,8 +48,7 @@ end
 function ability:use(type)
 	if type == "shield" then
 		-- if shield, then use 20 mana and apply shield to target
-		if self.target.mana > 20 and not self.target.hasShield then
-			self.target.statusBar:setMana(-20)
+		if self.target.mana > 0 and not self.target.hasShield then
 			self.target.hasShield = true
 			self.target.Shield = display.newCircle( self.target, 0, 5, 40 )
 			self.target.Shield:setFillColor(1, 1, 0)

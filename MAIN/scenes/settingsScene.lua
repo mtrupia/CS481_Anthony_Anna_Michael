@@ -52,7 +52,7 @@ function scene:show( event )
 			function createLevelButton:touch ( event )
 				local phase = event.phase
 				if "ended" == phase then
-					composer.gotoScene( "scenes.levelEditor" )
+					composer.gotoScene( "scenes.levelEditor" , { params = { } } )
 				end
 			end
 			createLevelButton:addEventListener( "touch", createLevelButton)

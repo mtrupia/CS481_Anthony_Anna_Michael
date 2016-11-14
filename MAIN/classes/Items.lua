@@ -64,6 +64,7 @@ end
 function HP.spawn(self)
   local pot = self
   pot.image = display.newImage(healthImage, pot.x, pot.y)
+  pot.image.name = pot.name
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     HP.collision(pot,event)
@@ -77,7 +78,7 @@ function HP.collision(self, event)
     display.remove(self.image)
 
     self.exists = false
-    sb:setHealth(50)
+    sb:setHealth(100)
   end
 end
 ---------------------------------------------------------------------------------
@@ -99,6 +100,7 @@ end
 function Mana.spawn(self)
   local pot = self
   pot.image = display.newImage(manaImage, pot.x, pot.y)
+  pot.image.name = pot.name
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     Mana.collision(pot,event)
@@ -111,7 +113,7 @@ function Mana.collision(self, event)
   if(event.other.name == "player") then
     display.remove(self.image)
     self.exists = false
-    sb:setMana(50)
+    sb:setMana(100)
   end
 end
 ---------------------------------------------------------------------------------
@@ -134,6 +136,7 @@ end
 function Key.spawn(self)
   local pot = self
   pot.image = display.newImage(keyImage, pot.x, pot.y)
+  pot.image.name = pot.name
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     Key.collision(pot,event)
@@ -168,6 +171,7 @@ end
 function Door.spawn(self)
   local pot = self
   pot.image = display.newImage(doorImage, pot.x, pot.y)
+  pot.image.name = pot.name
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     Door.collision(pot,event)
@@ -202,6 +206,7 @@ end
 function FDoor.spawn(self)
   local pot = self
   pot.image = display.newImage(fdoorImage, pot.x, pot.y)
+  pot.image.name = pot.name
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     FDoor.collision(pot,event)
@@ -238,6 +243,7 @@ end
 function Bomb.spawn(self)
   local pot = self
   pot.image = display.newImage(bombImage, pot.x, pot.y)
+  pot.image.name = pot.name
   pot.image:scale(.5,.5)
   physics.addBody(pot.image, "dynamic")
   return pot.image
@@ -260,6 +266,7 @@ end
 function BombP.spawn(self)
   local pot = self
   pot.image = display.newImage(bombImage, pot.x, pot.y)
+  pot.image.name = pot.name
   pot.image:scale(.3,.3)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
