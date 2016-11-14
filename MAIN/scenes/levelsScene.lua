@@ -15,7 +15,7 @@ local OpenPlayed = false
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "normal" )
 
 -- Vars
 local pauseImg

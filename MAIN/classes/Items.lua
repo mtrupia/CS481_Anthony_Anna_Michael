@@ -216,6 +216,7 @@ function FDoor.collision(self, event)
     self.exists = false
     --updatePlayerLevel()
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
+    ItemsList = nil
     composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
   end
 end

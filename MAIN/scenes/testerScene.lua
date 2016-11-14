@@ -29,7 +29,6 @@ local Joystick
 local levelID
 local pauseButton
 local Items
-local ItemsList = {}
 local Enemies
 local bombPlacer
 local shieldPlacer
@@ -134,6 +133,7 @@ function scene:initLevel(event)
 	sceneGroup:insert(Player.sprite)
 	-- Joystick
 	Joystick = {}
+	ItemsList = {}
 	-------------------------------
 	-- Unit Testing Begins
 	-------------------------------
