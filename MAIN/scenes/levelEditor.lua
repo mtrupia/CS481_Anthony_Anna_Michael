@@ -78,7 +78,7 @@ function scene:saveLevel()
 	s = s .. '\tplayer = {\n'
 	local b = Player
 	if b.x then
-		s = s .. '\t\t{x = ' .. math.floor(b.x) .. ', y = ' .. math.floor(b.y) .. '}'
+		s = s .. '\t\t{x = ' .. math.floor(b.sprite.x) .. ', y = ' .. math.floor(b.sprite.y) .. '}'
 		s = s .. '\n'
 	end
     s = s .. '\t},\n'

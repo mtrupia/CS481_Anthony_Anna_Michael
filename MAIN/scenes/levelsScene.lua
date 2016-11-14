@@ -39,7 +39,7 @@ function scene:create( event )
 end
 
 function scene:loadLevel()
-	if (levelID > 4) then
+	if (levelID > 5) then
 		level = require('levels.1')
 	else
 		level = require('levels.' .. levelID)
