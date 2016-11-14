@@ -26,6 +26,7 @@ local Joystick
 local levelID
 local pauseButton
 local Items
+local ItemList = {}
 local Enemies
 local statusBar
 local bombPlacer
@@ -402,6 +403,7 @@ end
 
 function placeItem(type, x, y)
 	local item = type:new(x,y,statusBar)
+	table.insert(ItemList, item)
 	Items:insert(item.image)
 end
 
