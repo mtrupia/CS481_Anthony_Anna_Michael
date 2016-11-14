@@ -278,7 +278,7 @@ function beginMovement( event )
 		scene:leaveLvl()
 		return
 	end
-
+	Player.sprite.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
@@ -482,7 +482,7 @@ function placeItem(type, x, y)
 end
 
 function placeEnemy(t,z)
-	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = "chaser"} )
+	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = "ranger"} )
 	e[en]:spawn()
 	Enemies:insert(e[en].sprite)
 	en = en + 1
