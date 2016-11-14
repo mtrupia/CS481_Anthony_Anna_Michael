@@ -8,7 +8,7 @@ local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
---local DoorOpenSound = audio.loadSound( "sounds/DoorOpen.wav" )
+local GameOverSound = audio.loadSound( "sounds/GameOver.wav")
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -236,22 +236,22 @@ pauseButton.y 		= 21
 pauseButton.alpha = 0.5
 sceneGroup:insert(pauseButton)
 -- bomb bombPlacer
-	playerLevel = require('levels.player').levels
+playerLevel = require('levels.player').levels
 
-	if playerLevel >= 2 then
-		shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
-		sceneGroup:insert(shieldPlacer)
-		shieldPlacer.img = display.newImage("images/shield.png", display.contentWidth - 50, display.contentHeight - 40)
-		shieldPlacer.img:scale(0.5,0.5)
-		sceneGroup:insert(shieldPlacer.img)
-	end
-	if playerLevel >= 3 then
-		bombPlacer = display.newCircle( display.contentWidth, display.contentHeight - 40, 20)
-		sceneGroup:insert(bombPlacer)
-		bombPlacer.img = display.newImage("images/Bomb.png", display.contentWidth, display.contentHeight - 40)
-		bombPlacer.img:scale(0.5,0.5)
-		sceneGroup:insert(bombPlacer.img)
-	end
+if playerLevel >= 2 then
+	shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
+	sceneGroup:insert(shieldPlacer)
+	shieldPlacer.img = display.newImage("images/shield.png", display.contentWidth - 50, display.contentHeight - 40)
+	shieldPlacer.img:scale(0.5,0.5)
+	sceneGroup:insert(shieldPlacer.img)
+end
+if playerLevel >= 3 then
+	bombPlacer = display.newCircle( display.contentWidth, display.contentHeight - 40, 20)
+	sceneGroup:insert(bombPlacer)
+	bombPlacer.img = display.newImage("images/Bomb.png", display.contentWidth, display.contentHeight - 40)
+	bombPlacer.img:scale(0.5,0.5)
+	sceneGroup:insert(bombPlacer.img)
+end
 end
 
 function scene:unPause()
@@ -269,6 +269,7 @@ end
 
 function beginMovement( event )
 	if (Player.sprite.health <= 0) then
+		audio.play(GameOverSound)
 		scene:leaveLvl()
 		return
 	end
