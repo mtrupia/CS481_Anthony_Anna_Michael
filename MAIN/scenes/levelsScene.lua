@@ -482,12 +482,13 @@ function placeItem(type, x, y)
 end
 
 function placeEnemy(t,z)
-	etype_number = math.random(1, 4)
-	if etype_number ==1 then
-		etype="chaser"
-	elseif etype_number ==2 then
+	etype_number = math.random(1, 10)
+
+	if etype_number <=2 then
 		etype="ranger"
-	elseif etype_number ==3 then
+	elseif etype_number >=3 and etype_number<=6 then
+		etype="chaser"
+	elseif etype_number >=7 and etype_number <= 8 then
 		etpye="tank"
 	else
 		etype="trapper"
