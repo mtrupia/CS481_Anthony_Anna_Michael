@@ -90,11 +90,10 @@ function ability:Shoot(event)
 		timer.performWithDelay(self.life, delete)
 		tTarget = nil
 	elseif self.target.name == "enemy" then
-		audio.play( ShootSound )
 		
 		n = n + 1
 		powers[n] = display.newImage(image, self.target.x, self.target.y)
-		physics.addBody( powers[n], { density=self.density, friction=self.friction, bounce=self.bounce, filter=enemyPowerCollisionFilter } )
+		physics.addBody( powers[n], { density=0.0000000001, friction=self.friction, bounce=self.bounce, filter=enemyPowerCollisionFilter } )
 		powers[n].name = "enemypower"
 		deltaX = event.x - self.target.x
 		deltaY = event.y - self.target.y
