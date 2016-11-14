@@ -37,7 +37,7 @@ function NewPower( props )
 			self:removeSelf()
 		end
 	end
-	
+
 	function power:Shield()
 		if player.mana > 20 and not player.hasShield then
 			player.statusBar:setMana(player, -20)
@@ -65,13 +65,13 @@ function NewPower( props )
 			powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 			alivePowers[n] = n
 			player.statusBar:setMana(player, -10)
-			
+
 			if player.hasShield and player.mana <= 0 then
 				player.hasShield = false
 				player:remove(player.Shield)
 			end
-			
-			
+
+
 			function delete()
 				x = x + 1
 				if (powers[alivePowers[x]] and powers[alivePowers[x]].myName == "power") then
@@ -88,14 +88,14 @@ function NewPower( props )
 		audio.play( ShootSound )
 		n = n + 1
 		powers[n] = display.newImage(powerImage, enemy.x, enemy.y)
-		physics.addBody( powers[n], { density=0.00000000001, friction=friction, bounce=bounce, filter=enemyPowerCollisionFilter } )		
+		physics.addBody( powers[n], { density=0.00000000001, friction=friction, bounce=bounce, filter=enemyPowerCollisionFilter } )
 		powers[n].myName = "enemyPower"
-		
+
 		deltaX=target.x - enemy.x
 		deltaY=target.y - enemy.y
 		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
-		
+
 		powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
 		alivePowers[n] = n
 
@@ -107,6 +107,6 @@ function NewPower( props )
 		end
 		timer.performWithDelay(powerLife, delete)
 	end
-	
+
 	return power
 end

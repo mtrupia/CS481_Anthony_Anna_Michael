@@ -244,7 +244,7 @@ function scene:initLevel(event)
 	placeItem(Key,320,100)
 	placeItem(Door,470,100)
 	placeItem(FDoor,570,100)
-	ItemList[1]:test()
+	--ItemList[1]:test()
 	--placeEnemy(100, 150)
 	function Joystick:move()
 		Player.x = Player.x - 1

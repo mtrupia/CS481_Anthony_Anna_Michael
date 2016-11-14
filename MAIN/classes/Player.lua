@@ -106,7 +106,7 @@ function NewPlayer ( props )
 		physics.addBody(player, {filter = enemyCollisionFilter})
 		player.isFixedRotation = true
 		Runtime:addEventListener("collision", onGlobalCollision)
-		
+
 		player.shootReady = true
 	end
 
@@ -223,7 +223,7 @@ function NewPlayer ( props )
 				event.object1.hit=true
 			end
 		end
-		
+
 	end
 
 		function player:visibility(p)
@@ -233,10 +233,10 @@ function NewPlayer ( props )
 
 			x2 = p.x
 			y2 = p.y
-			
+
 			xdist = math.abs(x1 - x2)
 			ydist = math.abs(y1 - y2)
-			
+
 			slope = ydist / xdist
 			inc = math.max(xdist, ydist) % 30
 			b = y1 - slope * x1
@@ -246,14 +246,14 @@ function NewPlayer ( props )
 				xchk = 30 * i / math.sqrt(slope * slope + 1)
 				ychk = slope * xchk + b
 			end
-			
+
 			if (math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400) and (arrChk == true) then
 				player.visible = true
 			else
 				player.visible = false
 			end
 		end
-		
+
 		function player:enemyMove( p )
 			player:visibility(p)
 			if player.visible then
@@ -267,7 +267,7 @@ function NewPlayer ( props )
 					end
 					timer.performWithDelay(1000, allowShoot, 1)
 				end
-				
+
 				if(player.x > p.x ) then
 					player.enemySprite.xScale = 1
 					player.enemySprite:play()
@@ -275,7 +275,7 @@ function NewPlayer ( props )
 					player.enemySprite.xScale = -1
 					player.enemySprite:play()
 				end
-				
+
 				if ( player[1] and p and player.visible and player.enemyType == "chaser" ) then
 					--approach player
 					player.x=player.x + (p.x-player.x)/hyp

@@ -21,7 +21,6 @@ _G.screenH 		= display.contentHeight
 _G.halfW 		= screenW/2
 _G.halfH 		= screenH/2
 _G.borders = 140			-- TODO: move this!
-
 -- Physics and filters
 _G.physics = require("physics")
 _G.worldCollisionFilter 	= {categoryBits = 1, maskBits = 30}
@@ -29,7 +28,7 @@ _G.playerCollisionFilter 	= { categoryBits = 2, maskBits = 26 }
 _G.powerCollisionFilter 	= { categoryBits = 4, maskBits = 29 }
 _G.enemyCollisionFilter 	= { categoryBits = 8, maskBits = 15 }
 _G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 7 }
--- Classes 
+-- Classes
 _G.StickLib 	= require("classes.lib_analog_stick")
 _G.PlayerLib	= require("classes.Player")
 _G.ItemsLib    	= require("classes.Items")
