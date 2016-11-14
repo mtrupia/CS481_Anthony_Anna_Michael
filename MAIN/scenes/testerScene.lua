@@ -1,14 +1,23 @@
 ---------------------------------------------------------------------------------
 --
--- levelsScene.lua	: Loads the levels of the game ( SO FAR ONLY 1 :( )
+-- levelsScene.lua	: Loads the levels of the game
 --
 ---------------------------------------------------------------------------------
-
 local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound("sounds/Boom.wav")
---require("classes.Items")
+
+local powerImage = "images/brick.png"
+local powers = {}
+local n = 0
+local alivePowers = {}
+local x = 0
+local powerLife = 1000
+local powerSpeed = 250
+local density		 = 3
+local friction = 0.500
+local bounce = 1
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -20,10 +29,13 @@ local pauseImg
 local backGround
 local walls
 local statusBar
-local Joystick
+local Joystick = {}
 local pauseButton
 local sceneGroup
 local placer
+local Items
+
+local ItemList = {}
 
 function scene:create( event )
 	sceneGroup = self.view
@@ -138,7 +150,7 @@ function beginMovement( event )
 	end
 
 	statusBar:toFront()
-	Joystick:toFront()
+	--Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
 	for n=1, Enemies.numChildren, 1 do
@@ -227,48 +239,89 @@ function scene:initLevel(event)
 	sceneGroup:insert(statusBar)
 	Player.statusBar = statusBar
 	-- UNIT TEST INITIALIZATION
-	placeItem(HP,100,100)
-	-- local health = HP:new(100,100, statusBar)
-	-- Items:insert(health.image)
-	local mana = Mana:new(200, 100, statusBar)
-	Items:insert(mana.image)
-	local key  = Key:new(300,100, statusBar)
-	Items:insert(key.image)
-	local door = Door:new(450,100, statusBar)
-	Items:insert(door.image)
-	local finalDoor = FDoor:new(550,100, statusBar)
-	Items:insert(finalDoor.image)
+	placeItem(HP,120,140)
+	placeItem(Mana,220,100)
+	placeItem(Key,320,100)
+	placeItem(Door,470,100)
+	placeItem(FDoor,570,100)
+	--ItemList[1]:test()
+	--placeEnemy(100, 150)
+	function Joystick:move()
+		Player.x = Player.x - 1
+		print(Player.x - 1)
+		-- if (Player.x > 61) then
+		-- 	Player.x = Player.x - 1
+		-- 	Player.x = math.floor(Player.x + 0.5)
+		-- elseif (Player.x == 61 and Player.y > 140) then
+		-- 	Player.y = Player.y - 1
+		-- 	Player.y = math.floor(Player.y + 0.5)
+		-- elseif (Player.x < 70) then
+		-- 	Player.x = Player.x + 1
+		-- end
+	end
+	function Joystick:delete()
+		print("delete")
+	end
+	function Joystick:getAngle()
+		if(Player.x > 60 and Player.y == 160) then
+			return 310
+		end
+		if (Player.x == 60) then
+			return 44
+		end
+		return 310
+	end
+	function Joystick:getMoving()
+		return true
+	end
 
-	-- Joystick
-	Joystick = StickLib.NewStick(
-	{
-		x             = 10,
-		y             = screenH-(52),
-		thumbSize     = 20,
-		borderSize    = 32,
-		snapBackSpeed = .2,
-		R             = 0,
-		G             = 1,
-		B             = 1
-	}
-)
-sceneGroup:insert(Joystick)
-Joystick.alpha = 0.2
--- Create some collision
-walls = display.newGroup()
-sceneGroup:insert(walls)
--- Pause Button Initialization
-pauseButton 			= display.newImage(pauseImg)
-pauseButton.x 		= display.contentWidth+20
-pauseButton.y 		= 21
-pauseButton.alpha = 0.5
-sceneGroup:insert(pauseButton)
--- bomb placer
-placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
-sceneGroup:insert(placer)
-placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
-placer.img:scale(0.5,0.5)
-sceneGroup:insert(placer.img)
+	local function Shoot()
+		local event = {}
+		event.x = Player.x - 10
+		event.y = Player.y
+		audio.play( ShootSound )
+		n = n + 1
+		powers[n] = display.newImage(powerImage, Player.x, Player.y)
+		physics.addBody( powers[n], { density=density, friction=friction, bounce=bounce, filter=powerCollisionFilter } )
+		powers[n].myName = "power"
+		deltaX = event.x - Player.x
+		deltaY = event.y - Player.y
+		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
+		powers[n]:setLinearVelocity( normDeltaX * powerSpeed, normDeltaY * powerSpeed )
+		alivePowers[n] = n
+		Player.statusBar:setMana(Player, -10)
+
+		if Player.hasShield and Player.mana <= 0 then
+			Player.hasShield = false
+			Player:remove(Player.Shield)
+		end
+
+		function delete()
+			x = x + 1
+			if (powers[alivePowers[x]]) then
+				powers[alivePowers[x]]:removeSelf()
+			end
+		end
+		timer.performWithDelay(powerLife, delete)
+		tTarget = nil
+	end
+	--Shoot()
+	-- Create some collision
+	walls = display.newGroup()
+	sceneGroup:insert(walls)
+	-- Pause Button Initialization
+	pauseButton 			= display.newImage(pauseImg)
+	pauseButton.x 		= display.contentWidth+20
+	pauseButton.y 		= 21
+	pauseButton.alpha = 0.5
+	sceneGroup:insert(pauseButton)
+	-- bomb placer
+	placer = display.newCircle( display.contentWidth - 40, display.contentHeight - 40, 20)
+	sceneGroup:insert(placer)
+	placer.img = display.newImage("images/Bomb.png", display.contentWidth - 40, display.contentHeight - 40)
+	placer.img:scale(0.5,0.5)
+	sceneGroup:insert(placer.img)
 end
 
 function scene:unPause()
@@ -349,25 +402,25 @@ end
 -- end
 
 
--- function placeEnemy(t,z)
--- 	enemy = PlayerLib.NewPlayer( {x = t, y = z} )
--- 	enemy:spawnEnemy()
--- 	Enemies:insert(enemy)
--- end
+function placeEnemy(t,z)
+	enemy = PlayerLib.NewPlayer( {x = t, y = z} )
+	enemy:spawnEnemy()
+	Enemies:insert(enemy)
+end
 
 function placeItem(type, x, y)
 	local item = type:new(x,y,statusBar)
+	table.insert(ItemList, item)
 	Items:insert(item.image)
 end
 
-	---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 
-	-- Listener setup
-	scene:addEventListener( "create", scene )
-	scene:addEventListener( "show", scene )
-	scene:addEventListener( "hide", scene )
-	scene:addEventListener( "destroy", scene )
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
-	---------------------------------------------------------------------------------
-
-	return scene
+---------------------------------------------------------------------------------
+return scene
