@@ -8,7 +8,6 @@
 
 local ability = {}
 local ability_mt = { __index = ability }
-
 -------------------------------------------------
 -- PRIVATE FUNCTIONS
 -------------------------------------------------
@@ -17,7 +16,7 @@ local image = "images/brick.png"
 
 -- sounds
 local ShootSound = audio.loadSound( "sounds/Shoot.wav" )
-
+local PoofSound = audio.loadSound( "sounds/Poof.wav" )
 -- controls creation and deletion of powers
 local powers = {}
 local n = 0
@@ -30,7 +29,7 @@ local x = 0
 --create new ability
 function ability.new( props )
 	local newAbility
-	
+
 	newAbility = {
 		life		= props.life or 1000,			-- how long the power shall stay alive
 		speed		= props.speed or 250,			-- how fast will this power move
@@ -39,7 +38,7 @@ function ability.new( props )
 		bounce 		= props.bounce or 1,			-- bounce of this power
 		target		= props.target					-- target of the power
 	}
-	
+
 	return setmetatable( newAbility, ability_mt )
 end
 
@@ -60,9 +59,12 @@ end
 -------------------------------------------------
 -- shoot the ability
 function ability:Shoot(event)
+	if "began" == event.phase and self.target.mana <= 0 and event.target == tTarget then
+		audio.play( PoofSound )
+	end
 	if "began" == event.phase and self.target.mana > 0 and event.target == tTarget then
 		audio.play( ShootSound )
-		
+
 		n = n + 1
 		powers[n] = display.newImage(image, self.target.x, self.target.y)
 		physics.addBody( powers[n], { density=self.density, friction=self.friction, bounce=self.bounce, filter=powerCollisionFilter } )
@@ -74,12 +76,12 @@ function ability:Shoot(event)
 		powers[n]:setLinearVelocity( normDeltaX * self.speed, normDeltaY * self.speed )
 		alivePowers[n] = n
 		self.target.statusBar:setMana(-10)
-		
+
 		if self.target.hasShield and self.target.mana <= 0 then
 			self.target.hasShield = false
 			self.target:remove(self.target.Shield)
 		end
-		
+
 		function delete()
 			x = x + 1
 			if (powers[alivePowers[x]]) then
@@ -89,7 +91,7 @@ function ability:Shoot(event)
 		timer.performWithDelay(self.life, delete)
 		tTarget = nil
 	elseif self.target.name == "enemy" then
-		
+
 		n = n + 1
 		powers[n] = display.newImage(image, self.target.x, self.target.y)
 		physics.addBody( powers[n], { density=0.0000000001, friction=self.friction, bounce=self.bounce, filter=enemyPowerCollisionFilter } )
@@ -100,7 +102,7 @@ function ability:Shoot(event)
 		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 		powers[n]:setLinearVelocity( normDeltaX * self.speed, normDeltaY * self.speed )
 		alivePowers[n] = n
-		
+
 		function delete()
 			x = x + 1
 			if (powers[alivePowers[x]]) then
