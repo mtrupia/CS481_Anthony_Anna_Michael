@@ -169,8 +169,8 @@ function Door.spawn(self)
 end
 
 function Door.collision(self, event)
-  if(event.other.name == "player" and sb.key.isVisible) then
-    sb.key.isVisible = false
+  if(event.other.name == "player" and sb.sprite.key.isVisible) then
+    sb.sprite.key.isVisible = false
     display.remove(self)
   end
 end
@@ -202,7 +202,6 @@ end
 
 function FDoor.collision(self, event)
   if(event.other.name == "player") then
-    sb.key.isVisible = false
     display.remove(self)
     --updatePlayerLevel()
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!

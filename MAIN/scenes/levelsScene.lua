@@ -428,7 +428,6 @@ function createBomb(x, y)
 	print("hi")
 	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
 	Items:insert(bomb.image)
-	bomb:spawn()
 
 	function boom(item)
 		audio.play(BoomSound)
@@ -483,7 +482,7 @@ function placeItem(type, x, y)
 end
 
 function placeEnemy(t,z)
-	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = "ranger"} )
+	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = "chaser"} )
 	e[en]:spawn()
 	Enemies:insert(e[en].sprite)
 	en = en + 1

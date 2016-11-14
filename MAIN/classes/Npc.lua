@@ -159,7 +159,7 @@ local function damageEnemy(e, p)
 	else
 		if e.name == "enemy" then
 			-- damage enemy
-			e.statusBar:setHealth(-50)
+			e.statusBar:setHealth(-100)
 		else
 			e.statusBar:setHealth(-10)
 		end
