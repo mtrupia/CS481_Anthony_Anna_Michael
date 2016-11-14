@@ -158,65 +158,65 @@ function beginMovement( event )
 	end
 
 	--move world if outside border
-	-- if Player.x < borders-80 then	-- moving left
-	-- 	Player.x = borders-80
-	-- 	for n = 1, walls.numChildren, 1 do
-	-- 		walls[n].x = walls[n].x + Player.speed
-	-- 	end
-	-- 	for n = 1, Enemies.numChildren, 1 do
-	-- 		Enemies[n].x = Enemies[n].x + Player.speed
-	-- 	end
-	-- 	for n = 0, Items.numChildren, 1 do
-	-- 		if(Items[n]) then
-	-- 			Items[n].x = Items[n].x + Player.speed
-	-- 		end
-	-- 	end
-	-- end
-	-- if Player.x > screenW-borders then	-- moving right
-	-- 	Player.x = screenW-borders
-	--
-	-- 	for n = 1, walls.numChildren, 1 do
-	-- 		walls[n].x = walls[n].x - Player.speed
-	-- 	end
-	-- 	for n = 1, Enemies.numChildren, 1 do
-	-- 		Enemies[n].x = Enemies[n].x - Player.speed
-	-- 	end
-	-- 	for n = 0, Items.numChildren, 1 do
-	-- 		if(Items[n]) then
-	-- 			Items[n].x = Items[n].x - Player.speed
-	-- 		end
-	-- 	end
-	-- end
-	-- if Player.y < borders then	-- moving up
-	-- 	Player.y = borders
-	--
-	-- 	for n = 1, walls.numChildren, 1 do
-	-- 		walls[n].y = walls[n].y + Player.speed
-	-- 	end
-	-- 	for n = 1, Enemies.numChildren, 1 do
-	-- 		Enemies[n].y = Enemies[n].y + Player.speed
-	-- 	end
-	-- 	for n = 0, Items.numChildren, 1 do
-	-- 		if(Items[n]) then
-	-- 			Items[n].y = Items[n].y + Player.speed
-	-- 		end
-	-- 	end
-	-- end
-	-- if Player.y > screenH-borders then	-- moving down
-	-- 	Player.y = screenH-borders
-	--
-	-- 	for n = 1, walls.numChildren, 1 do
-	-- 		walls[n].y = walls[n].y - Player.speed
-	-- 	end
-	-- 	for n = 1, Enemies.numChildren, 1 do
-	-- 		Enemies[n].y = Enemies[n].y - Player.speed
-	-- 	end
-	-- 	for n = 0, Items.numChildren, 1 do
-	-- 		if(Items[n]) then
-	-- 			Items[n].y = Items[n].y - Player.speed
-	-- 		end
-	-- 	end
-	-- end
+	if Player.x < borders-80 then	-- moving left
+		Player.x = borders-80
+		for n = 1, walls.numChildren, 1 do
+			walls[n].x = walls[n].x + Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].x = Enemies[n].x + Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].x = Items[n].x + Player.speed
+			end
+		end
+	end
+	if Player.x > screenW-borders then	-- moving right
+		Player.x = screenW-borders
+
+		for n = 1, walls.numChildren, 1 do
+			walls[n].x = walls[n].x - Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].x = Enemies[n].x - Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].x = Items[n].x - Player.speed
+			end
+		end
+	end
+	if Player.y < borders then	-- moving up
+		Player.y = borders
+
+		for n = 1, walls.numChildren, 1 do
+			walls[n].y = walls[n].y + Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].y = Enemies[n].y + Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].y = Items[n].y + Player.speed
+			end
+		end
+	end
+	if Player.y > screenH-borders then	-- moving down
+		Player.y = screenH-borders
+
+		for n = 1, walls.numChildren, 1 do
+			walls[n].y = walls[n].y - Player.speed
+		end
+		for n = 1, Enemies.numChildren, 1 do
+			Enemies[n].y = Enemies[n].y - Player.speed
+		end
+		for n = 0, Items.numChildren, 1 do
+			if(Items[n]) then
+				Items[n].y = Items[n].y - Player.speed
+			end
+		end
+	end
 end
 
 function scene:initLevel(event)
@@ -247,15 +247,17 @@ function scene:initLevel(event)
 	ItemList[1]:test()
 	--placeEnemy(100, 150)
 	function Joystick:move()
-		if (Player.x > 61) then
-			Player.x = Player.x - 1
-			Player.x = math.floor(Player.x + 0.5)
-		elseif (Player.x == 61 and Player.y > 140) then
-			Player.y = Player.y - 1
-			Player.y = math.floor(Player.y + 0.5)
-		elseif (Player.x < 70) then
-			Player.x = Player.x + 1
-		end
+		Player.x = Player.x - 1
+		print(Player.x - 1)
+		-- if (Player.x > 61) then
+		-- 	Player.x = Player.x - 1
+		-- 	Player.x = math.floor(Player.x + 0.5)
+		-- elseif (Player.x == 61 and Player.y > 140) then
+		-- 	Player.y = Player.y - 1
+		-- 	Player.y = math.floor(Player.y + 0.5)
+		-- elseif (Player.x < 70) then
+		-- 	Player.x = Player.x + 1
+		-- end
 	end
 	function Joystick:delete()
 		print("delete")
