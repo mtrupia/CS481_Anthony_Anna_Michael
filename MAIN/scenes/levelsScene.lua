@@ -278,7 +278,7 @@ function beginMovement( event )
 		scene:leaveLvl()
 		return
 	end
-
+	Player.sprite.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
