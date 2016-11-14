@@ -8,11 +8,10 @@ local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound("sounds/Boom.wav")
-local bun = system.getTimer()
-local bunS = bun
-local bunD = bun + 10000
-local bunO = true
-local count = 0
+local bun
+local bunS
+local bunD
+local bunO
 --require("classes.Items")
 ---------------------------------------------------------------------------------
 
@@ -29,6 +28,7 @@ local Joystick
 local levelID
 local pauseButton
 local Items
+local ItemsList = {}
 local Enemies
 local bombPlacer
 local shieldPlacer
@@ -99,6 +99,14 @@ function scene:hide( event )
 			Items:removeSelf()
 			Items = nil
 		end
+		if ItemsList then
+			for n = 1, #ItemsList, 1 do
+				if ItemsList[1] then
+					ItemsList[1]:destroy()
+					ItemsList[1] = nil
+				end
+			end
+		end
 		if Enemies then
 			for n = 1, en, 1 do
 				if e[n] then
@@ -134,14 +142,51 @@ function scene:initLevel(event)
 	-- Joystick
 	Joystick = {}
 	ItemsList = {}
+	bun = system.getTimer()
+	bunS = bun
+	bunD = bun + 10000
+	bunO = true
+	walls = display.newGroup()
+	sceneGroup:insert(walls)
+	crate = display.newImage(walls,"images/crate.png", 100, 100)
 	-------------------------------
 	-- Unit Testing Begins
 	-------------------------------
 	placeItem(Door,176,70)
+	placeEnemy(50,100)
+	-- Checks Initialization of Player and Items
+	assert(walls[1].x == 100, "Error: Wall X is Incorrect")
+	assert(walls[1].y == 100, "Error: Wall Y is Incorrect")
+	assert(e[1].sprite.x == 50, "Error: Enemy X is Incorrect")
+	assert(e[1].sprite.y == 100, "Error: Enemy Y is Incorrect")
+	assert(e[1].sprite.health == 100, "Error: Enemy health is Incorrect")
+	assert(e[1].sprite.name == "enemy", "Error: Enemy name is Incorrect")
+	assert(e[1].sprite.hasShield == false, "Error: Enemy hasShield is Incorrect")
+	assert(e[1].sprite.dmgReady == true, "Error: Enemy dmgReady is Incorrect")
+	assert(e[1].sprite.attReady == true, "Error: Enemy attReady is Incorrect")
+	-- These 3 Variables aren't passed to the sprite
+	assert(e[1].visible == false, "Error: Enemy visible is Incorrect")
+	assert(e[1].index == 0, "Error: Enemy index is Incorrect")
+	assert(e[1].enemyType == "chaser", "Error: Enemy enemyType is Incorrect")
+	-----------------------------------------------
+	assert(e[1].sprite.damage == 10, "Error: Enemy damage is Incorrect")
+	assert(e[1].sprite.speed == 1, "Error: Enemy speed is Incorrect")
+	assert(e[1].sprite.shootReady == true, "Error: Enemy shootReady is Incorrect")
 	assert(ItemsList[1].x == 176, "Error: Door X is Incorrect")
 	assert(ItemsList[1].y == 70, "Error: Door X is Incorrect")
+	assert(ItemsList[1].name == "Door", "Error: Door has wrong name")
 	assert(Player.sprite.x == 240, "Error: Player X is Incorrect")
 	assert(Player.sprite.y == 160, "Error: Player Y is Incorrect")
+	assert(Player.sprite.angle == 0, "Error: Player angle is Incorrect")
+	assert(Player.sprite.health == 100, "Error: Player health is Incorrect")
+	assert(Player.sprite.mana == 100, "Error: Player mana is Incorrect")
+	assert(Player.sprite.score == 0, "Error: Player score is Incorrect")
+	assert(Player.sprite.name == "player", "Error: Player name is Incorrect")
+	assert(Player.sprite.hasShield == false, "Error: Player hasShield is Incorrect")
+	assert(Player.sprite.dmgReady == false, "Error: Player dmgReady is Incorrect")
+	assert(Player.sprite.speed == 3, "Error: Player speed is Incorrect")
+	assert(Player.sprite.attReady == true, "Error: Player attReady is Incorrect")
+
 	function Joystick:move()
 		--Left
 		if(Player.sprite.x > 224 and Player.sprite.y == 160 and bunO) then
@@ -235,29 +280,33 @@ function beginMovement( event )
 		end
 		bun = system.getTimer()
 		if (bun > bunS + 600 and bun < bunS + 620) then
-			if(count == 1) then
+			if(#ItemsList == 1) then
 				placeItem(HP,176,159)
 				assert(ItemsList[2].x == 176, "Error: Health X is Incorrect")
 				assert(ItemsList[2].y == 159, "Error: Health Y is Incorrect")
+				assert(ItemsList[2].name == "HP", "Error: Health Pot has wrong name")
 			end
 
 		elseif (bun > bunS + 700 and bun < bunS + 720) then
-			if(count == 2) then
+			if(#ItemsList == 2) then
 				placeItem(Mana,300,141)
 				assert(ItemsList[3].x == 300, "Error: Mana X is Incorrect")
 				assert(ItemsList[3].y == 141, "Error: Mana Y is Incorrect")
+				assert(ItemsList[3].name == "Mana", "Error: Mana Pot has wrong name")
 			end
 		elseif (bun > bunS + 800 and bun < bunS + 820) then
-			if(count == 3) then
+			if(#ItemsList == 3) then
 				placeItem(Key, 350, 141)
 				assert(ItemsList[4].x == 350, "Error: Key X is Incorrect")
 				assert(ItemsList[4].y == 141, "Error: Key Y is Incorrect")
+				assert(ItemsList[4].name == "Key", "Error: Key has wrong name")
 			end
 		elseif(bun > bunS + 4000 and bun < bunS + 4020) then
-			if(count == 4) then
+			if(#ItemsList == 4) then
 				placeItem(FDoor, 350,141)
 				assert(ItemsList[5].x == 350, "Error: Final Door X is Incorrect")
 				assert(ItemsList[5].y == 141, "Error: Final Door Y is Incorrect")
+				assert(ItemsList[5].name == "FDoor", "Error: FDoor has wrong name")
 
 			end
 		end
@@ -266,8 +315,8 @@ function beginMovement( event )
 	for n=1, en, 1 do
 		if e[n] then
 			if e[n].sprite then
-				e[n].sprite.statusBar:move()
-				e[n]:move(Player)
+				--e[n].sprite.statusBar:move()
+				--e[n]:move(Player)
 			end
 		end
 	end
@@ -391,7 +440,6 @@ function placeItem(type, x, y)
 	local item = type:new(x,y,Player.sprite.statusBar)
 	Items:insert(item.image)
 	table.insert(ItemsList, item)
-	count = count + 1
 end
 function placeEnemy(t,z)
 	e[en] = NpcLib.new("enemy", {x = t, y = z, enemyType = "chaser"} )
