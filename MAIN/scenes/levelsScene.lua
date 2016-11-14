@@ -273,7 +273,7 @@ function beginMovement( event )
 		scene:leaveLvl()
 		return
 	end
-
+	Player.sprite.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
@@ -422,7 +422,18 @@ function placeItem(type, x, y)
 end
 
 function placeEnemy(t,z)
-	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = "chaser"} )
+	etype_number = math.random(1, 10)
+
+	if etype_number <=2 then
+		etype="ranger"
+	elseif etype_number >=3 and etype_number<=6 then
+		etype="chaser"
+	elseif etype_number >=7 and etype_number <= 8 then
+		etpye="tank"
+	else
+		etype="trapper"
+	end
+	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = etype} )
 	e[en]:spawn()
 	Enemies:insert(e[en].sprite)
 	en = en + 1
