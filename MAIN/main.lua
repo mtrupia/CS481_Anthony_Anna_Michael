@@ -24,10 +24,11 @@ _G.borders = 140			-- TODO: move this!
 -- Physics and filters
 _G.physics = require("physics")
 _G.worldCollisionFilter 		= {	categoryBits = 1, maskBits = 30 }
-_G.playerCollisionFilter 		= { categoryBits = 2, maskBits = 25 }
+_G.playerCollisionFilter 		= { categoryBits = 2, maskBits = 57 }
 _G.powerCollisionFilter 		= { categoryBits = 4, maskBits = 9 }
 _G.enemyCollisionFilter 		= { categoryBits = 8, maskBits = 15 }
 _G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 3 }
+_G.itemCollisionFilter			= { categoryBits = 32, maskBits = 2 }
 -- Classes 
 _G.StickLib 	= require( "classes.Analog" )
 _G.NpcLib		= require( "classes.Npc" )

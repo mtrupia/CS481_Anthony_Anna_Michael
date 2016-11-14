@@ -68,6 +68,7 @@ function scene:loadLevel()
 		if(b.name == "key") then b.name = Key end
 		if(b.name == "door") then b.name = Door end
 		if(b.name == "fdoor") then b.name = FDoor end
+		if(b.name == "bombP") then b.name = BombP end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -424,8 +425,9 @@ function updatePlayerLevel()
 end
 
 function createBomb(x, y)
-	local bomb = ItemsLib.newItem(1,"bomb",x, y)
-	Items:insert(bomb)
+	print("hi")
+	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
+	Items:insert(bomb.image)
 	bomb:spawn()
 
 	function boom(item)
@@ -476,7 +478,7 @@ function createBomb(x, y)
 end
 
 function placeItem(type, x, y)
-	local item = type:new(x, y)
+	local item = type:new(x, y, Player.sprite.statusBar)
 	Items:insert(item.image)
 end
 

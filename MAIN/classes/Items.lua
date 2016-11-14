@@ -17,12 +17,12 @@ local player
 function Item:initialize( x, y, name )
   self.x = x
   self.y = y
-  self.myName = name
+  self.name = name
   return self
 end
 
 function Item:test()
-  print("Name  = " .. self.myName)
+  print("Name  = " .. self.name)
   print("X     = " .. self.x)
   print("Y     = " .. self.y)
   --Loop that prints members of the object
@@ -63,7 +63,7 @@ end
 function HP.spawn(self)
   local pot = self
   pot.image = display.newImage(healthImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     HP.collision(self,event)
   end
@@ -72,9 +72,9 @@ function HP.spawn(self)
 end
 
 function HP.collision(self, event)
-  if(event.other.myName == "player") then
+  if(event.other.name == "player") then
     display.remove(self)
-    sb:setHP(Player,50)
+    sb:setHealth(50)
   end
 end
 ---------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ end
 function Mana.spawn(self)
   local pot = self
   pot.image = display.newImage(manaImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     Mana.collision(self,event)
   end
@@ -104,9 +104,9 @@ function Mana.spawn(self)
 end
 
 function Mana.collision(self, event)
-  if(event.other.myName == "player") then
+  if(event.other.name == "player") then
     display.remove(self)
-    sb:setMana(Player,50)
+    sb:setMana(50)
   end
 end
 ---------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ end
 function Key.spawn(self)
   local pot = self
   pot.image = display.newImage(keyImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     Key.collision(self,event)
   end
@@ -137,9 +137,9 @@ function Key.spawn(self)
 end
 
 function Key.collision(self, event)
-  if(event.other.myName == "player") then
+  if(event.other.name == "player") then
     display.remove(self)
-    sb.key.isVisible = true
+    sb.sprite.key.isVisible = true
   end
 end
 ---------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ end
 function Door.spawn(self)
   local pot = self
   pot.image = display.newImage(doorImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     Door.collision(self,event)
   end
@@ -169,7 +169,7 @@ function Door.spawn(self)
 end
 
 function Door.collision(self, event)
-  if(event.other.myName == "player" and sb.key.isVisible) then
+  if(event.other.name == "player" and sb.key.isVisible) then
     sb.key.isVisible = false
     display.remove(self)
   end
@@ -192,7 +192,7 @@ end
 function FDoor.spawn(self)
   local pot = self
   pot.image = display.newImage(fdoorImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     FDoor.collision(self,event)
   end
@@ -201,7 +201,7 @@ function FDoor.spawn(self)
 end
 
 function FDoor.collision(self, event)
-  if(event.other.myName == "player") then
+  if(event.other.name == "player") then
     sb.key.isVisible = false
     display.remove(self)
     --updatePlayerLevel()
@@ -248,7 +248,7 @@ function BombP.spawn(self)
   local pot = self
   pot.image = display.newImage(bombImage, pot.x, pot.y)
   pot.image:scale(.3,.3)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
     BombP.collision(self,event)
   end
@@ -257,9 +257,9 @@ function BombP.spawn(self)
 end
 
 function BombP.collision(self, event)
-  if(event.other.myName == "player") then
-    sb.count = sb.count + 1
-    sb.bomb.count.text = "x" .. sb.count
+  if(event.other.name == "player") then
+    sb.sprite.count = sb.sprite.count + 1
+    sb.sprite.bomb.count.text = "x" .. sb.sprite.count
     display.remove(self)
   end
 end
