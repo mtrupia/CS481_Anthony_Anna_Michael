@@ -55,6 +55,7 @@ end
 ---------------------------------------------------------------------------------
 HP = class('HP', Item)
 function HP:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "HP")
   return HP.spawn(self)
@@ -65,7 +66,7 @@ function HP.spawn(self)
   pot.image = display.newImage(healthImage, pot.x, pot.y)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    HP.collision(self,event)
+    HP.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
@@ -73,7 +74,9 @@ end
 
 function HP.collision(self, event)
   if(event.other.name == "player") then
-    display.remove(self)
+    display.remove(self.image)
+
+    self.exists = false
     sb:setHealth(50)
   end
 end
@@ -87,6 +90,7 @@ end
 ---------------------------------------------------------------------------------
 Mana = class('Mana', Item)
 function Mana:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Mana")
   return Mana.spawn(self)
@@ -97,7 +101,7 @@ function Mana.spawn(self)
   pot.image = display.newImage(manaImage, pot.x, pot.y)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    Mana.collision(self,event)
+    Mana.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
@@ -105,7 +109,8 @@ end
 
 function Mana.collision(self, event)
   if(event.other.name == "player") then
-    display.remove(self)
+    display.remove(self.image)
+    self.exists = false
     sb:setMana(50)
   end
 end
@@ -120,6 +125,7 @@ end
 
 Key = class('Key', Item)
 function Key:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Key")
   return Key.spawn(self)
@@ -130,7 +136,7 @@ function Key.spawn(self)
   pot.image = display.newImage(keyImage, pot.x, pot.y)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    Key.collision(self,event)
+    Key.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
@@ -138,7 +144,8 @@ end
 
 function Key.collision(self, event)
   if(event.other.name == "player") then
-    display.remove(self)
+    display.remove(self.image)
+    self.exists = false
     sb.sprite.key.isVisible = true
   end
 end
@@ -152,6 +159,7 @@ end
 ---------------------------------------------------------------------------------
 Door = class('Door', Item)
 function Door:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Door")
   return Door.spawn(self)
@@ -162,7 +170,7 @@ function Door.spawn(self)
   pot.image = display.newImage(doorImage, pot.x, pot.y)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    Door.collision(self,event)
+    Door.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
@@ -171,7 +179,8 @@ end
 function Door.collision(self, event)
   if(event.other.name == "player" and sb.sprite.key.isVisible) then
     sb.sprite.key.isVisible = false
-    display.remove(self)
+    display.remove(self.image)
+    self.exists = false
   end
 end
 ---------------------------------------------------------------------------------
@@ -184,6 +193,7 @@ end
 ---------------------------------------------------------------------------------
 FDoor = class('FDoor', Item)
 function FDoor:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "FDoor")
   return FDoor.spawn(self)
@@ -194,7 +204,7 @@ function FDoor.spawn(self)
   pot.image = display.newImage(fdoorImage, pot.x, pot.y)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    FDoor.collision(self,event)
+    FDoor.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
@@ -202,7 +212,8 @@ end
 
 function FDoor.collision(self, event)
   if(event.other.name == "player") then
-    display.remove(self)
+    display.remove(self.image)
+    self.exists = false
     --updatePlayerLevel()
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
     composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
@@ -217,6 +228,7 @@ end
 ---------------------------------------------------------------------------------
 Bomb = class('Bomb', Item)
 function Bomb:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Bomb")
   return Bomb.spawn(self)
@@ -238,6 +250,7 @@ end
 ---------------------------------------------------------------------------------
 BombP = class('BombP', Item)
 function BombP:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "BombP")
   return BombP.spawn(self)
@@ -249,7 +262,7 @@ function BombP.spawn(self)
   pot.image:scale(.3,.3)
   physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    BombP.collision(self,event)
+    BombP.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
@@ -259,6 +272,7 @@ function BombP.collision(self, event)
   if(event.other.name == "player") then
     sb.sprite.count = sb.sprite.count + 1
     sb.sprite.bomb.count.text = "x" .. sb.sprite.count
-    display.remove(self)
+    display.remove(self.image)
+    self.exists = false
   end
 end
