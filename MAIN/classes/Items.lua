@@ -7,6 +7,11 @@ local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
 local composer = require("composer")
+
+local BombPSound = audio.loadSound("sounds/BombP.wav")
+local DoorSound = audio.loadSound("sounds/Door.wav")
+local FDoorSound = audio.loadSound("sounds/FDoor.wav")
+local HealthSound = audio.loadSound("sounds/Health.wav")
 ---------------------------------------------------------------------------------
 -- Class: Item
 -- Functions: initialize, test, getDistance
@@ -17,12 +22,12 @@ local player
 function Item:initialize( x, y, name )
   self.x = x
   self.y = y
-  self.myName = name
+  self.name = name
   return self
 end
 
 function Item:test()
-  print("Name  = " .. self.myName)
+  print("Name  = " .. self.name)
   print("X     = " .. self.x)
   print("Y     = " .. self.y)
   --Loop that prints members of the object
@@ -55,6 +60,7 @@ end
 ---------------------------------------------------------------------------------
 HP = class('HP', Item)
 function HP:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "HP")
   return HP.spawn(self)
@@ -63,18 +69,21 @@ end
 function HP.spawn(self)
   local pot = self
   pot.image = display.newImage(healthImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    HP.collision(self,event)
+    HP.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
 end
 
 function HP.collision(self, event)
-  if(event.other.myName == "player") then
-    display.remove(self)
-    sb:setHP(Player,50)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    audio.play(HealthSound)
+    self.exists = false
+    sb:setHealth(100)
   end
 end
 ---------------------------------------------------------------------------------
@@ -87,6 +96,7 @@ end
 ---------------------------------------------------------------------------------
 Mana = class('Mana', Item)
 function Mana:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Mana")
   return Mana.spawn(self)
@@ -95,18 +105,20 @@ end
 function Mana.spawn(self)
   local pot = self
   pot.image = display.newImage(manaImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    Mana.collision(self,event)
+    Mana.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
 end
 
 function Mana.collision(self, event)
-  if(event.other.myName == "player") then
-    display.remove(self)
-    sb:setMana(Player,50)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    self.exists = false
+    sb:setMana(100)
   end
 end
 ---------------------------------------------------------------------------------
@@ -120,6 +132,7 @@ end
 
 Key = class('Key', Item)
 function Key:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Key")
   return Key.spawn(self)
@@ -128,18 +141,20 @@ end
 function Key.spawn(self)
   local pot = self
   pot.image = display.newImage(keyImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    Key.collision(self,event)
+    Key.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
 end
 
 function Key.collision(self, event)
-  if(event.other.myName == "player") then
-    display.remove(self)
-    sb.key.isVisible = true
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    self.exists = false
+    sb.sprite.key.isVisible = true
   end
 end
 ---------------------------------------------------------------------------------
@@ -152,6 +167,7 @@ end
 ---------------------------------------------------------------------------------
 Door = class('Door', Item)
 function Door:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Door")
   return Door.spawn(self)
@@ -160,18 +176,21 @@ end
 function Door.spawn(self)
   local pot = self
   pot.image = display.newImage(doorImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    Door.collision(self,event)
+    Door.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
 end
 
 function Door.collision(self, event)
-  if(event.other.myName == "player" and sb.key.isVisible) then
-    sb.key.isVisible = false
-    display.remove(self)
+  if(event.other.name == "player" and sb.sprite.key.isVisible) then
+    sb.sprite.key.isVisible = false
+    display.remove(self.image)
+    audio.play(DoorSound)
+    self.exists = false
   end
 end
 ---------------------------------------------------------------------------------
@@ -184,6 +203,7 @@ end
 ---------------------------------------------------------------------------------
 FDoor = class('FDoor', Item)
 function FDoor:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "FDoor")
   return FDoor.spawn(self)
@@ -192,21 +212,24 @@ end
 function FDoor.spawn(self)
   local pot = self
   pot.image = display.newImage(fdoorImage, pot.x, pot.y)
-  physics.addBody(pot.image, "static")
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    FDoor.collision(self,event)
+    FDoor.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
 end
 
 function FDoor.collision(self, event)
-  if(event.other.myName == "player") then
-    sb.key.isVisible = false
-    display.remove(self)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    audio.play(FDoorSound)
+    self.exists = false
     --updatePlayerLevel()
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
-    composer.gotoScene( "scenes.welcomeScene", { effect = "fade", time = 300 } )
+    ItemsList = nil
+    composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
   end
 end
 ---------------------------------------------------------------------------------
@@ -218,6 +241,7 @@ end
 ---------------------------------------------------------------------------------
 Bomb = class('Bomb', Item)
 function Bomb:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "Bomb")
   return Bomb.spawn(self)
@@ -226,6 +250,7 @@ end
 function Bomb.spawn(self)
   local pot = self
   pot.image = display.newImage(bombImage, pot.x, pot.y)
+  pot.image.name = pot.name
   pot.image:scale(.5,.5)
   physics.addBody(pot.image, "dynamic")
   return pot.image
@@ -239,6 +264,7 @@ end
 ---------------------------------------------------------------------------------
 BombP = class('BombP', Item)
 function BombP:initialize(x,y, statusBar)
+  self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "BombP")
   return BombP.spawn(self)
@@ -247,19 +273,22 @@ end
 function BombP.spawn(self)
   local pot = self
   pot.image = display.newImage(bombImage, pot.x, pot.y)
+  pot.image.name = pot.name
   pot.image:scale(.3,.3)
-  physics.addBody(pot.image, "static")
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
   pot.image.collision = function(self,event)
-    BombP.collision(self,event)
+    BombP.collision(pot,event)
   end
   self.image:addEventListener("collision")
   return pot.image
 end
 
 function BombP.collision(self, event)
-  if(event.other.myName == "player") then
-    sb.count = sb.count + 1
-    sb.bomb.count.text = "x" .. sb.count
-    display.remove(self)
+  if(event.other.name == "player") then
+    sb.sprite.count = sb.sprite.count + 1
+    sb.sprite.bomb.count.text = "x" .. sb.sprite.count
+    display.remove(self.image)
+    audio.play(BombPSound)
+    self.exists = false
   end
 end
