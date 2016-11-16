@@ -23,17 +23,18 @@ _G.halfH 		= screenH/2
 _G.borders = 140			-- TODO: move this!
 -- Physics and filters
 _G.physics = require("physics")
-_G.worldCollisionFilter 	= {categoryBits = 1, maskBits = 30}
-_G.playerCollisionFilter 	= { categoryBits = 2, maskBits = 26 }
-_G.powerCollisionFilter 	= { categoryBits = 4, maskBits = 29 }
-_G.enemyCollisionFilter 	= { categoryBits = 8, maskBits = 15 }
-_G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 7 }
+_G.worldCollisionFilter 		 = {	categoryBits = 1, maskBits = 30 }
+_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 57 }
+_G.powerCollisionFilter 		 = { categoryBits = 4, maskBits = 41 }
+_G.enemyCollisionFilter 		 = { categoryBits = 8, maskBits = 47 }
+_G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 35 }
+_G.itemCollisionFilter			 = { categoryBits = 32, maskBits = 30 }
 -- Classes
-_G.StickLib 	= require("classes.lib_analog_stick")
-_G.PlayerLib	= require("classes.Player")
-_G.ItemsLib    	= require("classes.Items")
-_G.PowerLib 	= require("classes.Power")
-_G.SBLib       	= require("classes.StatusBar")
+_G.StickLib 	 = require( "classes.Analog" )
+_G.NpcLib		   = require( "classes.Character" )
+_G.AbilityLib	 = require( "classes.Ability" )
+_G.BarLib		   = require( "classes.Bar" )
+_G.ItemsLib    = require("classes.Items")
 -- phone taps
 _G.tTarget = nil
 
