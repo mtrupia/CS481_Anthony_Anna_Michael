@@ -1,4 +1,4 @@
-local class = require 'classes.middleclass'
+local class = require 'libs.middleclass'
 -- Image Variables for Items
 local healthImage = "images/Health.png"
 local manaImage = "images/Mana.png"

@@ -6,6 +6,10 @@
 
 local sceneName = ...
 local composer = require( "composer" )
+require( "classes.Characters")
+require( "classes.Enemies")
+require( "classes.Items")
+require( "classes.Abilities")
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
 local GameOverSound = audio.loadSound( "sounds/GameOver.wav")
@@ -56,6 +60,7 @@ function scene:loadLevel()
 	for i = 1, #level.walls do
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
+		crate.name = "wall"
 		physics.addBody(crate, "static", { filter = editFilter } )
 		walls:insert(crate)
 	end
@@ -94,19 +99,19 @@ function scene:show( event )
 				if "began" == event.phase then
 					tTarget = bombPlacer
 				elseif "ended" == event.phase and event.target == tTarget then
-					if(Player.sprite.angle and Player.sprite.statusBar.sprite.count > 0) then
-						if(Player.sprite.angle <= 45 or Player.sprite.angle > 315) then
+					if(Player.angle and Player.statusBar.sprite.count > 0) then
+						if(Player.angle <= 45 or Player.angle > 315) then
 							createBomb(Player.sprite.x, Player.sprite.y - 60)
-						elseif(Player.sprite.angle <= 135 and Player.sprite.angle > 45) then
+						elseif(Player.angle <= 135 and Player.angle > 45) then
 							createBomb(Player.sprite.x + 60, Player.sprite.y)
-						elseif(Player.sprite.angle <= 225 and Player.sprite.angle > 135) then
+						elseif(Player.angle <= 225 and Player.angle > 135) then
 							createBomb(Player.sprite.x, Player.sprite.y + 60)
-						elseif(Player.sprite.angle <= 315 and Player.sprite.angle > 225) then
+						elseif(Player.angle <= 315 and Player.angle > 225) then
 							createBomb(Player.sprite.x - 60, Player.sprite.y)
 						end
 
-						Player.sprite.statusBar.sprite.count = Player.sprite.statusBar.sprite.count - 1
-						Player.sprite.statusBar.sprite.bomb.count.text = "x" .. Player.sprite.statusBar.sprite.count
+						Player.statusBar.sprite.count = Player.statusBar.sprite.count - 1
+						Player.statusBar.sprite.bomb.count.text = "x" .. Player.statusBar.sprite.count
 					end
 					tTarget = nil
 				end
@@ -118,7 +123,7 @@ function scene:show( event )
 				if event.phase == "began" then
 					tTarget = shieldPlacer
 				elseif event.phase == "ended" and event.target == tTarget then
-					Player:useAbility( "shield" )
+					Player:useAbility( Shield )
 					tTarget = nil
 				end
 			end
@@ -163,7 +168,7 @@ function scene:hide( event )
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
-			Player:destroy()
+			Player:kill()
 			Player = nil;
 		end
 		if Joystick then
@@ -181,7 +186,7 @@ function scene:hide( event )
 		if Enemies then
 			for n = 1, en, 1 do
 				if e[n] then
-					e[n]:destroy()
+					e[n]:kill()
 					e[n] = nil
 				end
 			end
@@ -203,12 +208,11 @@ function scene:initLevel( event )
 	levelID = event.params.levelID
 	-- Player
 	Items = display.newGroup()
-	Player = NpcLib.new("player", {} )
+	Player = Mollie:new("player", {})
 	sceneGroup:insert(Items)
 	-- Enemy
 	Enemies = display.newGroup()
 	sceneGroup:insert(Enemies)
-	Player:spawn()
 	sceneGroup:insert(Player.sprite)
 
 	-- Joystick
@@ -253,7 +257,6 @@ if playerLevel >= 3 then
 	sceneGroup:insert(bombPlacer.img)
 end
 end
-
 function scene:unPause()
 	physics.start()
 	Runtime:addEventListener("enterFrame", beginMovement)
@@ -268,18 +271,18 @@ function scene:restartLvl( id )
 end
 
 function beginMovement( event )
-	if (Player.sprite.health <= 0) then
+	if (Player.health <= 0) then
 		audio.play(GameOverSound)
 		scene:leaveLvl()
 		return
 	end
-	Player.sprite.statusBar.sprite:toFront()
+	Player.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
 	for n=1, en, 1 do
 		if e[n] then
-			if e[n].sprite then
+			if e[n].sprite.statusBar then
 				e[n].sprite.statusBar:move()
 				e[n]:move(Player)
 			end
@@ -290,14 +293,14 @@ function beginMovement( event )
 	if Player.sprite.x < borders-80 then	-- moving left
 		Player.sprite.x = borders-80
 		for n = 1, walls.numChildren, 1 do
-			walls[n].x = walls[n].x + Player.sprite.speed
+			walls[n].x = walls[n].x + Player.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].x = Enemies[n].x + Player.sprite.speed
+			Enemies[n].x = Enemies[n].x + Player.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].x = Items[n].x + Player.sprite.speed
+				Items[n].x = Items[n].x + Player.speed
 			end
 		end
 	end
@@ -305,14 +308,14 @@ function beginMovement( event )
 		Player.sprite.x = screenW-borders
 
 		for n = 1, walls.numChildren, 1 do
-			walls[n].x = walls[n].x - Player.sprite.speed
+			walls[n].x = walls[n].x - Player.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].x = Enemies[n].x - Player.sprite.speed
+			Enemies[n].x = Enemies[n].x - Player.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].x = Items[n].x - Player.sprite.speed
+				Items[n].x = Items[n].x - Player.speed
 			end
 		end
 	end
@@ -320,14 +323,14 @@ function beginMovement( event )
 		Player.sprite.y = borders
 
 		for n = 1, walls.numChildren, 1 do
-			walls[n].y = walls[n].y + Player.sprite.speed
+			walls[n].y = walls[n].y + Player.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].y = Enemies[n].y + Player.sprite.speed
+			Enemies[n].y = Enemies[n].y + Player.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].y = Items[n].y + Player.sprite.speed
+				Items[n].y = Items[n].y + Player.speed
 			end
 		end
 	end
@@ -335,14 +338,14 @@ function beginMovement( event )
 		Player.sprite.y = screenH-borders
 
 		for n = 1, walls.numChildren, 1 do
-			walls[n].y = walls[n].y - Player.sprite.speed
+			walls[n].y = walls[n].y - Player.speed
 		end
 		for n = 1, Enemies.numChildren, 1 do
-			Enemies[n].y = Enemies[n].y - Player.sprite.speed
+			Enemies[n].y = Enemies[n].y - Player.speed
 		end
 		for n = 0, Items.numChildren, 1 do
 			if(Items[n]) then
-				Items[n].y = Items[n].y - Player.sprite.speed
+				Items[n].y = Items[n].y - Player.speed
 			end
 		end
 	end
@@ -365,24 +368,20 @@ function updatePlayerLevel()
 end
 
 function createBomb(x, y)
-	print("hi")
 	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
 	Items:insert(bomb.image)
 
 	function boom(item)
 		audio.play(BoomSound)
-		print("boom")
 		if(item) then
 			if Enemies then
 				for n = 1, en, 1 do
 					if(e[n] and item) then
 						if e[n].sprite then
-							if e[n].sprite[1] then
-								local dis = item:getDistance(e[n].sprite, item)
-								if(dis < 100) then
-									e[n]:attack(100)
-									print("Hit Enemy: " .. n)
-								end
+							local dis = item:getDistance(e[n].sprite, item)
+							if(dis < 100) then
+								e[n]:damage()
+								print("Hit Enemy: " .. n)
 							end
 						end
 					end
@@ -399,7 +398,7 @@ function createBomb(x, y)
 							Player.sprite:remove(Player.sprite.Shield)
 						end
 					else
-						Player.sprite.statusBar:setHealth(-30)
+						Player.statusBar:setHealth(-30)
 					end
 				end
 			end
@@ -417,24 +416,26 @@ function createBomb(x, y)
 end
 
 function placeItem(type, x, y)
-	local item = type:new(x, y, Player.sprite.statusBar)
+	local item = type:new(x, y, Player.statusBar)
 	Items:insert(item.image)
 end
 
-function placeEnemy(t,z)
+function placeEnemy(x,y)
 	etype_number = math.random(1, 10)
 
 	if etype_number <=2 then
-		etype="ranger"
+		etype= Ranger
 	elseif etype_number >=3 and etype_number<=6 then
-		etype="chaser"
+		etype= Chaser
 	elseif etype_number >=7 and etype_number <= 8 then
-		etpye="tank"
+		etype= Tank
 	else
-		etype="trapper"
+		etype= Trapper
 	end
-	e[en] = NpcLib.new( "enemy", {x = t, y = z, enemyType = etype} )
-	e[en]:spawn()
+	e[en] = Chaser:new(x,y, Player)
+	for key,value in pairs(e[en]) do
+		print("found member " .. key);
+	end
 	Enemies:insert(e[en].sprite)
 	en = en + 1
 end

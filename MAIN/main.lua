@@ -30,11 +30,7 @@ _G.enemyCollisionFilter 		 = { categoryBits = 8, maskBits = 47 }
 _G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 35 }
 _G.itemCollisionFilter			 = { categoryBits = 32, maskBits = 30 }
 -- Classes
-_G.StickLib 	 = require( "classes.Analog" )
-_G.NpcLib		   = require( "classes.Character" )
-_G.AbilityLib	 = require( "classes.Ability" )
-_G.BarLib		   = require( "classes.Bar" )
-_G.ItemsLib    = require("classes.Items")
+_G.StickLib 	 = require( "libs.Analog" )
 -- phone taps
 _G.tTarget = nil
 
