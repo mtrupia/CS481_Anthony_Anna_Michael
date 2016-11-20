@@ -433,9 +433,6 @@ function placeEnemy(x,y)
 		etype= Trapper
 	end
 	e[en] = Chaser:new(x,y, Player)
-	for key,value in pairs(e[en]) do
-		print("found member " .. key);
-	end
 	Enemies:insert(e[en].sprite)
 	en = en + 1
 end
