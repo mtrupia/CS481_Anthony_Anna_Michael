@@ -1,6 +1,6 @@
 local class = require 'libs.middleclass'
 require 'classes.Bars'
-local HitSound = audio.loadSound("sounds/Hit.wav")
+local obj
 -- Enemy
 local enemySpriteOptions = {
 	width = 29,
@@ -39,8 +39,10 @@ function Enemy:visibility(player)
 	end
 end
 
-function Enemy:damage()
-	self.sprite.statusBar:setHealth(-100)
+function Enemy:Damage(dmg)
+	if self.sprite.health > 0 then
+		self.sprite.statusBar:setHealth(dmg)
+	end
 	if self.sprite.health <= 0 then
 		self:kill()
 	else
@@ -70,6 +72,7 @@ function Chaser:initialize(x,y, Player)
 	self.name = "Chaser"
 	player = Player
 	Enemy:initialize(x, y)
+
 	return Chaser.spawn(self)
 end
 
@@ -85,21 +88,16 @@ function Chaser.spawn(self)
 	physics.addBody(pot.sprite, {filter = enemyCollisionFilter})
 	pot.sprite.statusBar = eBar:new({target = self.sprite})
 	pot.sprite.statusBar:show()
+	obj = self
 	pot.sprite.collision = function(self, event)
 		Chaser.collision(pot,event)
 	end
-	pot.sprite:addEventListener("collision", Enemy.collision)
+	pot.sprite:addEventListener("collision", self.collision, self)
 	return pot.sprite
 end
 
-function Chaser.collision(self, event)
-	if event.other.name == "power" then
-		audio.play(HitSound)
-		if self.attReady then
-			self.attReady = false
-			Enemy.damage(self)
-		end
-	end
+function Chaser.collision()
+	
 end
 
 
@@ -113,6 +111,10 @@ function Chaser:move()
 		self.sprite.x = self.sprite.x + (player.sprite.x-self.sprite.x)/hyp
 		self.sprite.y = self.sprite.y + (player.sprite.y-self.sprite.y)/hyp
 	end
+end
+
+function Enemy:print()
+	print("Print Function Called")
 end
 
 -- Ranger
@@ -135,8 +137,8 @@ function Ranger:spawn()
 	self.sprite:play()
 	self.sprite.isFixedRotation = true
 	physics.addBody(self.sprite, {filter = enemyCollisionFilter})
-	self.power = AbilityLib.new({target = self.sprite, bounce = 0, friction = 0, density = 0, life = 600})
-	self.statusBar = BarLib.new({target = self.sprite})
+	--self.power = Ability.new({target = self.sprite, bounce = 0, friction = 0, density = 0, life = 600})
+	self.statusBar = Bar.new({target = self.sprite})
 	self.statusBar:show()
 	self.sprite.collision = function(self, event)
 		Ranger.collision(self,event)

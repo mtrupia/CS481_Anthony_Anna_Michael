@@ -51,7 +51,7 @@ function Mollie:spawn()
   self.statusBar = Bar:new({target = self})
   self.statusBar:show()
   -- Initialize Player Power
-  self.power = Ability:new({target = self})
+  self.power = Ability:new(self)
   local function Shoot(event)
     if self.power then
       self.power:Shoot(event)

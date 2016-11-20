@@ -33,10 +33,10 @@ local Enemies
 local bombPlacer
 local shieldPlacer
 
+local sceneGroup
+
 local e = {}
 local en = 1
-
-local sceneGroup
 
 function scene:create( event )
 	sceneGroup = self.view
