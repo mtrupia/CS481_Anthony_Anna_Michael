@@ -44,6 +44,7 @@ end
 
 -------------------------------------------------
 -- use an ability base on the type
+-- MOVE UNDER SHIELD SUBCLASS OF ABILITY
 function ability:use(type)
 	if type == "shield" then
 		-- if shield, then use 20 mana and apply shield to target
@@ -66,11 +67,11 @@ function ability:Shoot(event)
 		audio.play( ShootSound )
 
 		n = n + 1
-		powers[n] = display.newImage(image, self.target.x, self.target.y)
+		powers[n] = display.newImage(image, self.target.sprite.x, self.target.sprite.y)
 		physics.addBody( powers[n], { density=self.density, friction=self.friction, bounce=self.bounce, filter=powerCollisionFilter } )
 		powers[n].name = "power"
-		deltaX = event.x - self.target.x
-		deltaY = event.y - self.target.y
+		deltaX = event.x - self.target.sprite.x
+		deltaY = event.y - self.target.sprite.y
 		normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 		normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
 		powers[n]:setLinearVelocity( normDeltaX * self.speed, normDeltaY * self.speed )
@@ -91,7 +92,7 @@ function ability:Shoot(event)
 		timer.performWithDelay(self.life, delete)
 		tTarget = nil
 	elseif self.target.name == "enemy" then
-
+		-- MAKE ENEMY ABILITY CLASS
 		n = n + 1
 		powers[n] = display.newImage(image, self.target.x, self.target.y)
 		physics.addBody( powers[n], { density=0.0000000001, friction=self.friction, bounce=self.bounce, filter=enemyPowerCollisionFilter } )

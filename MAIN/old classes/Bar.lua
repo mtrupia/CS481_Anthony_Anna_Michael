@@ -59,7 +59,7 @@ local manaSpriteData = {
 -- create new bar/bars
 function bar.new ( props )
 	local newBar
-	
+
 	newBar = {
 		healthPos = {
 			x 		= props.healthX or screenW - 460,
@@ -76,7 +76,7 @@ function bar.new ( props )
 		target 		= props.target,
 		sprite		= props.sprite
 	}
-	
+
 	return setmetatable( newBar, bar_mt )
 end
 
@@ -108,6 +108,7 @@ function bar:show()
 			self.sprite.bomb = display.newImage(self.sprite, "images/Bomb.png", 420, 15)
 			self.sprite.bomb:scale(0.5, 0.5)
 			self.sprite.bomb.count = display.newText(self.sprite, "x".. self.sprite.count, 420, 15)
+			-- Enemy health bars
 		else
 			self.sprite.healthBar = display.newSprite( self.sprite, healthSpriteSheet, healthSpriteData )
 			self.sprite.healthBar.x = self.target.x
@@ -118,7 +119,7 @@ function bar:show()
 		end
 	else
 		self.sprite = display.newGroup()
-		
+
 		self:show()
 	end
 end
@@ -128,7 +129,7 @@ end
 function bar:setHealth( amt )
 	local player = self.target
 	player.health = player.health + amt
-	
+
 	if player.health < 0 then player.health = 0
 	elseif player.health > 100 then player.health = 100 end
 
@@ -143,7 +144,7 @@ end
 function bar:setMana( amt )
 	local player = self.target
 	player.mana = player.mana + amt
-	
+
 	if player.mana < 0 then player.mana = 0
 	elseif player.mana > 100 then player.mana = 100 end
 
@@ -165,7 +166,8 @@ end
 -------------------------------------------------
 -- move the sprites()
 function bar:move()
-	if self.sprite and self.target then
+	--temp fix to stop error [i added .x to the conditionals]
+	if self.sprite.x  and self.target.x then
 		self.sprite.healthBar.x = self.target.x
 		self.sprite.healthBar.y = self.target.y - 10
 	end
