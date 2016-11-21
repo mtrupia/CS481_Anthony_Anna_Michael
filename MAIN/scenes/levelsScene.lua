@@ -440,7 +440,7 @@ function placeEnemy(x,y)
 	else
 		etype= Trapper
 	end
-	e[en] = Chaser:new(x,y, Player)
+	e[en] = etype:new(x,y, Player)
 	Enemies:insert(e[en].sprite)
 	en = en + 1
 end
