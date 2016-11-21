@@ -6,6 +6,10 @@
 
 local sceneName = ...
 local composer = require( "composer" )
+require( "classes.Characters")
+require( "classes.Enemies")
+require( "classes.Items")
+require( "classes.Abilities")
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
 
@@ -44,8 +48,8 @@ end
 function scene:loadLevel()
 	level = require('levels.edit')
 	
-	Player.x = level.player[1].x
-	Player.y = level.player[1].y
+	Player.sprite.x = level.player[1].x
+	Player.sprite.y = level.player[1].y
 	
 	for i = 1, #level.enemies do
 		local b = level.enemies[i]
@@ -67,6 +71,7 @@ function scene:loadLevel()
 		if(b.name == "door" or b.name == "Door") then b.name = Door end
 		if(b.name == "fdoor" or b.name == "FDoor") then b.name = FDoor end
 		if(b.name == "bombP" or b.name == "BombP") then b.name = BombP end
+		if(b.name == "spikes" or b.name == "Spikes") then b.name = Spikes end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -325,6 +330,10 @@ function onKeyEvent( event )
 			print("bombs")
 			editType = Items
 			editName = "bombP"
+		elseif key == "9" then
+			print("spikes")
+			editType = Items
+			editName = "Spikes"
 		elseif key == "deleteBack" then
 			scene.loadLevel()
 		elseif key == "insert" then
@@ -410,6 +419,7 @@ function onMouseEvent( event )
 					if(editName == "door") then editName = Door end
 					if(editName == "fdoor") then editName = FDoor end
 					if(editName == "bombP") then editName = BombP end
+					if(editName == "Spikes") then editName = Spikes end
 					placeItem(editName, event.x, event.y)
 				end
 			end
@@ -441,8 +451,7 @@ function scene:initLevel( event )
 	Items = display.newGroup()
 	sceneGroup:insert(Items)
 	--Player
-	Player = NpcLib.new("player", {})
-	Player:spawn()
+	Player = Mollie:new("player", {})
 	sceneGroup:insert(Player.sprite)
 	--Enemies
 	Enemies = display.newGroup()
@@ -532,8 +541,7 @@ function placeItem(type, x, y)
 end
 
 function placeEnemy(t,z)
-	e[en] = NpcLib.new( "enemy", {x = t, y = z} )
-	e[en]:spawn()
+	e[en] = Chaser:new(t, z, Player)
 	Enemies:insert(e[en].sprite)
 	en = en + 1
 end

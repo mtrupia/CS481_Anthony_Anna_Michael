@@ -33,10 +33,10 @@ local Enemies
 local bombPlacer
 local shieldPlacer
 
+local sceneGroup
+
 local e = {}
 local en = 1
-
-local sceneGroup
 
 function scene:create( event )
 	sceneGroup = self.view
@@ -73,6 +73,7 @@ function scene:loadLevel()
 		if(b.name == "door" or b.name == "Door") then b.name = Door end
 		if(b.name == "fdoor" or b.name == "FDoor") then b.name = FDoor end
 		if(b.name == "bombP" or b.name == "BombP") then b.name = BombP end
+		if(b.name == "spikes" or b.name == "Spikes") then b.name = Spikes end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -99,7 +100,7 @@ function scene:show( event )
 				if "began" == event.phase then
 					tTarget = bombPlacer
 				elseif "ended" == event.phase and event.target == tTarget then
-					if(Player.angle and Player.statusBar.sprite.count > 0) then
+					if(Player.angle and Player.sprite.statusBar.sprite.count > 0) then
 						if(Player.angle <= 45 or Player.angle > 315) then
 							createBomb(Player.sprite.x, Player.sprite.y - 60)
 						elseif(Player.angle <= 135 and Player.angle > 45) then
@@ -110,8 +111,8 @@ function scene:show( event )
 							createBomb(Player.sprite.x - 60, Player.sprite.y)
 						end
 
-						Player.statusBar.sprite.count = Player.statusBar.sprite.count - 1
-						Player.statusBar.sprite.bomb.count.text = "x" .. Player.statusBar.sprite.count
+						Player.sprite.statusBar.sprite.count = Player.sprite.statusBar.sprite.count - 1
+						Player.sprite.statusBar.sprite.bomb.count.text = "x" .. Player.sprite.statusBar.sprite.count
 					end
 					tTarget = nil
 				end
@@ -168,6 +169,7 @@ function scene:hide( event )
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
+			Runtime:removeEventListener("enterFrame",  spike)
 			Player:kill()
 			Player = nil;
 		end
@@ -271,12 +273,12 @@ function scene:restartLvl( id )
 end
 
 function beginMovement( event )
-	if (Player.health <= 0) then
+	if (Player.sprite.health <= 0) then
 		audio.play(GameOverSound)
 		scene:leaveLvl()
 		return
 	end
-	Player.statusBar.sprite:toFront()
+	Player.sprite.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
@@ -380,7 +382,7 @@ function createBomb(x, y)
 						if e[n].sprite then
 							local dis = item:getDistance(e[n].sprite, item)
 							if(dis < 100) then
-								e[n]:damage()
+								e[n]:Damage(-50)
 								print("Hit Enemy: " .. n)
 							end
 						end
@@ -416,7 +418,13 @@ function createBomb(x, y)
 end
 
 function placeItem(type, x, y)
-	local item = type:new(x, y, Player.statusBar)
+	local item
+
+	if type == Spikes then
+		item = type:new(x, y, Player.sprite)
+	else
+		item = type:new(x, y, Player.sprite.statusBar)
+	end
 	Items:insert(item.image)
 end
 

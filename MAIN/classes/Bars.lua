@@ -145,8 +145,10 @@ function eBar:show()
 end
 
 function eBar:move()
-  if self.sprite.x and self.target.x then
-    self.sprite.healthBar.x = self.target.x
-    self.sprite.healthBar.y = self.target.y - 10
-  end
+	if self.sprite then
+	  if self.sprite.x and self.target.x then
+		self.sprite.healthBar.x = self.target.x
+		self.sprite.healthBar.y = self.target.y - 10
+	  end
+	 end
 end
