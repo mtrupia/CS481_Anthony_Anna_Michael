@@ -24,6 +24,23 @@ local playerSpriteData = {
 }
 ------------------------------------------------
 
+local function damagePlayer(p, e)
+	if p.hasShield then
+		p.statusBar:setMana(-e.damage)
+		if p.mana <= 0 then
+			p.hasShield = false
+			p:remove(p.Shield)
+		end
+	else
+		p.statusBar:setHealth(-e.damage)
+	end
+
+	e.dmgReady = false
+	function allowDmg()
+		e.dmgReady = true
+	end
+	timer.performWithDelay(250, allowDmg, 1)
+end
 
 Mollie = class('Mollie')
 function Mollie:initialize(props)
@@ -41,28 +58,50 @@ function Mollie:initialize(props)
 end
 
 function Mollie:spawn()
-  self.sprite = display.newSprite(playerSpriteSheet, playerSpriteData)
+  self.sprite = display.newGroup()
+  playerSprite = display.newSprite(self.sprite, playerSpriteSheet, playerSpriteData)
   self.sprite.x = self.x
   self.sprite.y = self.y
   self.sprite.name = self.name
-  self.sprite:setSequence("forward")
+  self.sprite.health = self.health
+  self.sprite.mana = self.mana
+  self.sprite.score = self.score
+  self.sprite.speed = self.speed
+  self.sprite.hasShield = self.hasShield
+  playerSprite:setSequence("forward")
   physics.addBody(self.sprite, {filter = playerCollisionFilter})
   -- Initialize Player's StatusBar
-  self.statusBar = Bar:new({target = self})
-  self.statusBar:show()
+  self.sprite.statusBar = Bar:new({target = self.sprite})
+  self.sprite.statusBar:show()
   -- Initialize Player Power
-  self.power = Ability:new(self)
+  self.power = Ability:new(self.sprite)
   local function Shoot(event)
     if self.power then
       self.power:Shoot(event)
     end
   end
   Runtime:addEventListener("touch", Shoot)
+  
+  self.sprite.collision = function (self, event) 
+	Mollie.collision(self, event)
+  end
+  
+  self.sprite:addEventListener("collision")
+end
+
+function Mollie.collision(self, event)
+	if event then
+		if(event.other.name == "Enemy") then
+			if event.other.dmgReady then
+				damagePlayer(self, event.other)
+			end
+		end
+	end
 end
 
 function Mollie:useAbility( type )
   if self.name == "player" then
-    self.power = type:new({target = self.sprite })
+    s = type:new({target = self.sprite })
   end
 end
 
@@ -73,10 +112,10 @@ function Mollie:kill()
       self.power = nil
     end
   end
-  if self then
-    if self.statusBar then
-      self.statusBar:destroy()
-      self.statusBar = nil
+  if self.sprite then
+    if self.sprite.statusBar then
+      self.sprite.statusBar:destroy()
+      self.sprite.statusBar = nil
     end
     display.remove(self.sprite)
   end
@@ -101,30 +140,12 @@ function Mollie:move( obj )
       seq = "left"
     end
 
-    if (not (seq == self.sprite.sequence) and moving) then
-      self.sprite:setSequence(seq)
+    if (not (seq == self.sprite[1].sequence) and moving) then
+      self.sprite[1]:setSequence(seq)
     end
 
     if moving then
-      self.sprite:play()
+      self.sprite[1]:play()
     end
   end
-end
-
-function Mollie:damagePlayer(e)
-  if self.hasShield then
-    self.statusBar:setMana(-e.damage)
-    if self.mana <= 0 then
-      self.hasShield = false
-      self:remove(self.Shield)
-    end
-  else
-    self.statusBar:setHealth(-e.damage)
-  end
-
-  e.dmgReady = false
-  function allowDmg()
-    e.dmgReady = true
-  end
-  timer.performWithDelay(500,allowDmg,1)
 end

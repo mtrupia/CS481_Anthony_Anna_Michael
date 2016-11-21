@@ -258,6 +258,48 @@ end
 ---------------------------------------------------------------------------------
 -- End of SubClass:  Bomb
 ---------------------------------------------------------------------------------
+
+Spikes = class('Spikes', Item)
+function Spikes:initialize(x, y, player)
+	self.exists = true
+	p = player
+	Item.initialize(self, x, y, "Spikes")
+	return Spikes.spawn(self)
+end
+
+function Spikes.spawn(self)
+	self.image = display.newImage("images/spikes.png", self.x, self.y)
+	self.image.name = self.name
+	
+	local function spike( event )
+		self:active(p)
+	end
+	
+	Runtime:addEventListener("enterFrame", spike)
+	
+	return self.image
+end
+
+function Spikes:active(p) 
+	local ready = false
+	local x1 = p.x
+	local y1 = p.y
+	local x2 = self.image.x
+	local y2 = self.image.y
+
+	if x2 and y2 and x1 and y1 then
+		if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 40 then
+			ready = true
+		end
+		
+		if ready then
+			if not p.hasShield then
+				p.statusBar:setHealth(-100)
+			end
+		end
+	end
+end
+
 ---------------------------------------------------------------------------------
 -- Subclass: BombP
 -- Functions: initialize, spawn
