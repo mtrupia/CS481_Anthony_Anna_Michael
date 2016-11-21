@@ -81,11 +81,11 @@ function Mollie:spawn()
     end
   end
   Runtime:addEventListener("touch", Shoot)
-  
-  self.sprite.collision = function (self, event) 
+
+  self.sprite.collision = function (self, event)
 	Mollie.collision(self, event)
   end
-  
+
   self.sprite:addEventListener("collision")
 end
 

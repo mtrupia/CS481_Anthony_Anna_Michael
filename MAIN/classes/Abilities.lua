@@ -44,7 +44,7 @@ function Ability:Shoot(event)
     local normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
     powers[n]:setLinearVelocity( normDeltaX * self.speed, normDeltaY * self.speed )
     alivePowers[n] = n
-	target.statusBar:setMana(-10)
+	--target.statusBar:setMana(-10)
     function delete()
       x = x + 1
       if powers[alivePowers[x]] then
@@ -52,14 +52,14 @@ function Ability:Shoot(event)
       end
     end
     timer.performWithDelay(self.life,delete)
-	
+
 	if target.hasShield then
 		if target.mana <= 0 then
 			target.hasShield = false
 			target:remove(target.Shield)
 		end
 	end
-	
+
     tTarget = nil
   end
 end
@@ -79,7 +79,7 @@ function Shield:initialize(props)
 
   print(props.target.name)
   self.target = props.target
-  
+
   self:use()
 end
 

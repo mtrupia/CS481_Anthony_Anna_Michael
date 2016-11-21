@@ -268,19 +268,19 @@ function Spikes:initialize(x, y, player)
 end
 
 function Spikes.spawn(self)
-	self.image = display.newImage("images/spikes.png", self.x, self.y)
+	self.image = display.newImage("images/spikes.PNG", self.x, self.y)
 	self.image.name = self.name
-	
+
 	local function spike( event )
 		self:active(p)
 	end
-	
+
 	Runtime:addEventListener("enterFrame", spike)
-	
+
 	return self.image
 end
 
-function Spikes:active(p) 
+function Spikes:active(p)
 	local ready = false
 	local x1 = p.x
 	local y1 = p.y
@@ -291,7 +291,7 @@ function Spikes:active(p)
 		if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 40 then
 			ready = true
 		end
-		
+
 		if ready then
 			if not p.hasShield then
 				p.statusBar:setHealth(-100)

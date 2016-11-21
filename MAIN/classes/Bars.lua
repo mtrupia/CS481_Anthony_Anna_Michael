@@ -25,16 +25,16 @@ local manaSpriteOptions = {
 }
 local manaSpriteSheet = graphics.newImageSheet( "images/manaBar.png", manaSpriteOptions)
 local manaSpriteData = {
-  { name = "0", start=1, count=1, time=0,   loopCount=1 },
-  { name = "10", start=2, count=1, time=0, loopCount=1 },
-  { name = "20", start=3, count=1, time=0, loopCount=1 },
-  { name = "30", start=4, count=1, time=0, loopCount=1 },
-  { name = "40", start=5, count=1, time=0, loopCount=1 },
+  { name = "0",  start=1, count=1,  time=0,   loopCount=1 },
+  { name = "10", start=2, count=1, time=0,   loopCount=1 },
+  { name = "20", start=3, count=1, time=0,   loopCount=1 },
+  { name = "30", start=4, count=1, time=0,   loopCount=1 },
+  { name = "40", start=5, count=1, time=0,   loopCount=1 },
   { name = "50", start=6, count=1, time=0,   loopCount=1 },
-  { name = "60", start=7, count=1, time=0, loopCount=1 },
-  { name = "70", start=8, count=1, time=0, loopCount=1 },
-  { name = "80", start=9, count=1, time=0, loopCount=1 },
-  { name = "90", start=10, count=1, time=0, loopCount=1 },
+  { name = "60", start=7, count=1, time=0,   loopCount=1 },
+  { name = "70", start=8, count=1, time=0,   loopCount=1 },
+  { name = "80", start=9, count=1, time=0,   loopCount=1 },
+  { name = "90", start=10, count=1, time=0,  loopCount=1 },
   { name = "100", start=11, count=1, time=0, loopCount=1 }
 }
 Bar = class ('Bar')
@@ -43,6 +43,7 @@ function Bar:initialize(props)
   self.manaPos = {}
   local healthPos = self.healthPos
   local manaPos = self.manaPos
+
 
   healthPos.x       = props.healthX or screenW - 460
   healthPos.y       = props.healthY or screenH - 300
