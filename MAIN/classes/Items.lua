@@ -6,6 +6,7 @@ local keyImage = "images/Key.png"
 local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
+local gemImage = "images/Gem1.png"
 local composer = require("composer")
 
 local BombPSound = audio.loadSound("sounds/BombP.wav")
@@ -400,6 +401,37 @@ function BombP.collision(self, event)
     sb.sprite.bomb.count.text = "x" .. sb.sprite.count
     display.remove(self.image)
     audio.play(BombPSound)
+    self.exists = false
+    event.other.score = event.other.score + self.score
+  end
+end
+
+
+Gem = class('Gem', Item)
+function Gem:initialize(x,y, statusBar)
+  self.exists = true
+  sb = statusBar
+  Item.initialize(self, x, y, "Gem")
+  self.score = 500
+  return Gem.spawn(self)
+end
+
+function Gem.spawn(self)
+  local pot = self
+  pot.image = display.newImage(gemImage, pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  pot.image.collision = function(self,event)
+    Gem.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function Gem.collision(self, event)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    audio.play(HealthSound)
     self.exists = false
     event.other.score = event.other.score + self.score
   end

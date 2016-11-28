@@ -20,7 +20,7 @@ local bunO
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
---physics.setDrawMode( "hybrid" )
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImg
 local backGround
@@ -147,16 +147,18 @@ function scene:initLevel(event)
 	ItemsList = {}
 	bun = system.getTimer()
 	bunS = bun
-	bunD = bun + 10000
+	bunD = bun + 15000
 	bunO = true
 	walls = display.newGroup()
 	sceneGroup:insert(walls)
 	crate = display.newImage(walls,"images/crate.png", 100, 100)
+
 	-------------------------------
 	-- Unit Testing Begins
 	-------------------------------
 	placeItem(Door,176,70)
 	placeEnemy(Chaser,50,100)
+
 	-- Checks Initialization of Player and Items
 	assert(walls[1].x == 100, "Error: Wall X is Incorrect")
 	assert(walls[1].y == 100, "Error: Wall Y is Incorrect")
@@ -197,23 +199,19 @@ function scene:initLevel(event)
 		if(Player.sprite.x > 224 and Player.sprite.y == 160 and bunO) then
 			Player.sprite.x = Player.sprite.x - 1
 			Player.sprite.x = math.floor(Player.sprite.x+0.5)
-			--print("1Player.sprite.x = " .. Player.sprite.x .. " Player.sprite.y = " .. Player.sprite.y)
 			-- Up
 		elseif(Player.sprite.x <= 225 and Player.sprite.y >= 141) then
 			Player.sprite.y = Player.sprite.y - 1
 			Player.sprite.y = math.floor(Player.sprite.y+0.5)
-			--print("2Player.sprite.y = " .. Player.sprite.y .. " Player.sprite.x = " .. Player.sprite.x)
 			bunO = false
 			-- Right
 		elseif(Player.sprite.y <= 141 and Player.sprite.x < 340) then
 			Player.sprite.x = Player.sprite.x + 1
 			Player.sprite.x = math.floor(Player.sprite.x+0.5)
-			--print("3Player.sprite.x = " .. Player.sprite.x .. " Player.sprite.y = " .. Player.sprite.y)
 			-- Down
 		elseif(Player.sprite.x <= 343 and Player.sprite.y < 160 and bunO == false) then
 			Player.sprite.y = Player.sprite.y + 1
 			Player.sprite.y = math.floor(Player.sprite.y+0.5)
-			--print("4Player.sprite.y = " .. Player.sprite.y .. " Player.sprite.x = " .. Player.sprite.x)
 			--Left
 		elseif(Player.sprite.x >  225 and Player.sprite.y == 160) then
 			Player.sprite.x = Player.sprite.x - 1
@@ -281,7 +279,8 @@ function beginMovement( event )
 			assert(ItemsList[2].exists == false, "Error: Health still Exists!")
 			assert(ItemsList[3].exists == false, "Error: Mana still Exists!")
 			assert(ItemsList[4].exists == false, "Error: Key still Exists!")
-			assert(ItemsList[5].exists == true, "Error: Final Door doesn't Exists!")
+			assert(ItemsList[5].exists == false, "Error: Gem still Exists!")
+			assert(ItemsList[6].exists == true, "Error: Final Door doesn't Exists!")
 		end
 		bun = system.getTimer()
 		if (bun > bunS + 600 and bun < bunS + 620) then
@@ -308,11 +307,17 @@ function beginMovement( event )
 			end
 		elseif(bun > bunS + 4000 and bun < bunS + 4020) then
 			if(#ItemsList == 4) then
+				placeItem(Gem, 350,141)
+				assert(ItemsList[5].x == 350, "Error: Gem X is Incorrect")
+				assert(ItemsList[5].y == 141, "Error: Gem Y is Incorrect")
+				assert(ItemsList[5].name == "Gem", "Error: Gem has wrong name")
+			end
+		elseif(bun > bunS + 8000 and bun < bunS + 8020) then
+			if(#ItemsList == 5) then
 				placeItem(FDoor, 350,141)
-				assert(ItemsList[5].x == 350, "Error: Final Door X is Incorrect")
-				assert(ItemsList[5].y == 141, "Error: Final Door Y is Incorrect")
-				assert(ItemsList[5].name == "FDoor", "Error: FDoor has wrong name")
-
+				assert(ItemsList[6].x == 350, "Error: Final Door X is Incorrect")
+				assert(ItemsList[6].y == 141, "Error: Final Door Y is Incorrect")
+				assert(ItemsList[6].name == "FDoor", "Error: FDoor has wrong name")
 			end
 		end
 		Player:move(Joystick)
@@ -443,7 +448,6 @@ end
 
 function placeItem(type, x, y)
 	local item = type:new(x,y,Player.sprite.statusBar)
-	print(item)
 	Items:insert(item.image)
 	table.insert(ItemsList, item)
 end
