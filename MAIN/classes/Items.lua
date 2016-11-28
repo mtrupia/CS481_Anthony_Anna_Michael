@@ -233,8 +233,7 @@ function FDoor.collision(self, event)
     display.remove(self.image)
     audio.play(FDoorSound)
     self.exists = false
-    --updatePlayerLevel()
-    --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
+    updatePlayerLevel()
     ItemsList = nil
     composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
 
@@ -306,6 +305,68 @@ function Spikes:active(p)
 			end
 		end
 	end
+end
+
+HealthUpgrade = class('HealthUpgrade', Item)
+function HealthUpgrade:initialize(x,y, player)
+  self.exists = true
+  self.score = 100
+  p = player
+  Item.initialize(self, x, y, "HealthUpgrade")
+  return HealthUpgrade.spawn(self)
+end
+
+function HealthUpgrade.spawn(self)
+  local pot = self
+  pot.image = display.newImage("images/HealthUpgrade.png", pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  pot.image.collision = function(self,event)
+    HealthUpgrade.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function HealthUpgrade.collision(self, event)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    self.exists = false
+	p.maxHealth = p.maxHealth + 50
+    p.statusBar:setHealth(p.maxHealth)
+    event.other.score = event.other.score + self.score
+  end
+end
+
+ManaUpgrade = class('ManaUpgrade', Item)
+function ManaUpgrade:initialize(x,y, player)
+  self.exists = true
+  self.score = 100
+  p = player
+  Item.initialize(self, x, y, "ManaUpgrade")
+  return ManaUpgrade.spawn(self)
+end
+
+function ManaUpgrade.spawn(self)
+  local pot = self
+  pot.image = display.newImage("images/ManaUpgrade.png", pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  pot.image.collision = function(self,event)
+    ManaUpgrade.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function ManaUpgrade.collision(self, event)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    self.exists = false
+	p.maxMana = p.maxMana + 50
+	p.statusBar:setMana(p.maxMana)
+    event.other.score = event.other.score + self.score
+  end
 end
 
 ---------------------------------------------------------------------------------

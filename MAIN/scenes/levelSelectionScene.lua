@@ -41,14 +41,24 @@ function scene:show( event )
 		for n = 1, levels, 1 do
 			local btn
 			if n<=5 then
+				local score = 0
+				local p = require('levels.player')
+				if n == 1 then score = p.level1.score 
+				elseif n == 2 then score = p.level2.score 
+				elseif n == 3 then score = p.level3.score 
+				elseif n == 4 then score = p.level4.score 
+				elseif n == 5 then score = p.level5.score end
+			
 				btn = display.newText(levelsButton, n, (n-1)*120, display.contentHeight/2, native.systemFont, 32)
+				btn.id = n
 				if (not(_G.score[n])) then
-					btnscore = display.newText(levelsButton,0, (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
+					btnscore = display.newText(levelsButton, score, (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
 				else
 					btnscore = display.newText(levelsButton, _G.score[n], (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
 				end
 			else
 				btn = display.newText(levelsButton, n, 120*(n-6), display.contentHeight/2+64, native.systemFont, 32)
+				btn.id = n
 			end
 		end
 		sceneGroup:insert(levelsButton)
@@ -61,7 +71,7 @@ function scene:show( event )
 				function level:touch ( event )
 					local phase = event.phase
 					if "ended" == phase then
-						composer.gotoScene( "scenes.levelsScene", { params = { levelID = i } } )
+						composer.gotoScene( "scenes.levelsScene", { params = { levelID = level.id } } )
 					end
 				end
 				level:addEventListener( "touch", level )

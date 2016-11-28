@@ -67,19 +67,13 @@ function Bar:show()
   local healthPos = self.healthPos
   local manaPos = self.manaPos
   -- Health Bar
-  sprite.healthBar = display.newSprite(sprite, healthSpriteSheet, healthSpriteData)
+  sprite.healthBar = display.newText(sprite,self.target.health .. " / " .. self.target.maxHealth, display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 24)
   sprite.healthBar.x = healthPos.x
   sprite.healthBar.y = healthPos.y
-  sprite.healthBar:scale(healthPos.scaleX, healthPos.scaleY)
-  sprite.healthBar:setSequence("100")
-  sprite.healthBar:play()
   -- Mana Bar
-  sprite.manaBar = display.newSprite(sprite, manaSpriteSheet, manaSpriteData)
+  sprite.manaBar = display.newText(sprite,self.target.mana .. " / " .. self.target.maxMana, display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 24)
   sprite.manaBar.x = manaPos.x
   sprite.manaBar.y = manaPos.y
-  sprite.manaBar:scale(manaPos.scaleX, manaPos.scaleY)
-  sprite.manaBar:setSequence("100")
-  sprite.manaBar:play()
 
   -- Score
   sprite.score = display.newText(self.target.score, screenW - 100, screenH - 305)
@@ -102,26 +96,25 @@ function Bar:setHealth(amt)
   player.health = player.health + amt
   -- Upper and Lower Bounds for Player Health
   if player.health < 0 then player.health = 0
-  elseif player.health > 100 then player.health = 100 end
+  elseif player.health >= player.maxHealth then player.health = player.maxHealth end
 
   if sprite then
-    sprite.healthBar:setSequence("" .. player.health)
-    sprite.healthBar:play()
+    sprite.healthBar.text = self.target.health .. " / " .. self.target.maxHealth
   end
 end
 
 function Bar:setMana(amt)
   local player = self.target
   local sprite = self.sprite
-  -- Update manaBar
+  -- Update mana
   player.mana = player.mana + amt
-
   -- Upper and Lower Bounds for Player mana
   if player.mana < 0 then player.mana = 0
-  elseif player.mana > 100 then player.mana = 100 end
+  elseif player.mana >= player.maxMana then player.mana = player.maxMana end
 
-  sprite.manaBar:setSequence("".. player.mana)
-  sprite.manaBar:play()
+  if sprite then
+    sprite.manaBar.text = self.target.mana .. " / " .. self.target.maxMana
+  end
 end
 
 function Bar:destroy()

@@ -37,8 +37,7 @@ return {
 		{name = 'Door', x = 1431, y = 169},
 		{name = 'Spikes', x = 663, y = -243},
 		{name = 'Spikes', x = 723, y = -243},
-		{name = 'Mana', x = 657, y = -551},
-		{name = 'HP', x = 725, y = -547}
+		{name = 'HealthUpgrade', x = 690, y = -547}
 	},
 	walls = {
 		{x = 0, y = 241},

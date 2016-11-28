@@ -66,6 +66,8 @@ function Mollie:spawn()
   self.sprite.health = self.health
   self.sprite.mana = self.mana
   self.sprite.score = self.score
+  self.sprite.maxHealth = self.health
+  self.sprite.maxMana = self.mana
   self.sprite.speed = self.speed
   self.sprite.hasShield = self.hasShield
   playerSprite:setSequence("forward")

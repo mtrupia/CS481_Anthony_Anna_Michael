@@ -85,6 +85,7 @@ function Enemy:spawn()
 	self.sprite.health = self.health
 	self.sprite.damage = self.damage
 	self.sprite.speed  = self.speed
+	self.sprite.maxHealth = self.health
 	self.sprite.dmgReady = true
 	self.sprite.name = "Enemy"
 	self.sprite.score = 100
