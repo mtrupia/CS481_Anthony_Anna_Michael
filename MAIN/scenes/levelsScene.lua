@@ -295,7 +295,17 @@ end
 function beginMovement( event )
 	if (Player.sprite.health <= 0) then
 		audio.play(GameOverSound)
-		Player.sprite.score = 0
+		if levelID == 1 then
+			Player.sprite.score = require('levels.player').level1.score
+		elseif levelID == 2 then
+			Player.sprite.score = require('levels.player').level2.score
+		elseif levelID == 3 then
+			Player.sprite.score = require('levels.player').level3.score
+		elseif levelID == 4 then
+			Player.sprite.score = require('levels.player').level4.score
+		elseif levelID == 5 then
+			Player.sprite.score = require('levels.player').level5.score
+		end
 		scene:leaveLvl()
 		return
 	end
