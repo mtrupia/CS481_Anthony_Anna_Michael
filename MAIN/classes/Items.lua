@@ -39,12 +39,14 @@ function Item:test()
 end
 
 function Item:getDistance(a)
-  if self and a then
-    local xDist = a.x - self.x
-    local yDist = a.y - self.y
-    return math.sqrt( (xDist ^ 2) + (yDist^2) )
+  if self.image and a then
+	if a.x and self.image.x then
+		local xDist = a.x - self.image.x
+		local yDist = a.y - self.image.y
+		return math.sqrt( (xDist ^ 2) + (yDist^2) )
+	end
   end
-  return nil
+  return 1000000
 end
 
 function Item:destroy()
