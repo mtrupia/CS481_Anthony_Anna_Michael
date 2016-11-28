@@ -446,6 +446,10 @@ function createBomb(x, y)
 	1)
 end
 
+function updatePlayerLevel()
+
+end
+
 function placeItem(type, x, y)
 	local item = type:new(x,y,Player.sprite.statusBar)
 	Items:insert(item.image)
