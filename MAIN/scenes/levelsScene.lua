@@ -32,7 +32,8 @@ local Items
 local Enemies
 local bombPlacer
 local shieldPlacer
-
+local firePlacer
+local icePlacer
 local sceneGroup
 
 local e = {}
@@ -264,6 +265,19 @@ if playerLevel >= 3 then
 	bombPlacer.img:scale(0.5,0.5)
 	sceneGroup:insert(bombPlacer.img)
 end
+if playerLevel >= 4 then
+	firePlacer = display.newCircle( display.contentWidth - 100, display.contentHeight - 40 , 20)
+	sceneGroup:insert(firePlacer)
+	firePlacer.img = display.newImage("images/Fire.png", display.contentWidth - 100, display.contentHeight - 40, 20)
+	firePlacer.img:scale(0.5,0.5)
+	sceneGroup:insert(firePlacer.img)
+end
+if playerLevel >= 4 then
+	icePlacer = display.newCircle( display.contentWidth - 150, display.contentHeight - 40 , 20)
+	sceneGroup:insert( icePlacer)
+	icePlacer.img = display.newImage("images/Ice.png", display.contentWidth - 150, display.contentHeight - 40, 20)
+	sceneGroup:insert( icePlacer.img)
+end
 end
 function scene:unPause()
 	physics.start()
@@ -362,9 +376,9 @@ function beginMovement( event )
 end
 function updatePlayerLevel()
 	local p = require('levels.player')
-	
+
 	package.loaded['levels.player'] = nil
-		
+
 	local s = 'return {\n'
 	if ((p.levels < levelID + 1) and not (levelID + 1 == 6)) then
 		s = s .. '\tlevels = ' .. tostring(levelID + 1) .. ',\n'
@@ -500,10 +514,10 @@ function placeItem(type, x, y)
 		if p.level4.items == 0 then
 			item = type:new(x, y, Player.sprite)
 		end
-	else 
+	else
 		item = type:new(x, y, Player.sprite.statusBar)
 	end
-	
+
 	if item then
 		Items:insert(item.image)
 	end

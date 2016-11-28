@@ -102,9 +102,6 @@ function Fireball:initialize(props)
 end
 
 function Fireball:use(enemy)
-  -- for key,value in pairs(enemy) do
-  --   print("found member " .. key);
-  -- end
   audio.play(HitSound)
   if enemy.attReady then
     enemy.attReady = false

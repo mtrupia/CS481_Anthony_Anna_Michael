@@ -150,6 +150,7 @@ function Chaser.collision(self, event)
 	if event then
 		if event.other.name == "power" then
 			damageEnemy(self, event.other)
+
 		end
 	end
 end
@@ -198,6 +199,7 @@ function Ranger.collision(self, event)
 	if event then
 		if event.other.name == "power" then
 			damageEnemy(self, event.other)
+
 		end
 	end
 end
@@ -252,6 +254,7 @@ function Trapper.collision(self, event)
 	if event then
 		if event.other.name == "power" then
 			damageEnemy(self, event.other)
+
 		end
 	end
 end
@@ -309,6 +312,7 @@ function Tank.collision(self, event)
 	if event then
 		if event.other.name == "power" then
 			damageEnemy(self, event.other)
+			 
 		end
 	end
 end
