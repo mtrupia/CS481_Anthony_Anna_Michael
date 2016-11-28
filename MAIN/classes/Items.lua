@@ -40,8 +40,8 @@ end
 
 function Item:getDistance(a)
   if self and a then
-    local xDist = a.x - self.x
-    local yDist = a.y - self.y
+    local xDist = a.x - self.image.x
+    local yDist = a.y - self.image.y
     return math.sqrt( (xDist ^ 2) + (yDist^2) )
   end
   return nil

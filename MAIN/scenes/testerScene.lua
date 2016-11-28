@@ -456,7 +456,9 @@ function placeEnemy(type, x, y)
 	Enemies:insert(e[en].sprite)
 	en = en + 1
 end
-
+-- Empty Function for Final Door
+function updatePlayerLevel()
+end
 
 
 ---------------------------------------------------------------------------------
