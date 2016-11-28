@@ -23,6 +23,7 @@ function Item:initialize( x, y, name )
   self.x = x
   self.y = y
   self.name = name
+  self.score = 100
   return self
 end
 
@@ -84,6 +85,7 @@ function HP.collision(self, event)
     audio.play(HealthSound)
     self.exists = false
     sb:setHealth(100)
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -119,6 +121,7 @@ function Mana.collision(self, event)
     display.remove(self.image)
     self.exists = false
     sb:setMana(100)
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -155,6 +158,7 @@ function Key.collision(self, event)
     display.remove(self.image)
     self.exists = false
     sb.sprite.key.isVisible = true
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -191,6 +195,7 @@ function Door.collision(self, event)
     display.remove(self.image)
     audio.play(DoorSound)
     self.exists = false
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -206,6 +211,7 @@ function FDoor:initialize(x,y, statusBar)
   self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "FDoor")
+  self.score = 1000
   return FDoor.spawn(self)
 end
 
@@ -223,6 +229,7 @@ end
 
 function FDoor.collision(self, event)
   if(event.other.name == "player") then
+    event.other.score = event.other.score + self.score
     display.remove(self.image)
     audio.play(FDoorSound)
     self.exists = false
@@ -230,6 +237,7 @@ function FDoor.collision(self, event)
     --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
     ItemsList = nil
     composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+
   end
 end
 ---------------------------------------------------------------------------------
@@ -332,5 +340,6 @@ function BombP.collision(self, event)
     display.remove(self.image)
     audio.play(BombPSound)
     self.exists = false
+    event.other.score = event.other.score + self.score
   end
 end

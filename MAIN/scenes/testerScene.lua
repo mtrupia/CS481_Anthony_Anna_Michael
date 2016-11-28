@@ -85,6 +85,7 @@ function scene:hide( event )
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
+			display.remove(Player.sprite.statusBar.sprite.score )
 			Player:kill()
 			Player = nil;
 		end
@@ -385,11 +386,11 @@ function beginMovement( event )
 			end
 		end
 	end
+	Player.sprite.statusBar.sprite.score.text = Player.sprite.score
 end
 
 
 function createBomb(x, y)
-	print("hi")
 	local bomb = Bomb:new(x, y, Player.statusBar)
 	Items:insert(bomb.image)
 

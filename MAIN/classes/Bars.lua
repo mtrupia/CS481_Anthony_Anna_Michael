@@ -56,6 +56,8 @@ function Bar:initialize(props)
   manaPos.scaleY = props.manaScaleY or 1
 
   self.target = props.target
+
+
   self.sprite = props.sprite
 end
 
@@ -78,6 +80,10 @@ function Bar:show()
   sprite.manaBar:scale(manaPos.scaleX, manaPos.scaleY)
   sprite.manaBar:setSequence("100")
   sprite.manaBar:play()
+
+  -- Score
+  sprite.score = display.newText(self.target.score, screenW - 100, screenH - 305)
+  sprite.score:setFillColor( 1, 0, 0.5 )
   -- Key
   sprite.key = display.newImage(sprite, "images/Key.png", 230, 15)
   sprite.key:scale(0.5,0.5)

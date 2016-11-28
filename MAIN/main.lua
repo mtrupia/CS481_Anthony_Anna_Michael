@@ -27,8 +27,9 @@ _G.worldCollisionFilter 		 = {	categoryBits = 1, maskBits = 30 }
 _G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 57 }
 _G.powerCollisionFilter 		 = { categoryBits = 4, maskBits = 41 }
 _G.enemyCollisionFilter 		 = { categoryBits = 8, maskBits = 47 }
-_G.enemyPowerCollisionFilter 	= { categoryBits = 16, maskBits = 35 }
+_G.enemyPowerCollisionFilter = { categoryBits = 16, maskBits = 35 }
 _G.itemCollisionFilter			 = { categoryBits = 32, maskBits = 30 }
+_G.score  = {}
 -- Classes
 _G.StickLib 	 = require( "libs.Analog" )
 -- phone taps

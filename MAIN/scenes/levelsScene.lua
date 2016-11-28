@@ -170,8 +170,11 @@ function scene:hide( event )
 			Runtime:removeEventListener("enterFrame", beginMovement)
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Runtime:removeEventListener("enterFrame",  spike)
+			_G.score[levelID] = Player.sprite.score
+			display.remove(Player.sprite.statusBar.sprite.score )
 			Player:kill()
-			Player = nil;
+			Player = nil
+
 		end
 		if Joystick then
 			Joystick:delete()
@@ -197,6 +200,7 @@ function scene:hide( event )
 			e = {}
 			en = 1
 		end
+
 
 	elseif phase == "did" then
 	end
@@ -351,6 +355,7 @@ function beginMovement( event )
 			end
 		end
 	end
+	Player.sprite.statusBar.sprite.score.text = Player.sprite.score
 end
 function updatePlayerLevel()
 	package.loaded['levels.player'] = nil

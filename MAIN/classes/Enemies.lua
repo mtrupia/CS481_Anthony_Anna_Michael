@@ -1,6 +1,7 @@
 local class = require 'libs.middleclass'
 require 'classes.Bars'
 local obj
+local player
 -- Enemy
 local enemySpriteOptions = {
 	width = 29,
@@ -35,6 +36,7 @@ local function damageEnemy(e, p)
 	end
 	-- check if dead
 	if e.health <= 0 then
+		player.sprite.score = e.score + player.sprite.score
 		e.statusBar:destroy()
 		e:removeSelf()
 		e = nil
@@ -47,7 +49,7 @@ local function damageEnemy(e, p)
 	end
 end
 
-local player
+
 Enemy = class('Enemy')
 function Enemy:initialize(x,y)
 	self.x = x
@@ -55,6 +57,7 @@ function Enemy:initialize(x,y)
 	self.dmgReady = true
 	self.attReady = true
 	self.visible = false
+
 end
 
 function Enemy:visibility(player)
@@ -84,6 +87,7 @@ function Enemy:spawn()
 	self.sprite.speed  = self.speed
 	self.sprite.dmgReady = true
 	self.sprite.name = "Enemy"
+	self.sprite.score = 100
 	self.sprite[1]:setSequence("walk")
 	self.sprite[1]:play()
 	self.sprite.isFixedRotation = true
@@ -101,6 +105,7 @@ function Enemy:Damage(dmg)
 		self.sprite.statusBar:setHealth(dmg)
 	end
 	if self.sprite.health <= 0 then
+
 		self:kill()
 	else
 		function allowAtt()
@@ -111,6 +116,7 @@ function Enemy:Damage(dmg)
 end
 
 function Enemy:kill()
+
 	if self.sprite then
 		if self.sprite.statusBar then
 			display.remove(self.sprite.statusBar.sprite)

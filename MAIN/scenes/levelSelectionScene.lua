@@ -21,7 +21,7 @@ local backButton
 -- create selection scene
 function scene:create( event )
 	local sceneGroup = self.view
-	
+
 	-- create background and title image
 	local bg = display.newRect(sceneGroup, 0, 0, actualW, actualH)
 	bg:setFillColor( 0,0.5,0.5 )
@@ -32,16 +32,21 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-	
+
 	if phase == "will" then
 		-- create buttons
 		local levels = require('levels.player').levels
-		
+
 		levelsButton = display.newGroup()
 		for n = 1, levels, 1 do
 			local btn
 			if n<=5 then
 				btn = display.newText(levelsButton, n, (n-1)*120, display.contentHeight/2, native.systemFont, 32)
+				if (not(_G.score[n])) then
+					btnscore = display.newText(levelsButton,0, (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
+				else
+					btnscore = display.newText(levelsButton, _G.score[n], (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
+				end
 			else
 				btn = display.newText(levelsButton, n, 120*(n-6), display.contentHeight/2+64, native.systemFont, 32)
 			end
@@ -71,7 +76,7 @@ function scene:show( event )
 			end
 			backButton:addEventListener( "touch", backButton )
 		end
-	end 
+	end
 end
 
 -- hide selection scene once user chooses button.  Clean up listeners and buttons
