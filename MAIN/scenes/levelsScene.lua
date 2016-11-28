@@ -60,9 +60,9 @@ function scene:loadLevel()
 	
 	-- Determine sizes
 	minX=0 --global
-	local maxX=0
+	maxX=0 --global
 	minY=0 --global
-	local maxY=0
+	maxY=0 --global
 	for i = 1, #level.walls do
 		if level.walls[i].x < minX then minX=level.walls[i].x end
 		if level.walls[i].x > maxX then maxX=level.walls[i].x end
@@ -95,12 +95,16 @@ function scene:loadLevel()
 			end
 		end
 	end
-	for i=0, maxX-minX do
-		for j=0, maxY-minY do
-			io.write(levelArr[i][j] .. " ")
-		end
-		io.write("\n")
-	end
+	
+	--loops to print level array
+	
+	--for i=0, maxX-minX do
+	--	for j=0, maxY-minY do
+	--		io.write(levelArr[i][j] .. " ")
+	--	end
+	--	io.write("\n")
+	--end
+	
 	for i = 1, #level.items do
 		local b = level.items[i]
 		if(b.name == "hp" or b.name == "HP") then b.name = HP end

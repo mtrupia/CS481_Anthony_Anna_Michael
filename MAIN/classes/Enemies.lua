@@ -59,24 +59,42 @@ end
 
 function Enemy:visibility(self,player)
 	local ready = true --check?
-	local x1 = self.sprite.x
-	local y1 = self.sprite.y
-	local x2 = player.sprite.x
-	local y2 = player.sprite.y
-	print(player.sprite.x-minX, player.sprite.y-minY)
+	local x1 = self.sprite.x - minX
+	local y1 = self.sprite.y - minY
+	local x2 = player.sprite.x - minX
+	local y2 = player.sprite.y - minY
+	
 	local slope = (x2-x1)/(y2-y1)
 	
 	local inc = math.ceil(math.max(math.abs(x1-x2),math.abs(y1-y2))/20)
 	
 	if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400 then --in distance range
+		print("~" .. inc .. "~" .. x2 .. " " .. y2 .. "~" .. x1 .. " " .. y1)
 		for i=1, inc do
 			local xcheck = math.floor(20 * i / math.sqrt(slope * slope + 1))
 			local ycheck = math.floor(slope * xcheck)
-			if levelArr[xcheck-minX][ycheck-minY] == 1 then --blocked by wall
-				--print(xcheck-minX, ycheck-minY)
+			print(xcheck, ycheck)
+			levelArr[xcheck][ycheck] =2
+			if levelArr[xcheck-minX][ycheck-minY] == 1 then --blocked by wall	
 				ready = false
 			end
 		end
+		
+		--loops to print level array
+	
+		local fpath = system.pathForFile('classes/help.txt', system.ResourceDirectory)
+		local ffile = io.open(fpath, 'w')
+
+		for i=0, maxX-minX do
+			for j=0, maxY-minY do
+				ffile:write(tostring(levelArr[i][j]) .. ' ')
+			end
+			ffile:write('\n')
+		end
+		ffile:write('\nstop\n')
+		io.close(ffile)
+		
+		--end of testing code
 	else
 		ready = false
 	end
