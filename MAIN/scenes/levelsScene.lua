@@ -281,6 +281,7 @@ end
 function beginMovement( event )
 	if (Player.sprite.health <= 0) then
 		audio.play(GameOverSound)
+		Player.sprite.score = 0
 		scene:leaveLvl()
 		return
 	end
@@ -392,12 +393,20 @@ function updatePlayerLevel()
 		s = s .. '\tlevel2 = {score = ' .. p.level2.score .. ', items = ' .. p.level2.items .. '},\n'
 	end
 	if levelID == 3 then
-		s = s .. '\tlevel3 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
+		if Player.sprite.maxHealth == 200 then
+			s = s .. '\tlevel3 = {score = ' .. Player.sprite.score .. ', items = ' .. 1 .. '},\n'
+		else
+			s = s .. '\tlevel3 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
+		end
 	else
 		s = s .. '\tlevel3 = {score = ' .. p.level3.score .. ', items = ' .. p.level3.items .. '},\n'
 	end
 	if levelID == 4 then
-		s = s .. '\tlevel4 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
+		if Player.sprite.maxMana == 200 then
+			s = s .. '\tlevel4 = {score = ' .. Player.sprite.score .. ', items = ' .. 1 .. '},\n'
+		else
+			s = s .. '\tlevel4 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
+		end
 	else
 		s = s .. '\tlevel4 = {score = ' .. p.level4.score .. ', items = ' .. p.level4.items .. '},\n'
 	end
@@ -429,9 +438,9 @@ function createBomb(x, y)
 				for n = 1, en, 1 do
 					if(e[n] and item) then
 						if e[n].sprite then
-							local dis = item:getDistance(e[n].sprite, item)
+							local dis = item:getDistance(e[n].sprite)
 							if(dis < 100) then
-								e[n]:Damage(-50)
+								e[n]:Damage(-100)
 								print("Hit Enemy: " .. n)
 							end
 						end
@@ -439,7 +448,7 @@ function createBomb(x, y)
 				end
 			end
 			if Player and item then
-				if(item:getDistance(Player.sprite,item) < 100) then
+				if(item:getDistance(Player.sprite) < 100) then
 					print("Hit Player")
 					if Player.sprite.hasShield then
 						Player.sprite.statusBar:setMana(-30)
@@ -449,7 +458,7 @@ function createBomb(x, y)
 							Player.sprite:remove(Player.sprite.Shield)
 						end
 					else
-						Player.statusBar:setHealth(-30)
+						Player.sprite.statusBar:setHealth(-30)
 					end
 				end
 			end
@@ -479,6 +488,16 @@ function placeItem(type, x, y)
 	elseif type == ManaUpgrade and levelID == 2 then
 		local p = require('levels.player')
 		if p.level2.items == 0 then
+			item = type:new(x, y, Player.sprite)
+		end
+	elseif type == HealthUpgrade and levelID == 3 then
+		local p = require('levels.player')
+		if p.level3.items == 0 then
+			item = type:new(x, y, Player.sprite)
+		end
+	elseif type == ManaUpgrade and levelID == 4 then
+		local p = require('levels.player')
+		if p.level4.items == 0 then
 			item = type:new(x, y, Player.sprite)
 		end
 	else 

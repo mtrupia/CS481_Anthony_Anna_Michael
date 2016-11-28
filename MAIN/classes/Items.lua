@@ -39,12 +39,14 @@ function Item:test()
 end
 
 function Item:getDistance(a)
-  if self and a then
-    local xDist = a.x - self.image.x
-    local yDist = a.y - self.image.y
-    return math.sqrt( (xDist ^ 2) + (yDist^2) )
+  if self.image and a then
+    if a.x and self.image.x then
+      local xDist = a.x - self.image.x
+      local yDist = a.y - self.image.y
+      return math.sqrt( (xDist ^ 2) + (yDist^2) )
+    end
   end
-  return nil
+  return 1000000
 end
 
 function Item:destroy()
@@ -269,43 +271,43 @@ end
 
 Spikes = class('Spikes', Item)
 function Spikes:initialize(x, y, player)
-	self.exists = true
-	p = player
-	Item.initialize(self, x, y, "Spikes")
-	return Spikes.spawn(self)
+  self.exists = true
+  p = player
+  Item.initialize(self, x, y, "Spikes")
+  return Spikes.spawn(self)
 end
 
 function Spikes.spawn(self)
-	self.image = display.newImage("images/spikes.PNG", self.x, self.y)
-	self.image.name = self.name
+  self.image = display.newImage("images/spikes.PNG", self.x, self.y)
+  self.image.name = self.name
 
-	local function spike( event )
-		self:active(p)
-	end
+  local function spike( event )
+    self:active(p)
+  end
 
-	Runtime:addEventListener("enterFrame", spike)
+  Runtime:addEventListener("enterFrame", spike)
 
-	return self.image
+  return self.image
 end
 
 function Spikes:active(p)
-	local ready = false
-	local x1 = p.x
-	local y1 = p.y
-	local x2 = self.image.x
-	local y2 = self.image.y
+  local ready = false
+  local x1 = p.x
+  local y1 = p.y
+  local x2 = self.image.x
+  local y2 = self.image.y
 
-	if x2 and y2 and x1 and y1 then
-		if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 40 then
-			ready = true
-		end
+  if x2 and y2 and x1 and y1 then
+    if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 40 then
+      ready = true
+    end
 
-		if ready then
-			if not p.hasShield then
-				p.statusBar:setHealth(-100)
-			end
-		end
-	end
+    if ready then
+      if not p.hasShield then
+        p.statusBar:setHealth(-100)
+      end
+    end
+  end
 end
 
 HealthUpgrade = class('HealthUpgrade', Item)
@@ -333,7 +335,7 @@ function HealthUpgrade.collision(self, event)
   if(event.other.name == "player") then
     display.remove(self.image)
     self.exists = false
-	p.maxHealth = p.maxHealth + 50
+    p.maxHealth = p.maxHealth + 50
     p.statusBar:setHealth(p.maxHealth)
     event.other.score = event.other.score + self.score
   end
@@ -364,8 +366,8 @@ function ManaUpgrade.collision(self, event)
   if(event.other.name == "player") then
     display.remove(self.image)
     self.exists = false
-	p.maxMana = p.maxMana + 50
-	p.statusBar:setMana(p.maxMana)
+    p.maxMana = p.maxMana + 50
+    p.statusBar:setMana(p.maxMana)
     event.other.score = event.other.score + self.score
   end
 end
