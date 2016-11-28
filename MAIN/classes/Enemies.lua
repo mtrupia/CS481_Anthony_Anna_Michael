@@ -57,20 +57,35 @@ function Enemy:initialize(x,y)
 	self.visible = false
 end
 
-function Enemy:visibility(player)
-	local ready = false
+function Enemy:visibility(self,player)
+	local ready = true --check?
 	local x1 = self.sprite.x
 	local y1 = self.sprite.y
 	local x2 = player.sprite.x
 	local y2 = player.sprite.y
-
-	if math.sqrt(math.power((x2-x1),2)+math.pow((y2-y1),2)) < 400 then
-		ready = true
+	print(player.sprite.x-minX, player.sprite.y-minY)
+	local slope = (x2-x1)/(y2-y1)
+	
+	local inc = math.ceil(math.max(math.abs(x1-x2),math.abs(y1-y2))/20)
+	
+	if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 400 then --in distance range
+		for i=1, inc do
+			local xcheck = math.floor(20 * i / math.sqrt(slope * slope + 1))
+			local ycheck = math.floor(slope * xcheck)
+			if levelArr[xcheck-minX][ycheck-minY] == 1 then --blocked by wall
+				--print(xcheck-minX, ycheck-minY)
+				ready = false
+			end
+		end
+	else
+		ready = false
 	end
 	if ready then
 		self.sprite.visible = true
+		return true
 	else
 		self.sprite.visible = false
+		return false
 	end
 end
 
@@ -148,7 +163,7 @@ function Chaser.collision(self, event)
 end
 
 function Chaser:move()
-	if self.sprite.x and self.sprite.y then
+	if self.sprite.x and self.sprite.y and Enemy:visibility(self,player) then
 		if self.sprite.x > player.sprite.x then
 			self.sprite.xScale = 1
 			self.sprite[1]:play()
@@ -196,7 +211,7 @@ function Ranger.collision(self, event)
 end
 
 function Ranger:move()
-	if self.sprite.x and self.sprite.y then
+	if self.sprite.x and self.sprite.y and Enemy:visibility(self,player) then
 		if self.sprite.x > player.sprite.x then
 			self.sprite.xScale = 1
 			self.sprite[1]:play()
@@ -250,7 +265,7 @@ function Trapper.collision(self, event)
 end
 
 function Trapper:move()
-	if self.sprite.x and self.sprite.y then
+	if self.sprite.x and self.sprite.y and Enemy:visibility(self,player) then
 		if self.sprite.x > player.sprite.x then
 			self.sprite.xScale = 1
 			self.sprite[1]:play()

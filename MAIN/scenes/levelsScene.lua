@@ -15,12 +15,12 @@ local BoomSound = audio.loadSound( "sounds/Boom.wav" )
 local GameOverSound = audio.loadSound( "sounds/GameOver.wav")
 ---------------------------------------------------------------------------------
 
--- start phyics up
+-- start physics up
 physics.start()
 physics.setGravity(0, 0)
 physics.setDrawMode( "normal" )
 
--- Vars
+-- Variables
 local pauseImg
 local backGround
 local walls
@@ -34,6 +34,7 @@ local bombPlacer
 local shieldPlacer
 
 local sceneGroup
+levelArr = {} --global
 
 local e = {}
 local en = 1
@@ -56,15 +57,50 @@ function scene:loadLevel()
 		local b = level.enemies[i]
 		placeEnemy(b.x, b.y)
 	end
-
+	
+	-- Determine sizes
+	minX=0 --global
+	local maxX=0
+	minY=0 --global
+	local maxY=0
+	for i = 1, #level.walls do
+		if level.walls[i].x < minX then minX=level.walls[i].x end
+		if level.walls[i].x > maxX then maxX=level.walls[i].x end
+		if level.walls[i].y < minY then minY=level.walls[i].y end
+		if level.walls[i].y > maxY then maxY=level.walls[i].y end
+	end
+	--expand
+	minX=minX-30
+	maxX=maxX+30
+	minY=minY-30
+	maxY=maxY+30
+	--initialize levelArr
+	for i=0, maxX-minX do
+		levelArr[i]={}
+		for j=0, maxY-minY do
+			levelArr[i][j]=0
+		end
+	end
+	
 	for i = 1, #level.walls do
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
 		crate.name = "wall"
 		physics.addBody(crate, "static", { filter = editFilter } )
 		walls:insert(crate)
+		--insert into levelArr
+		for j=b.x-30-minX, b.x+30-minX do
+			for k=b.y-30-minY, b.y+30-minY do
+				levelArr[j][k]=1
+			end
+		end
 	end
-
+	for i=0, maxX-minX do
+		for j=0, maxY-minY do
+			io.write(levelArr[i][j] .. " ")
+		end
+		io.write("\n")
+	end
 	for i = 1, #level.items do
 		local b = level.items[i]
 		if(b.name == "hp" or b.name == "HP") then b.name = HP end
