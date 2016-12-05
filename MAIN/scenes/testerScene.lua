@@ -15,6 +15,7 @@ local bun
 local bunS
 local bunD
 local bunO
+local ts = true
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -145,10 +146,8 @@ function scene:initLevel(event)
 	-- Joystick
 	Joystick = {}
 	ItemsList = {}
-	bun = system.getTimer()
-	bunS = bun
-	bunD = bun + 15000
-	bunO = true
+
+
 	walls = display.newGroup()
 	sceneGroup:insert(walls)
 	crate = display.newImage(walls,"images/crate.png", 100, 100)
@@ -157,12 +156,12 @@ function scene:initLevel(event)
 	-- Unit Testing Begins
 	-------------------------------
 	placeItem(Door,176,70)
-	placeEnemy(Chaser,50,100)
+	placeEnemy(Chaser,50,160)
 
 	-- Checks Initialization of Player and Items
 	assert(walls[1].x == 100, "Error: Wall X is Incorrect")
 	assert(walls[1].y == 100, "Error: Wall Y is Incorrect")
-	assert(e[1].y == 100, "Error: Enemy Y is Incorrect")
+	assert(e[1].y == 160, "Error: Enemy Y is Incorrect")
 	assert(e[1].health == 100, "Error: Enemy health is Incorrect")
 	assert(e[1].name == "Enemy", "Error: Enemy name is Incorrect")
 	assert(e[1].dmgReady == true, "Error: Enemy dmgReady is Incorrect")
@@ -253,6 +252,52 @@ function scene:initLevel(event)
 	sceneGroup:insert(pauseButton)
 end
 
+local function callTimer()
+	timer.performWithDelay(3000, function()
+		testTimer()
+	end, 1)
+end
+
+function testTimer()
+	print("Test Timer called")
+	placeEnemy(Chaser,50,160)
+	createBomb(40, 160)
+end
+
+local function callTimer2()
+	timer.performWithDelay(7000,function()
+		testTimer2()
+	end,1)
+	ts = false
+end
+
+function testTimer2()
+	bun = system.getTimer()
+	bunS = bun
+	bunD = bun + 15000
+	bunO = true
+	ts = false
+	print("Test Timer 2 called.")
+end
+
+
+
+function testShoot()
+	if(ts) then
+		-- Test Shooting
+		Player.power:Shoot({
+			phase = "began",
+			x = Player.sprite.x - 20,
+			y = Player.sprite.y
+		})
+
+		-- Test Bomb
+		callTimer()
+
+		-- Run these after testing shooting
+		callTimer2()
+	end
+end
 function scene:unPause()
 	physics.start()
 	Runtime:addEventListener("enterFrame", begin)
@@ -273,51 +318,54 @@ function beginMovement( event )
 	end
 	--Joystick:toFront()
 	pauseButton:toFront()
-	if(bun <= bunD) then
-		if(bun >= bunD - 5000) then
-			assert(ItemsList[1].exists == false, "Error: Door still Exists!")
-			assert(ItemsList[2].exists == false, "Error: Health still Exists!")
-			assert(ItemsList[3].exists == false, "Error: Mana still Exists!")
-			assert(ItemsList[4].exists == false, "Error: Key still Exists!")
-			assert(ItemsList[5].exists == false, "Error: Gem still Exists!")
-			assert(ItemsList[6].exists == true, "Error: Final Door doesn't Exists!")
-		end
-		bun = system.getTimer()
-		if (bun > bunS + 600 and bun < bunS + 620) then
-			if(#ItemsList == 1) then
-				placeItem(HP,176,159)
-				assert(ItemsList[2].x == 176, "Error: Health X is Incorrect")
-				assert(ItemsList[2].y == 159, "Error: Health Y is Incorrect")
-				assert(ItemsList[2].name == "HP", "Error: Health Pot has wrong name")
+	testShoot()
+	if(not(bun == NULL) and not(bunD == NULL)) then
+		if(bun <= bunD) then
+			if(bun >= bunD - 5000) then
+				assert(ItemsList[1].exists == true, "Error: Door still Exists!")
+				assert(ItemsList[2].exists == false, "Error: Health still Exists!")
+				assert(ItemsList[3].exists == false, "Error: Mana still Exists!")
+				assert(ItemsList[4].exists == false, "Error: Key still Exists!")
+				assert(ItemsList[5].exists == false, "Error: Gem still Exists!")
+				assert(ItemsList[6].exists == true, "Error: Final Door doesn't Exists!")
 			end
+			bun = system.getTimer()
+			if (bun > bunS + 600 and bun < bunS + 620) then
+				if(#ItemsList == 1) then
+					placeItem(HP,176,159)
+					assert(ItemsList[2].x == 176, "Error: Health X is Incorrect")
+					assert(ItemsList[2].y == 159, "Error: Health Y is Incorrect")
+					assert(ItemsList[2].name == "HP", "Error: Health Pot has wrong name")
+				end
 
-		elseif (bun > bunS + 700 and bun < bunS + 720) then
-			if(#ItemsList == 2) then
-				placeItem(Mana,300,141)
-				assert(ItemsList[3].x == 300, "Error: Mana X is Incorrect")
-				assert(ItemsList[3].y == 141, "Error: Mana Y is Incorrect")
-				assert(ItemsList[3].name == "Mana", "Error: Mana Pot has wrong name")
-			end
-		elseif (bun > bunS + 800 and bun < bunS + 820) then
-			if(#ItemsList == 3) then
-				placeItem(Key, 350, 141)
-				assert(ItemsList[4].x == 350, "Error: Key X is Incorrect")
-				assert(ItemsList[4].y == 141, "Error: Key Y is Incorrect")
-				assert(ItemsList[4].name == "Key", "Error: Key has wrong name")
-			end
-		elseif(bun > bunS + 4000 and bun < bunS + 4020) then
-			if(#ItemsList == 4) then
-				placeItem(Gem, 350,141)
-				assert(ItemsList[5].x == 350, "Error: Gem X is Incorrect")
-				assert(ItemsList[5].y == 141, "Error: Gem Y is Incorrect")
-				assert(ItemsList[5].name == "Gem", "Error: Gem has wrong name")
-			end
-		elseif(bun > bunS + 8000 and bun < bunS + 8020) then
-			if(#ItemsList == 5) then
-				placeItem(FDoor, 350,141)
-				assert(ItemsList[6].x == 350, "Error: Final Door X is Incorrect")
-				assert(ItemsList[6].y == 141, "Error: Final Door Y is Incorrect")
-				assert(ItemsList[6].name == "FDoor", "Error: FDoor has wrong name")
+			elseif (bun > bunS + 700 and bun < bunS + 720) then
+				if(#ItemsList == 2) then
+					placeItem(Mana,300,141)
+					assert(ItemsList[3].x == 300, "Error: Mana X is Incorrect")
+					assert(ItemsList[3].y == 141, "Error: Mana Y is Incorrect")
+					assert(ItemsList[3].name == "Mana", "Error: Mana Pot has wrong name")
+				end
+			elseif (bun > bunS + 800 and bun < bunS + 820) then
+				if(#ItemsList == 3) then
+					placeItem(Key, 350, 141)
+					assert(ItemsList[4].x == 350, "Error: Key X is Incorrect")
+					assert(ItemsList[4].y == 141, "Error: Key Y is Incorrect")
+					assert(ItemsList[4].name == "Key", "Error: Key has wrong name")
+				end
+			elseif(bun > bunS + 4000 and bun < bunS + 4020) then
+				if(#ItemsList == 4) then
+					placeItem(Gem, 350,141)
+					assert(ItemsList[5].x == 350, "Error: Gem X is Incorrect")
+					assert(ItemsList[5].y == 141, "Error: Gem Y is Incorrect")
+					assert(ItemsList[5].name == "Gem", "Error: Gem has wrong name")
+				end
+			elseif(bun > bunS + 8000 and bun < bunS + 8020) then
+				if(#ItemsList == 5) then
+					placeItem(FDoor, 350,141)
+					assert(ItemsList[6].x == 350, "Error: Final Door X is Incorrect")
+					assert(ItemsList[6].y == 141, "Error: Final Door Y is Incorrect")
+					assert(ItemsList[6].name == "FDoor", "Error: FDoor has wrong name")
+				end
 			end
 		end
 		Player:move(Joystick)
@@ -396,40 +444,37 @@ end
 
 
 function createBomb(x, y)
-	local bomb = Bomb:new(x, y, Player.statusBar)
+	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
 	Items:insert(bomb.image)
 
 	function boom(item)
 		audio.play(BoomSound)
-		print("boom")
 		if(item) then
 			if Enemies then
 				for n = 1, en, 1 do
 					if(e[n] and item) then
 						if e[n].sprite then
-							if e[n].sprite[1] then
-								local dis = item:getDistance(e[n].sprite, item)
-								if(dis < 100) then
-									e[n]:attack(100)
-									print("Hit Enemy: " .. n)
-								end
+							local dis = item:getDistance(e[n].sprite)
+							if(dis < 100) then
+								e[n]:Damage(-100)
+								print("Hit Enemy: " .. n)
 							end
 						end
 					end
 				end
 			end
 			if Player and item then
-				if(item:getDistance(Player,item) < 100) then
+				if(item:getDistance(Player.sprite) < 100) then
 					print("Hit Player")
-					if Player.hasShield then
-						Player.statusBar:setMana(-30)
+					if Player.sprite.hasShield then
+						Player.sprite.statusBar:setMana(-30)
 
-						if Player.mana <= 0 then
-							Player.hasShield = false
-							Player:remove(Player.Shield)
+						if Player.sprite.mana <= 0 then
+							Player.sprite.hasShield = false
+							Player.sprite:remove(Player.sprite.Shield)
 						end
 					else
-						Player.statusBar:setHealth(-30)
+						Player.sprite.statusBar:setHealth(-30)
 					end
 				end
 			end

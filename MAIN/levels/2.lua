@@ -3,6 +3,7 @@ return {
 		{x = 145, y = 159}
 	},
 	enemies = {
+		-- 32 Enemies
 		{x = 135, y = -414},
 		{x = 191, y = -474},
 		{x = 195, y = -354},
@@ -38,6 +39,7 @@ return {
 		{x = 1034, y = 120}
 	},
 	items = {
+		-- 17 Usable Items
 		{name = 'HP', x = 132, y = -351},
 		{name = 'Mana', x = 132, y = -471},
 		{name = 'Key', x = 189, y = -417},

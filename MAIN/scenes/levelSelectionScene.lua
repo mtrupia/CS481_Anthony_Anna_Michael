@@ -8,12 +8,18 @@
 local sceneName = ...
 local composer = require( "composer" )
 local scene = composer.newScene( sceneName )
-
+local scoreArray = {}
+scoreArray[1] = {930, 1860, 2790}
+scoreArray[2] = {1470, 2940, 4410}
+scoreArray[3] = {3090, 6180, 9270}
+scoreArray[4] = {2430, 4860, 7290}
+scoreArray[5] = {3510, 7020, 10530}
 ---------------------------------------------------------------------------------
 
 -- images
 local titleImg = "images/gameTitle.png"
-
+local emptyStar = "images/EmptyStar.png"
+local fullStar = "images/FullStar.png"
 -- buttons
 local levelsButton
 local backButton
@@ -43,22 +49,16 @@ function scene:show( event )
 			if n<=5 then
 				local score = 0
 				local p = require('levels.player')
-				if n == 1 then score = p.level1.score 
-				elseif n == 2 then score = p.level2.score 
-				elseif n == 3 then score = p.level3.score 
-				elseif n == 4 then score = p.level4.score 
+				if n == 1 then score = p.level1.score
+				elseif n == 2 then score = p.level2.score
+				elseif n == 3 then score = p.level3.score
+				elseif n == 4 then score = p.level4.score
 				elseif n == 5 then score = p.level5.score end
-			
+
 				btn = display.newText(levelsButton, n, (n-1)*120, display.contentHeight/2, native.systemFont, 32)
 				btn.id = n
-				if (not(_G.score[n])) then
-					btnscore = display.newText(levelsButton, score, (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
-				else
-					btnscore = display.newText(levelsButton, _G.score[n], (n-1) * 120, display.contentHeight/3 + 10, native.systemFont, 10)
-				end
-			else
-				btn = display.newText(levelsButton, n, 120*(n-6), display.contentHeight/2+64, native.systemFont, 32)
-				btn.id = n
+				--_G.score[1] = 1000
+				displayStars(n)
 			end
 		end
 		sceneGroup:insert(levelsButton)
@@ -110,6 +110,31 @@ function scene:hide( event )
 		end
 	end
 end
+
+function displayStars(n)
+	if (not(_G.score[n])) then
+		btnscore = 	display.newImage(levelsButton, emptyStar, (n-1) * 120 - 22, display.contentHeight/3 + 20)
+		btnscore2 = display.newImage(levelsButton, emptyStar, (n-1) * 120 + 3, display.contentHeight/3 + 10)
+		btnscore3 = display.newImage(levelsButton, emptyStar, (n-1) * 120 + 28, display.contentHeight/3 + 20)
+	else
+		if(_G.score[n] >= scoreArray[n][1]) then
+			btnscore = 	display.newImage(levelsButton, fullStar, (n-1) * 120 - 22, display.contentHeight/3 + 20)
+		else
+			btnscore = 	display.newImage(levelsButton, emptyStar, (n-1) * 120 - 22, display.contentHeight/3 + 20)
+		end
+		if(_G.score[n] >= scoreArray[n][2]) then
+			btnscore2 = display.newImage(levelsButton, fullStar, (n-1) * 120 + 3, display.contentHeight/3 + 10)
+		else
+			btnscore2 = display.newImage(levelsButton, emptyStar, (n-1) * 120 + 3, display.contentHeight/3 + 10)
+		end
+		if(_G.score[n] >= scoreArray[n][3]) then
+			btnscore3 = display.newImage(levelsButton, fullStar, (n-1) * 120 + 28, display.contentHeight/3 + 20)
+		else
+			btnscore3 = display.newImage(levelsButton, emptyStar, (n-1) * 120 + 28, display.contentHeight/3 + 20)
+		end
+	end
+end
+
 
 ---------------------------------------------------------------------------------
 
