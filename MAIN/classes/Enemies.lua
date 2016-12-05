@@ -65,7 +65,6 @@ end
 -- fireball dot lasts 3 secs
 function useFireball(e)
 	function dot()
-		print("dotted")
 		if e then
 			if e.statusBar then
 				e.statusBar:setHealth(-10)

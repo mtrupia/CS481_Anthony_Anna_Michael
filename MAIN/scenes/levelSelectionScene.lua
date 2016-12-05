@@ -34,21 +34,19 @@ function scene:show( event )
 	local phase = event.phase
 
 	if phase == "will" then
-		-- create buttons
-		local levels = require('levels.player').levels
+		loadPlayer()
+		--create buttons
+		local levels = loadPlayer().level
+		if levels > 5 then levels = 5 end
 
 		levelsButton = display.newGroup()
 		for n = 1, levels, 1 do
 			local btn
 			if n<=5 then
 				local score = 0
-				local p = require('levels.player')
-				if n == 1 then score = p.level1.score 
-				elseif n == 2 then score = p.level2.score 
-				elseif n == 3 then score = p.level3.score 
-				elseif n == 4 then score = p.level4.score 
-				elseif n == 5 then score = p.level5.score end
-			
+				local p = loadPlayer()
+				score = p.levels[n].score
+				
 				btn = display.newText(levelsButton, n, (n-1)*120, display.contentHeight/2, native.systemFont, 32)
 				btn.id = n
 				if (not(_G.score[n])) then

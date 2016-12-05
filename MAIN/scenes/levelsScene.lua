@@ -251,7 +251,8 @@ function scene:initLevel( event )
 	levelID = event.params.levelID
 	-- Player
 	Items = display.newGroup()
-	Player = Mollie:new({health = require('levels.player').health, mana = require('levels.player').mana})
+	local playersave = loadPlayer()
+	Player = Mollie:new({health = playersave.health, mana = playersave.mana})
 	sceneGroup:insert(Items)
 	-- Enemy
 	Enemies = display.newGroup()
@@ -283,7 +284,7 @@ pauseButton.y 		= 21
 pauseButton.alpha = 0.5
 sceneGroup:insert(pauseButton)
 -- bomb bombPlacer
-playerLevel = require('levels.player').levels
+playerLevel = loadPlayer().level
 
 if playerLevel >= 2 then
 	shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
@@ -329,17 +330,7 @@ end
 function beginMovement( event )
 	if (Player.sprite.health <= 0) then
 		audio.play(GameOverSound)
-		if levelID == 1 then
-			Player.sprite.score = require('levels.player').level1.score
-		elseif levelID == 2 then
-			Player.sprite.score = require('levels.player').level2.score
-		elseif levelID == 3 then
-			Player.sprite.score = require('levels.player').level3.score
-		elseif levelID == 4 then
-			Player.sprite.score = require('levels.player').level4.score
-		elseif levelID == 5 then
-			Player.sprite.score = require('levels.player').level5.score
-		end
+		Player.sprite.score = loadPlayer().levels[levelID].score
 		scene:leaveLvl()
 		return
 	end
@@ -418,72 +409,6 @@ function beginMovement( event )
 	end
 	Player.sprite.statusBar.sprite.score.text = Player.sprite.score
 end
-function updatePlayerLevel()
-	local p = require('levels.player')
-
-	package.loaded['levels.player'] = nil
-
-	local s = 'return {\n'
-	if ((p.levels < levelID + 1) and not (levelID + 1 == 6)) then
-		s = s .. '\tlevels = ' .. tostring(levelID + 1) .. ',\n'
-	else
-		s = s .. '\tlevels = ' .. p.levels .. ',\n'
-	end
-	s = s .. '\thealth = ' .. Player.sprite.maxHealth .. ',\n'
-	s = s .. '\tmana = ' .. Player.sprite.maxMana .. ',\n'
-	if levelID == 1 then
-		if Player.sprite.maxHealth == 150 then
-			s = s .. '\tlevel1 = {score = ' .. Player.sprite.score .. ', items = ' .. 1 .. '},\n'
-		else
-			s = s .. '\tlevel1 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
-		end
-	else
-		s = s .. '\tlevel1 = {score = ' .. p.level1.score .. ', items = ' .. p.level1.items .. '},\n'
-	end
-	print(levelID)
-	if levelID == 2 then
-		if Player.sprite.maxMana == 150 then
-			s = s .. '\tlevel2 = {score = ' .. Player.sprite.score .. ', items = ' .. 1 .. '},\n'
-		else
-			s = s .. '\tlevel2 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
-		end
-	else
-		s = s .. '\tlevel2 = {score = ' .. p.level2.score .. ', items = ' .. p.level2.items .. '},\n'
-	end
-	if levelID == 3 then
-		if Player.sprite.maxHealth == 200 then
-			s = s .. '\tlevel3 = {score = ' .. Player.sprite.score .. ', items = ' .. 1 .. '},\n'
-		else
-			s = s .. '\tlevel3 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
-		end
-	else
-		s = s .. '\tlevel3 = {score = ' .. p.level3.score .. ', items = ' .. p.level3.items .. '},\n'
-	end
-	if levelID == 4 then
-		if Player.sprite.maxMana == 200 then
-			s = s .. '\tlevel4 = {score = ' .. Player.sprite.score .. ', items = ' .. 1 .. '},\n'
-		else
-			s = s .. '\tlevel4 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '},\n'
-		end
-	else
-		s = s .. '\tlevel4 = {score = ' .. p.level4.score .. ', items = ' .. p.level4.items .. '},\n'
-	end
-	if levelID == 5 then
-		s = s .. '\tlevel5 = {score = ' .. Player.sprite.score .. ', items = ' .. 0 .. '}\n'
-	else
-		s = s .. '\tlevel5 = {score = ' .. p.level5.score .. ', items = ' .. p.level5.items .. '}\n'
-	end
-	s = s .. '}'
-
-	local path = system.pathForFile('levels/player.lua', system.ResourceDirectory)
-	local file = io.open(path, 'w')
-
-
-	if file then
-		file:write(s)
-		io.close(file)
-	end
-end
 
 function createBomb(x, y)
 	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
@@ -535,27 +460,24 @@ end
 
 function placeItem(type, x, y)
 	local item
+	local p = loadPlayer()
 
 	if type == Spikes then
 		item = type:new(x, y, Player.sprite)
 	elseif type == HealthUpgrade and levelID == 1 then
-		local p = require('levels.player')
-		if p.level1.items == 0 then
+		if p.levels[1].items == 0 then
 			item = type:new(x, y, Player.sprite)
 		end
 	elseif type == ManaUpgrade and levelID == 2 then
-		local p = require('levels.player')
-		if p.level2.items == 0 then
+		if p.levels[2].items == 0 then
 			item = type:new(x, y, Player.sprite)
 		end
 	elseif type == HealthUpgrade and levelID == 3 then
-		local p = require('levels.player')
-		if p.level3.items == 0 then
+		if p.levels[3].items == 0 then
 			item = type:new(x, y, Player.sprite)
 		end
 	elseif type == ManaUpgrade and levelID == 4 then
-		local p = require('levels.player')
-		if p.level4.items == 0 then
+		if p.levels[4].items == 0 then
 			item = type:new(x, y, Player.sprite)
 		end
 	else
@@ -566,7 +488,9 @@ function placeItem(type, x, y)
 		Items:insert(item.image)
 	end
 end
-
+function updatePlayerLevel()
+	updatePlayer(levelID, Player)
+end
 function placeEnemy(x,y)
 	etype_number = math.random(1, 10)
 
