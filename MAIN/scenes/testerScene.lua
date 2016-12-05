@@ -458,7 +458,7 @@ function createBomb(x, y)
 							local dis = item:getDistance(e[n].sprite)
 							if(dis < 100) then
 								e[n]:Damage(-100)
-								print("Hit Enemy: " .. n)
+								--print("Hit Enemy: " .. n)
 							end
 						end
 					end
