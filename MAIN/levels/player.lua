@@ -1,5 +1,5 @@
 return {
-	levels = 5,
+	levels = 1,
 	health = 100,
 	mana = 100,
 	level1 = {score = 0, items = 0},

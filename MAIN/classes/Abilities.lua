@@ -12,14 +12,16 @@ local alivePowers = {}
 local x = 0
 
 Ability = class('Ability')
-function Ability:initialize(target)
-  self.life     = 1000    -- how long the power shall stay alive
-  self.speed    = 250    -- how fast will this power move
-  self.density  = 0.01    -- density of this power
-  self.friction = 0.01 -- friction of this power
-  self.bounce   = 0.01     -- bounce of this power
+function Ability:initialize(target, mana, damage, name)
+  self.life     = 500    -- how long the power shall stay alive
+  self.speed    = 300    -- how fast will this power move
+  self.density  = 0.0000001    -- density of this power
+  self.friction = 0.00000001 -- friction of this power
+  self.bounce   = 0.00000001     -- bounce of this power
   self.target   = target          -- target of the power
-
+  self.name		= name or 'reg'
+  self.damage 	= damage or -30
+  self.mana		= mana or 0
 end
 
 function Ability:Shoot(event)
@@ -31,20 +33,21 @@ function Ability:Shoot(event)
       end
     end
   end
-  if event.phase == "began" and event.target == tTarget and target.mana >= 10 then
+  if event.phase == "began" and event.target == tTarget and target.mana >= (self.mana*-1) then
     audio.play( ShootSound )
     n = n + 1
     powers[n] = display.newImage(image, target.x, target.y)
     physics.addBody( powers[n], {density = self.density, friction = self.friction, bounce = self.bounce, filter = powerCollisionFilter})
     powers[n].name = "power"
     powers[n].spell = self.name
+	powers[n].damage = self.damage
     local deltaX = event.x - target.x
     local deltaY = event.y - target.y
     local normDeltaX = deltaX / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
     local normDeltaY = deltaY / math.sqrt(math.pow(deltaX,2) + math.pow(deltaY,2))
     powers[n]:setLinearVelocity( normDeltaX * self.speed, normDeltaY * self.speed )
     alivePowers[n] = n
-	--target.statusBar:setMana(-10)
+	target.statusBar:setMana(self.mana)
     function delete()
       x = x + 1
       if powers[alivePowers[x]] then
@@ -60,6 +63,10 @@ function Ability:Shoot(event)
 		end
 	end
 
+	if target.mana < self.mana*-1 then
+		Ability.initialize(self, self.target)
+	end
+	
     tTarget = nil
   end
 end
@@ -77,7 +84,6 @@ end
 Shield = class('Shield', Ability)
 function Shield:initialize(props)
 
-  print(props.target.name)
   self.target = props.target
 
   self:use()
@@ -95,49 +101,20 @@ end
 
 -- Fireball Subclass
 Fireball = class('Fireball', Ability)
-function Fireball:initialize(props)
-  self.name = "Fireball"
-  self.target = props.target
-  Ability.initialize(self, self.target)
-end
-
-function Fireball:use(enemy)
-  audio.play(HitSound)
-  if enemy.attReady then
-    enemy.attReady = false
-  end
-  --Initial Damage for connecting Fireball
-  enemy:Damage(-20)
-  function DOT()
-    --print("DOT")
-    --enemy:Damage(-10)
-    --print("Enemy HP = " .. enemy.sprite.health)
-  end
-  -- Damage Over Time ticks 4 times, for 30 damage
-  timer.performWithDelay(1000, DOT, 3)
+function Fireball:initialize(target)
+  self.name = "fireball"
+  self.target = target
+  self.mana = -10
+  self.damage = -40
+  Ability.initialize(self, self.target, self.mana, self.damage, self.name)
 end
 
 -- Iceball Subclass
 Iceball = class('Iceball', Ability)
-function Iceball:initialize(props)
-  self.target = props.target
-end
-
-function Iceball:use()
-  print("Use Iceball Ability")
-  audio.play(HitSound)
-  if enemy.attReady then
-    enemy.attReady = false
-  end
-  -- Initial Damage for connecting Iceball
-  enemy:damage(-10)
-  local regularSpeed = enemy.speed
-  enemy.speed = enemy.speed * .6
-  function removeSlow()
-    enemy.speed = regularSpeed
-  end
-  timer.performWithDelay(3000, function()
-    removeSlow()
-  end,
-  1)
+function Iceball:initialize(target)
+  self.name = "iceball"
+  self.target = target
+  self.mana = -10
+  self.damage = -40
+  Ability.initialize(self, self.target, self.mana, self.damage, self.name)
 end

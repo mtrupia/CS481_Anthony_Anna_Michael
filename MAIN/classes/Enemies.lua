@@ -29,16 +29,30 @@ local function damageEnemy(e, p)
 	else
 		if e.name == "Enemy" then
 			-- damage enemy
-			e.statusBar:setHealth(-50)
+			e.statusBar:setHealth(p.damage)
+			local spell = p.spell
+			if spell == 'fireball' then
+				useFireball(e)
+			elseif spell == 'iceball' then
+				useIceball(e)
+			end
 		else
 			e.statusBar:setHealth(-10)
 		end
 	end
 	-- check if dead
+	isDead(e)
+end
+-- check if enemy is dead
+function isDead(e)
 	if e.health <= 0 then
 		player.sprite.score = e.score + player.sprite.score
-		e.statusBar:destroy()
-		e:removeSelf()
+		if e.statusBar then
+			e.statusBar:destroy()
+		end
+		if e then
+			display.remove(e)
+		end
 		e = nil
 	else
 		--allow att
@@ -48,7 +62,27 @@ local function damageEnemy(e, p)
 		timer.performWithDelay(100, allowAtt, 1)
 	end
 end
-
+-- fireball dot lasts 3 secs
+function useFireball(e)
+	function dot()
+		print("dotted")
+		if e then
+			if e.statusBar then
+				e.statusBar:setHealth(-10)
+			end
+			isDead(e)
+		end
+	end
+	timer.performWithDelay(500, dot, 6)
+end
+function useIceball(e)
+	local speed = e.speed
+	e.speed = e.speed/3
+	function slow()
+		e.speed = speed
+	end
+	timer.performWithDelay(3000, slow)
+end
 
 Enemy = class('Enemy')
 function Enemy:initialize(x,y)
@@ -130,7 +164,7 @@ end
 -- Chaser
 Chaser = class('Chaser', Enemy)
 function Chaser:initialize(x,y, Player)
-	self.speed = 1
+	self.speed = 1.5
 	self.damage = 10
 	self.health = 100
 	self.name = "Enemy"
@@ -172,15 +206,15 @@ function Chaser:move()
 			self.sprite.statusBar.x = self.sprite.x
 			self.sprite.statusBar.y = self.sprite.y - 10
 		end
-		self.sprite.x = self.sprite.x + (player.sprite.x-self.sprite.x)/hyp
-		self.sprite.y = self.sprite.y + (player.sprite.y-self.sprite.y)/hyp
+		self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+		self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 	end
 end
 
 -- Ranger
 Ranger = class('Ranger', Enemy)
 function Ranger:initialize(x,y,Player)
-	self.speed = 0.55
+	self.speed = 1.25
 	self.damage = 20
 	self.health = 50
 	self.name = "Enemy"
@@ -223,12 +257,12 @@ function Ranger:move()
 		end
 		if (hyp >= dist) then
 			-- approach player
-			self.sprite.x = self.sprite.x + (player.sprite.x-self.sprite.x)/hyp
-			self.sprite.y = self.sprite.y + (player.sprite.y-self.sprite.y)/hyp
+			self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+			self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 		else
 			-- move away from player
-			self.sprite.x = self.sprite.x - (player.sprite.x-self.sprite.x)/hyp
-			self.sprite.y = self.sprite.y - (player.sprite.y-self.sprite.y)/hyp
+			self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+			self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 		end
 	end
 end
@@ -236,7 +270,7 @@ end
 --  Trapper
 Trapper = class('Trapper', Enemy)
 function Trapper:initialize(x,y, Player)
-	self.speed = 0.5
+	self.speed = 1.2
 	self.damage = 10
 	self.health = 75
 	self.name = "Enemy"
@@ -278,14 +312,14 @@ function Trapper:move()
 		end
 		if (hyp >= dist) then
 			-- approach player
-			self.sprite.x = self.sprite.x + (player.sprite.x-self.sprite.x)/hyp
-			self.sprite.y = self.sprite.y + (player.sprite.y-self.sprite.y)/hyp
+			self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+			self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 		else
 			-- set trap
 
 			-- move away from player
-			self.sprite.x = self.sprite.x - (player.sprite.x-self.sprite.x)/hyp
-			self.sprite.y = self.sprite.y - (player.sprite.y-self.sprite.y)/hyp
+			self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+			self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 		end
 	end
 end
@@ -293,7 +327,7 @@ end
 -- tank
 Tank = class('Tank', Enemy)
 function Tank:initialize(x,y, Player)
-	self.speed = 0.25
+	self.speed = 1
 	self.damage = 10
 	self.health = 100
 	self.name = "Enemy"
@@ -333,7 +367,7 @@ function Tank:move()
 			self.sprite.statusBar.x = self.sprite.x
 			self.sprite.statusBar.y = self.sprite.y - 10
 		end
-		self.sprite.x = self.sprite.x + (player.sprite.x-self.sprite.x)/hyp
-		self.sprite.y = self.sprite.y + (player.sprite.y-self.sprite.y)/hyp
+		self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+		self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 	end
 end
