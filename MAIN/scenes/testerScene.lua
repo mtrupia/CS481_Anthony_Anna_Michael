@@ -169,7 +169,7 @@ function scene:initLevel(event)
 	assert(e[1].visible == false, "Error: Enemy visible is Incorrect")
 	-----------------------------------------------
 	assert(e[1].sprite.damage == 10, "Error: Enemy damage is Incorrect")
-	assert(e[1].sprite.speed == 1, "Error: Enemy speed is Incorrect")
+	assert(e[1].sprite.speed == 1.5, "Error: Enemy speed is Incorrect")
 	assert(ItemsList[1].x == 176, "Error: Door X is Incorrect")
 	assert(ItemsList[1].y == 70, "Error: Door X is Incorrect")
 	assert(ItemsList[1].name == "Door", "Error: Door has wrong name")
@@ -260,8 +260,9 @@ end
 
 function testTimer()
 	print("Test Timer called")
-	placeEnemy(Chaser,50,160)
-	createBomb(40, 160)
+	e[1]:kill()
+	placeEnemy(Chaser,50,180)
+	createBomb(0, 160)
 end
 
 local function callTimer2()
