@@ -101,6 +101,13 @@ function Bar:setHealth(amt)
   if sprite then
     sprite.healthBar.text = self.target.health .. " / " .. self.target.maxHealth
   end
+  
+  if player.name == 'Enemy' then
+	if sprite then
+		sprite.healthBar:setSequence(player.health)
+		sprite.healthBar:play()
+	end
+  end
 end
 
 function Bar:setMana(amt)

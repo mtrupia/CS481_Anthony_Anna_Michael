@@ -133,6 +133,30 @@ function scene:show( event )
 			end
 			shieldPlacer:addEventListener( "touch", shieldPlacer )
 		end
+		if firePlacer then
+			function firePlacer:touch ( event )
+				if event.phase == "began" then
+					tTarget = firePlacer
+				elseif event.phase == "ended" and event.target == tTarget then
+					Player.power = Fireball:new(Player.sprite)
+					
+					tTarget = nil
+				end
+			end
+			firePlacer:addEventListener( "touch", firePlacer )
+		end
+		if icePlacer then
+			function icePlacer:touch ( event )
+				if event.phase == "began" then
+					tTarget = icePlacer
+				elseif event.phase == "ended" and event.target == tTarget then
+					Player.power = Iceball:new(Player.sprite)
+					
+					tTarget = nil
+				end
+			end
+			icePlacer:addEventListener( "touch", icePlacer )
+		end
 		if pauseButton then
 			function pauseButton:touch ( event )
 				local phase = event.phase
@@ -168,6 +192,16 @@ function scene:hide( event )
 			shieldPlacer:removeEventListener( "touch", shieldPlacer )
 			shieldPlacer:removeSelf()
 			shieldPlacer = nil
+		end
+		if firePlacer then
+			firePlacer:removeEventListener( "touch", firePlacer )
+			firePlacer:removeSelf()
+			firePlacer = nil
+		end
+		if icePlacer then
+			icePlacer:removeEventListener( "touch", icePlacer )
+			icePlacer:removeSelf()
+			icePlacer = nil
 		end
 		if Player then
 			Runtime:removeEventListener("enterFrame", beginMovement)
@@ -217,7 +251,7 @@ function scene:initLevel( event )
 	levelID = event.params.levelID
 	-- Player
 	Items = display.newGroup()
-	Player = Mollie:new({speed = 5, health = require('levels.player').health, mana = require('levels.player').mana})
+	Player = Mollie:new({health = require('levels.player').health, mana = require('levels.player').mana})
 	sceneGroup:insert(Items)
 	-- Enemy
 	Enemies = display.newGroup()
@@ -272,7 +306,7 @@ if playerLevel >= 4 then
 	firePlacer.img:scale(0.5,0.5)
 	sceneGroup:insert(firePlacer.img)
 end
-if playerLevel >= 4 then
+if playerLevel >= 5 then
 	icePlacer = display.newCircle( display.contentWidth - 150, display.contentHeight - 40 , 20)
 	sceneGroup:insert( icePlacer)
 	icePlacer.img = display.newImage("images/Ice.png", display.contentWidth - 150, display.contentHeight - 40, 20)
