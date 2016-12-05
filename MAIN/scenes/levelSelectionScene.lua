@@ -54,7 +54,7 @@ function scene:show( event )
 				score = p.levels[n].score
 				btn = display.newText(levelsButton, n, (n-1)*120, display.contentHeight/2, native.systemFont, 32)
 				btn.id = n
-				--_G.score[1] = 1000
+				_G.score[n] = p.levels[n].score
 				displayStars(n)
 			end
 		end

@@ -72,47 +72,75 @@ function _G.updatePlayer(level, Player)
 	local p = loadPlayer()
 	
 	--save new player data
-	s = s .. tostring(level+1) .. '\n'
+	if level+1 > p.level then
+		s = s .. tostring(level+1) .. '\n'
+	else
+		s = s .. p.level .. '\n'
+	end
 	s = s .. Player.sprite.maxHealth .. "\n"
 	s = s .. Player.sprite.maxMana .. "\n"
 	if level == 1 then
-		if Player.sprite.maxHealth >= 150 then
-			s = s .. Player.sprite.score .. "\n1\n"
+		if Player.sprite.score > p.levels[1].score then
+			s = s .. Player.sprite.score .. "\n"
 		else
-			s = s .. Player.sprite.score .. "\n0\n"
+			s = s .. p.levels[1].score .. "\n"
+		end
+		if Player.sprite.maxHealth >= 150 then
+			s = s .. "1\n"
+		else
+			s = s .. "0\n"
 		end
 	else
 		s = s .. p.levels[1].score .. "\n" .. p.levels[1].items .. "\n"
 	end
 	if level == 2 then
-		if Player.sprite.maxMana >= 150 then
-			s = s .. Player.sprite.score .. "\n1\n"
+		if Player.sprite.score > p.levels[2].score then
+			s = s .. Player.sprite.score .. "\n"
 		else
-			s = s .. Player.sprite.score .. "\n0\n"
+			s = s .. p.levels[2].score .. "\n"
+		end
+		if Player.sprite.maxMana >= 150 then
+			s = s .. "1\n"
+		else
+			s = s .. "0\n"
 		end
 	else
 		s = s .. p.levels[2].score .. "\n" .. p.levels[2].items .. "\n"
 	end
 	if level == 3 then
-		if Player.sprite.maxHealth == 200 then
-			s = s .. Player.sprite.score .. "\n1\n"
+		if Player.sprite.score > p.levels[3].score then
+			s = s .. Player.sprite.score .. "\n"
 		else
-			s = s .. Player.sprite.score .. "\n0\n"
+			s = s .. p.levels[3].score .. "\n"
+		end
+		if Player.sprite.maxHealth == 200 then
+			s = s .. "1\n"
+		else
+			s = s .. "0\n"
 		end
 	else
 		s = s .. p.levels[3].score .. "\n" .. p.levels[3].items .. "\n"
 	end
 	if level == 4 then
-		if Player.sprite.maxMana == 200 then
-			s = s .. Player.sprite.score .. "\n1\n"
+		if Player.sprite.score > p.levels[4].score then
+			s = s .. Player.sprite.score .. "\n"
 		else
-			s = s .. Player.sprite.score .. "\n0\n"
+			s = s .. p.levels[4].score .. "\n"
+		end
+		if Player.sprite.maxMana == 200 then
+			s = s .. "1\n"
+		else
+			s = s .. "0\n"
 		end
 	else
 		s = s .. p.levels[4].score .. "\n" .. p.levels[4].items .. "\n"
 	end
 	if level == 5 then
-		s = s .. Player.sprite.score .. "\n0\n"
+		if Player.sprite.score > p.levels[5].score then
+			s = s .. Player.sprite.score .. "\n0\n"
+		else
+			s = s .. p.levels[5].score .. "\n0\n"
+		end
 	else
 		s = s .. p.levels[5].score .. "\n" .. p.levels[5].items .. "\n"
 	end
