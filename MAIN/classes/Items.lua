@@ -1,4 +1,4 @@
-local class = require 'classes.middleclass'
+local class = require 'libs.middleclass'
 -- Image Variables for Items
 local healthImage = "images/Health.png"
 local manaImage = "images/Mana.png"
@@ -6,6 +6,7 @@ local keyImage = "images/Key.png"
 local doorImage = "images/Door.png"
 local fdoorImage = "images/FinalDoor.png"
 local bombImage = "images/Bomb.png"
+local gemImage = "images/Gem1.png"
 local composer = require("composer")
 
 local BombPSound = audio.loadSound("sounds/BombP.wav")
@@ -23,6 +24,7 @@ function Item:initialize( x, y, name )
   self.x = x
   self.y = y
   self.name = name
+  self.score = 100
   return self
 end
 
@@ -37,12 +39,14 @@ function Item:test()
 end
 
 function Item:getDistance(a)
-  if self and a then
-    local xDist = a.x - self.x
-    local yDist = a.y - self.y
-    return math.sqrt( (xDist ^ 2) + (yDist^2) )
+  if self.image and a then
+    if a.x and self.image.x then
+      local xDist = a.x - self.image.x
+      local yDist = a.y - self.image.y
+      return math.sqrt( (xDist ^ 2) + (yDist^2) )
+    end
   end
-  return nil
+  return 1000000
 end
 
 function Item:destroy()
@@ -84,6 +88,7 @@ function HP.collision(self, event)
     audio.play(HealthSound)
     self.exists = false
     sb:setHealth(100)
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -119,6 +124,7 @@ function Mana.collision(self, event)
     display.remove(self.image)
     self.exists = false
     sb:setMana(100)
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -155,6 +161,7 @@ function Key.collision(self, event)
     display.remove(self.image)
     self.exists = false
     sb.sprite.key.isVisible = true
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -191,6 +198,7 @@ function Door.collision(self, event)
     display.remove(self.image)
     audio.play(DoorSound)
     self.exists = false
+    event.other.score = event.other.score + self.score
   end
 end
 ---------------------------------------------------------------------------------
@@ -206,6 +214,7 @@ function FDoor:initialize(x,y, statusBar)
   self.exists = true
   sb = statusBar
   Item.initialize(self, x, y, "FDoor")
+  self.score = 1000
   return FDoor.spawn(self)
 end
 
@@ -223,13 +232,14 @@ end
 
 function FDoor.collision(self, event)
   if(event.other.name == "player") then
+    event.other.score = event.other.score + self.score
     display.remove(self.image)
     audio.play(FDoorSound)
     self.exists = false
-    --updatePlayerLevel()
-    --CHANGE THIS BACK TO levelSelectionScene before Demo!!!!!!
+    updatePlayerLevel()
     ItemsList = nil
     composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+
   end
 end
 ---------------------------------------------------------------------------------
@@ -258,6 +268,111 @@ end
 ---------------------------------------------------------------------------------
 -- End of SubClass:  Bomb
 ---------------------------------------------------------------------------------
+
+Spikes = class('Spikes', Item)
+function Spikes:initialize(x, y, player)
+  self.exists = true
+  p = player
+  Item.initialize(self, x, y, "Spikes")
+  return Spikes.spawn(self)
+end
+
+function Spikes.spawn(self)
+  self.image = display.newImage("images/spikes.PNG", self.x, self.y)
+  self.image.name = self.name
+
+  local function spike( event )
+    self:active(p)
+  end
+
+  Runtime:addEventListener("enterFrame", spike)
+
+  return self.image
+end
+
+function Spikes:active(p)
+  local ready = false
+  local x1 = p.x
+  local y1 = p.y
+  local x2 = self.image.x
+  local y2 = self.image.y
+
+  if x2 and y2 and x1 and y1 then
+    if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 40 then
+      ready = true
+    end
+
+    if ready then
+      if not p.hasShield then
+        p.statusBar:setHealth(-100)
+      end
+    end
+  end
+end
+
+HealthUpgrade = class('HealthUpgrade', Item)
+function HealthUpgrade:initialize(x,y, player)
+  self.exists = true
+  self.score = 100
+  p = player
+  Item.initialize(self, x, y, "HealthUpgrade")
+  return HealthUpgrade.spawn(self)
+end
+
+function HealthUpgrade.spawn(self)
+  local pot = self
+  pot.image = display.newImage("images/HealthUpgrade.png", pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  pot.image.collision = function(self,event)
+    HealthUpgrade.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function HealthUpgrade.collision(self, event)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    self.exists = false
+
+    p.maxHealth = p.maxHealth + 50
+    p.statusBar:setHealth(p.maxHealth)
+    event.other.score = event.other.score + self.score
+  end
+end
+
+ManaUpgrade = class('ManaUpgrade', Item)
+function ManaUpgrade:initialize(x,y, player)
+  self.exists = true
+  self.score = 100
+  p = player
+  Item.initialize(self, x, y, "ManaUpgrade")
+  return ManaUpgrade.spawn(self)
+end
+
+function ManaUpgrade.spawn(self)
+  local pot = self
+  pot.image = display.newImage("images/ManaUpgrade.png", pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  pot.image.collision = function(self,event)
+    ManaUpgrade.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function ManaUpgrade.collision(self, event)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    self.exists = false
+    p.maxMana = p.maxMana + 50
+    p.statusBar:setMana(p.maxMana)
+    event.other.score = event.other.score + self.score
+  end
+end
+
 ---------------------------------------------------------------------------------
 -- Subclass: BombP
 -- Functions: initialize, spawn
@@ -290,5 +405,37 @@ function BombP.collision(self, event)
     display.remove(self.image)
     audio.play(BombPSound)
     self.exists = false
+    event.other.score = event.other.score + self.score
+  end
+end
+
+
+Gem = class('Gem', Item)
+function Gem:initialize(x,y, statusBar)
+  self.exists = true
+  sb = statusBar
+  Item.initialize(self, x, y, "Gem")
+  self.score = 500
+  return Gem.spawn(self)
+end
+
+function Gem.spawn(self)
+  local pot = self
+  pot.image = display.newImage(gemImage, pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  pot.image.collision = function(self,event)
+    Gem.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  return pot.image
+end
+
+function Gem.collision(self, event)
+  if(event.other.name == "player") then
+    display.remove(self.image)
+    audio.play(HealthSound)
+    self.exists = false
+    event.other.score = event.other.score + self.score
   end
 end

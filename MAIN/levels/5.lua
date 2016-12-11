@@ -3,6 +3,7 @@ return {
 		{x = 116, y = 167}
 	},
 	enemies = {
+		-- 85 Enemies
 		{x = -324, y = 200},
 		{x = -262, y = 201},
 		{x = -262, y = 140},
@@ -91,6 +92,7 @@ return {
 		{x = 1156, y = 193}
 	},
 	items = {
+		-- 32 Usable Items
 		{name = 'FDoor', x = 338, y = 3},
 		{name = 'Door', x = 224, y = -30},
 		{name = 'Door', x = 107, y = 27},

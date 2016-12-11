@@ -24,10 +24,10 @@ local testerButton
 -- create welcome scene (LOADED ONCE!)
 function scene:create( event )
 	local sceneGroup = self.view
-	
+
 	-- create background and title image
 	local bg = display.newRect(sceneGroup, 0, 0, actualW, actualH)
-	bg:setFillColor( 0,0.5,0.5 )
+	bg:setFillColor( 0,0.0,0.0 )
 	local title = display.newImage(sceneGroup, titleImg, halfW, halfH - 100)
 end
 
