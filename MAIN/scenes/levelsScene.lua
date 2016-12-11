@@ -77,6 +77,7 @@ function scene:loadLevel()
 		if(b.name == "spikes" or b.name == "Spikes") then b.name = Spikes end
 		if(b.name == "healthupgrade" or b.name == "HealthUpgrade") then b.name = HealthUpgrade end
 		if(b.name == "manahupgrade" or b.name == "ManaUpgrade") then b.name = ManaUpgrade end
+		if(b.name == "rocks" or b.name == "Rocks") then b.name = Rocks end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -424,7 +425,18 @@ function createBomb(x, y)
 							local dis = item:getDistance(e[n].sprite)
 							if(dis < 100) then
 								e[n]:Damage(-100)
-								print("Hit Enemy: " .. n)
+							end
+						end
+					end
+				end
+			end
+			if Items then
+				for n = 1, Items.numChildren, 1 do
+					if Items[n] and item then
+						if Items[n].name == "Rocks" then
+							local dis = item:getDistance(Items[n])
+							if(dis < 200) then
+								display.remove(Items[n])
 							end
 						end
 					end

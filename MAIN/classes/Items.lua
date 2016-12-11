@@ -310,7 +310,19 @@ function Spikes:active(p)
   end
 end
 
-
+Rocks = class('Rocks', Item)
+function Rocks:initialize(x, y, player)
+  self.exists = true
+  p = player
+  Item.initialize(self, x, y, "Rocks")
+  return Rocks.spawn(self)
+end
+function Rocks.spawn(self)
+  self.image = display.newImage("images/rocks.png", self.x, self.y)
+  self.image.name = self.name
+  physics.addBody(self.image, "static", { filter = itemCollisionFilter} )
+  return self.image
+end
 
 HealthUpgrade = class('HealthUpgrade', Item)
 function HealthUpgrade:initialize(x,y, player)

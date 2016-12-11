@@ -56,8 +56,10 @@ return {
 		{name = 'Key', x = 1424, y = 159},
 		{name = 'Door', x = 1205, y = 73},
 		{name = 'FDoor', x = 684, y = 165},
-		{name = 'Spikes', x = 1216, y = 246},
-		{name = 'Spikes', x = 1276, y = 246},
+		{name = 'Rocks', x = 1216, y = 246},
+		{name = 'Rocks', x = 1276, y = 246},
+		{name = 'BombP', x = 1246, y = 200},
+		{name = 'BombP', x = 1246, y = 200},
 		{name = 'ManaUpgrade', x = 1248, y = 422}
 	},
 	walls = {
