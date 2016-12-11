@@ -335,8 +335,8 @@ function HealthUpgrade.collision(self, event)
   if(event.other.name == "player") then
     display.remove(self.image)
     self.exists = false
-    print(p.maxHealth)
-    --p.maxHealth = p.maxHealth + 50
+
+    p.maxHealth = p.maxHealth + 50
     p.statusBar:setHealth(p.maxHealth)
     event.other.score = event.other.score + self.score
   end
