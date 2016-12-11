@@ -67,6 +67,7 @@ function FireOff(e)
 end
 -- fireball dot lasts 3 secs
 function useFireball(e)
+	e.onFire = true
 	function dot()
 		if e then
 			if e.statusBar then
@@ -84,6 +85,7 @@ function useIceball(e)
 	local speed = e.speed
 	e.speed = e.speed/3
 	e.onIce = true
+	assert(e.onIce == true) -- REMOVE FROM HERE EVENTUALLY
 	function slow()
 		e.speed = speed
 		e.onIce = false
@@ -98,6 +100,8 @@ function Enemy:initialize(x,y)
 	self.dmgReady = true
 	self.attReady = true
 	self.visible = false
+	self.onFire = false
+	self.onIce = false
 
 end
 
@@ -133,6 +137,8 @@ function Enemy:spawn()
 	self.sprite[1]:setSequence("walk")
 	self.sprite[1]:play()
 	self.sprite.isFixedRotation = true
+	self.sprite.onFire = self.onFire
+	self.sprite.onIce = self.onIce
 	physics.addBody(self.sprite, {filter = enemyCollisionFilter})
 	self.sprite.statusBar = eBar:new({target = self.sprite})
 	self.sprite.statusBar:show()
