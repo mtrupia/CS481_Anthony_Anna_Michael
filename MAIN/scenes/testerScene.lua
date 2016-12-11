@@ -267,6 +267,8 @@ end
 
 function testTimer()
 	print("Test Timer called")
+	assert(e[1].onIce == false)
+	assert(e[2].onFire == false)
 	e[1]:kill()
 	e[2]:kill()
 	placeEnemy(Chaser,50,180)
@@ -294,6 +296,7 @@ function testShoot()
 	if(ts) then
 		print("Testing Shooting")
 		-- Test Shooting
+		Player.power = Iceball:new(Player.sprite)
 		Player.power:Shoot({
 			phase = "began",
 			x = Player.sprite.x - 20,
@@ -308,6 +311,7 @@ function testShoot()
 		})
 		Player:useAbility(Shield)
 		-- Test Bomb
+		print(e[1].onIce)
 		callTimer()
 
 		-- Run these after testing shooting
