@@ -63,6 +63,9 @@ function isDead(e)
 		timer.performWithDelay(100, allowAtt, 1)
 	end
 end
+function FireOff(e)
+	e.onFire = false
+end
 -- fireball dot lasts 3 secs
 function useFireball(e)
 	function dot()
@@ -73,13 +76,18 @@ function useFireball(e)
 			end
 		end
 	end
-	timer.performWithDelay(500, dot, 6)
+	timer.performWithDelay(500, dot, 3)
+	timer.performWithDelay(1500, function()
+	FireOff(e)
+end, 1)
 end
 function useIceball(e)
 	local speed = e.speed
 	e.speed = e.speed/3
+	e.onIce = true
 	function slow()
 		e.speed = speed
+		e.onIce = false
 	end
 	timer.performWithDelay(3000, slow)
 end
@@ -346,7 +354,7 @@ function Tank.collision(self, event)
 	if event then
 		if event.other.name == "power" then
 			damageEnemy(self, event.other)
-			 
+
 		end
 	end
 end

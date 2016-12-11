@@ -15,7 +15,7 @@ local bun
 local bunS
 local bunD
 local bunO
-local ts = true
+local ts
 ---------------------------------------------------------------------------------
 
 -- start phyics up
@@ -31,7 +31,7 @@ local Joystick
 local levelID
 local pauseButton
 local Items
-local ItemsList = {}
+local ItemsList
 local Enemies
 local bombPlacer
 local shieldPlacer
@@ -127,6 +127,7 @@ function scene:hide( event )
 end
 
 function scene:initLevel(event)
+	print("Initialize level")
 	-- Create backGround
 	bg = display.newImage(backGround)
 	bg.rotation = 90
@@ -146,8 +147,11 @@ function scene:initLevel(event)
 	-- Joystick
 	Joystick = {}
 	ItemsList = {}
-
-
+	ts = true
+	bun = NULL
+	bunS = NULL
+	bunD = NULL
+	bunO = NULL
 	walls = display.newGroup()
 	sceneGroup:insert(walls)
 
@@ -264,6 +268,7 @@ end
 function testTimer()
 	print("Test Timer called")
 	e[1]:kill()
+	e[2]:kill()
 	placeEnemy(Chaser,50,180)
 	createBomb(0, 160)
 end
@@ -280,7 +285,6 @@ function testTimer2()
 	bunS = bun
 	bunD = bun + 15000
 	bunO = true
-	ts = false
 	print("Test Timer 2 called.")
 end
 
@@ -288,13 +292,21 @@ end
 
 function testShoot()
 	if(ts) then
+		print("Testing Shooting")
 		-- Test Shooting
 		Player.power:Shoot({
 			phase = "began",
 			x = Player.sprite.x - 20,
 			y = Player.sprite.y
 		})
-
+		placeEnemy(Chaser, Player.sprite.x + 100, Player.sprite.y)
+		Player.power = Fireball:new(Player.sprite)
+		Player.power:Shoot({
+			phase = "began",
+			x = Player.sprite.x + 20,
+			y = Player.sprite.y
+		})
+		Player:useAbility(Shield)
 		-- Test Bomb
 		callTimer()
 
@@ -325,13 +337,7 @@ function beginMovement( event )
 	testShoot()
 	if(not(bun == NULL) and not(bunD == NULL)) then
 		if(bun <= bunD) then
-			if(bun >= bunD - 5000) then
-				assert(ItemsList[1].exists == true, "Error: Door still Exists!")
-				assert(ItemsList[2].exists == false, "Error: Health still Exists!")
-				assert(ItemsList[3].exists == false, "Error: Mana still Exists!")
-				assert(ItemsList[4].exists == false, "Error: Key still Exists!")
-				assert(ItemsList[5].exists == false, "Error: Gem still Exists!")
-				assert(ItemsList[6].exists == true, "Error: Final Door doesn't Exists!")
+			if(bun >= bunD - 8000) then
 			end
 			bun = system.getTimer()
 			if (bun > bunS + 600 and bun < bunS + 620) then
@@ -369,13 +375,14 @@ function beginMovement( event )
 					assert(ItemsList[6].x == 176, "Error: HealthUpgrade X is Incorrect")
 					assert(ItemsList[6].y == 159, "Error: HealthUpgrade Y is Incorrect")
 					assert(ItemsList[6].name == "HealthUpgrade", "Error: HealthUpgrade has wrong name")
+					placeItem(Spikes, 200, 131)
 				end
 			elseif(bun > bunS + 8000 and bun < bunS + 8020) then
-				if(#ItemsList == 6) then
+				if(#ItemsList == 7) then
 					placeItem(FDoor, 350,141)
-					assert(ItemsList[7].x == 350, "Error: Final Door X is Incorrect")
-					assert(ItemsList[7].y == 141, "Error: Final Door Y is Incorrect")
-					assert(ItemsList[7].name == "FDoor", "Error: FDoor has wrong name")
+					assert(ItemsList[8].x == 350, "Error: Final Door X is Incorrect")
+					assert(ItemsList[8].y == 141, "Error: Final Door Y is Incorrect")
+					assert(ItemsList[8].name == "FDoor", "Error: FDoor has wrong name")
 				end
 			end
 		end
@@ -507,8 +514,19 @@ function updatePlayerLevel()
 end
 
 function placeItem(type, x, y)
-	local item = type:new(x,y,Player.sprite.statusBar)
-	Items:insert(item.image)
+	local item
+	if type == Spikes then
+		item = type:new(x, y, Player.sprite)
+	elseif type == HealthUpgrade then
+		item = type:new(x, y, Player.sprite)
+	elseif type == ManaUpgrade then
+		item = type:new(x, y, Player.sprite)
+	else
+		item = type:new(x, y, Player.sprite.statusBar)
+	end
+	if item then
+		Items:insert(item.image)
+	end
 	table.insert(ItemsList, item)
 end
 function placeEnemy(type, x, y)
