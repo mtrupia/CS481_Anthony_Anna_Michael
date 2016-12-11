@@ -70,7 +70,7 @@ end
 function _G.updatePlayer(level, Player)
 	local s = ""
 	local p = loadPlayer()
-	
+
 	--save new player data
 	if level+1 > p.level then
 		s = s .. tostring(level+1) .. '\n'

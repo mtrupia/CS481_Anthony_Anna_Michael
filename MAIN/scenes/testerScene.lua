@@ -150,8 +150,11 @@ function scene:initLevel(event)
 
 	walls = display.newGroup()
 	sceneGroup:insert(walls)
-	crate = display.newImage(walls,"images/crate.png", 100, 100)
 
+	crate = display.newImage("images/crate.png", 100, 100)
+	crate.name = "wall"
+	physics.addBody(crate, "static", { filter = editFilter } )
+	walls:insert(crate)
 	-------------------------------
 	-- Unit Testing Begins
 	-------------------------------
@@ -360,12 +363,19 @@ function beginMovement( event )
 					assert(ItemsList[5].y == 141, "Error: Gem Y is Incorrect")
 					assert(ItemsList[5].name == "Gem", "Error: Gem has wrong name")
 				end
-			elseif(bun > bunS + 8000 and bun < bunS + 8020) then
+			elseif(bun > bunS + 6500 and bun < bunS + 6520) then
 				if(#ItemsList == 5) then
+					placeItem(HealthUpgrade, 176, 159)
+					assert(ItemsList[6].x == 176, "Error: HealthUpgrade X is Incorrect")
+					assert(ItemsList[6].y == 159, "Error: HealthUpgrade Y is Incorrect")
+					assert(ItemsList[6].name == "HealthUpgrade", "Error: HealthUpgrade has wrong name")
+				end
+			elseif(bun > bunS + 8000 and bun < bunS + 8020) then
+				if(#ItemsList == 6) then
 					placeItem(FDoor, 350,141)
-					assert(ItemsList[6].x == 350, "Error: Final Door X is Incorrect")
-					assert(ItemsList[6].y == 141, "Error: Final Door Y is Incorrect")
-					assert(ItemsList[6].name == "FDoor", "Error: FDoor has wrong name")
+					assert(ItemsList[7].x == 350, "Error: Final Door X is Incorrect")
+					assert(ItemsList[7].y == 141, "Error: Final Door Y is Incorrect")
+					assert(ItemsList[7].name == "FDoor", "Error: FDoor has wrong name")
 				end
 			end
 		end

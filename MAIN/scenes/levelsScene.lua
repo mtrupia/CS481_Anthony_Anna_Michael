@@ -139,7 +139,7 @@ function scene:show( event )
 					tTarget = firePlacer
 				elseif event.phase == "ended" and event.target == tTarget then
 					Player.power = Fireball:new(Player.sprite)
-					
+
 					tTarget = nil
 				end
 			end
@@ -151,7 +151,7 @@ function scene:show( event )
 					tTarget = icePlacer
 				elseif event.phase == "ended" and event.target == tTarget then
 					Player.power = Iceball:new(Player.sprite)
-					
+
 					tTarget = nil
 				end
 			end
