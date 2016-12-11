@@ -49,6 +49,7 @@ function isDead(e)
 		player.sprite.score = e.score + player.sprite.score
 		if e.statusBar then
 			e.statusBar:destroy()
+			e.statusBar = nil
 		end
 		if e then
 			display.remove(e)
@@ -68,8 +69,8 @@ function useFireball(e)
 		if e then
 			if e.statusBar then
 				e.statusBar:setHealth(-10)
+				isDead(e)
 			end
-			isDead(e)
 		end
 	end
 	timer.performWithDelay(500, dot, 6)

@@ -24,22 +24,37 @@ local playerSpriteData = {
 }
 ------------------------------------------------
 
-local function damagePlayer(p, e)
-	if p.hasShield then
-		p.statusBar:setMana(-e.damage)
-		if p.mana <= 0 then
-			p.hasShield = false
-			p:remove(p.Shield)
-		end
+function damagePlayer(p, e)
+	if HARDMODE == 1 then
+		damagePlayerHardMode(p, e)
 	else
-		p.statusBar:setHealth(-e.damage)
+		if p.hasShield then
+			p.statusBar:setMana(-e.damage)
+			if p.mana <= 0 then
+				p.hasShield = false
+				p:remove(p.Shield)
+			end
+		else
+			p.statusBar:setHealth(-e.damage)
+		end
 	end
-
+	
 	e.dmgReady = false
 	function allowDmg()
 		e.dmgReady = true
 	end
 	timer.performWithDelay(250, allowDmg, 1)
+end
+function damagePlayerHardMode(p, e)
+	if p.hasShield then
+		p.statusBar:setMana(-200)
+		if p.mana <= 0 then
+			p.hasShield = false
+			p:remove(p.Shield)
+		end
+	else
+		p.statusBar:setHealth(-200)
+	end
 end
 
 Mollie = class('Mollie')

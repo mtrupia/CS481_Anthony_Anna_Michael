@@ -24,8 +24,8 @@ _G.borders = 140
 -- Physics and filters
 _G.physics = require("physics")
 _G.worldCollisionFilter 		 = {	categoryBits = 1, maskBits = 30 }
-_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 57 }
---_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 56 }
+--_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 57 }
+_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 56 }
 _G.powerCollisionFilter 		 = { categoryBits = 4, maskBits = 9 }
 _G.enemyCollisionFilter 		 = { categoryBits = 8, maskBits = 47 }
 _G.enemyPowerCollisionFilter = { categoryBits = 16, maskBits = 35 }
@@ -35,6 +35,8 @@ _G.score  = {}
 _G.StickLib 	 = require( "libs.Analog" )
 -- phone taps
 _G.tTarget = nil
+-- Hardmode variable
+_G.HARDMODE = nil
 
 -- read player save file
 function _G.loadPlayer()
@@ -52,10 +54,11 @@ function _G.loadPlayer()
 		loadPlayer()
 		return
 	else
-		player.level 	= file:read("*n")
-		player.health 	= file:read("*n")
-		player.mana		= file:read("*n")
-		player.levels	= {}
+		player.level 		= file:read("*n")
+		player.HARDMODE		= file:read("*n")
+		player.health 		= file:read("*n")
+		player.mana			= file:read("*n")
+		player.levels		= {}
 		for i = 1, 5, 1 do
 			player.levels[i]= {score = file:read("*n"), items = file:read("*n")}
 		end
@@ -73,12 +76,18 @@ function _G.updatePlayer(level, Player)
 
 	--save new player data
 	if level+1 > p.level then
-		s = s .. tostring(level+1) .. '\n'
+		s = s .. level+1 .. '\n'
 	else
 		s = s .. p.level .. '\n'
 	end
-	s = s .. Player.sprite.maxHealth .. "\n"
-	s = s .. Player.sprite.maxMana .. "\n"
+	s = s .. tostring(HARDMODE) .. "\n"
+	if Player then
+		s = s .. Player.sprite.maxHealth .. "\n"
+		s = s .. Player.sprite.maxMana .. "\n"
+	else
+		s = s .. p.health .. "\n"
+		s = s .. p.mana .. "\n"
+	end
 	if level == 1 then
 		if Player.sprite.score > p.levels[1].score then
 			s = s .. Player.sprite.score .. "\n"
@@ -161,7 +170,7 @@ end
 -- create starting player save file
 function _G.createPlayer()
 	-- Data (string) to write
-	local saveData = "1\n100\n100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0"
+	local saveData = "1\n0\n100\n100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0"
 
 	-- Path for the file to write
 	local path = system.pathForFile( "player.txt", system.DocumentsDirectory )
@@ -183,4 +192,6 @@ function _G.createPlayer()
 end
 
 -- load Welcome Screen
+HARDMODE = loadPlayer().HARDMODE
+
 composer.gotoScene( "scenes.welcomeScene" )

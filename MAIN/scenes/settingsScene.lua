@@ -17,6 +17,8 @@ local titleImg = "images/gameTitle.png"
 -- buttons
 local createLevelButton
 local backButton
+local hardmodeButton
+local restartButton
 
 -- create settings scene
 function scene:create( event )
@@ -24,7 +26,7 @@ function scene:create( event )
 
 	-- create background and title image
 	local bg = display.newRect(sceneGroup, 0, 0, actualW, actualH)
-	bg:setFillColor( 0,0.5,0.5 )
+	bg:setFillColor( 0,0,0 )
 	local title = display.newImage(sceneGroup, titleImg, halfW, halfH - 100)
 end
 
@@ -36,7 +38,14 @@ function scene:show( event )
     if phase == "will" then
 		-- create buttons
         backButton = display.newText(sceneGroup, "Back", display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 32)
-		createLevelButton = display.newText(sceneGroup, "Create a Level", display.contentWidth/2, display.contentHeight/2, native.systemFont, 32)
+		--createLevelButton = display.newText(sceneGroup, "Create a Level", display.contentWidth/2, display.contentHeight/2, native.systemFont, 32)
+		hardmodeButton = display.newText(sceneGroup, "Enable Hard Mode", display.contentWidth/2, display.contentHeight/2, native.systemFont, 32)
+		if HARDMODE == 1 then
+			hardmodeButton.text = "Disable Hard Mode"
+			hardmodeButton:setFillColor( 1, 0 ,0 )
+		end
+		restartButton = display.newText(sceneGroup, "Reset Save Data", display.contentWidth/2, display.contentHeight/2+40, native.systemFont, 32)
+		restartButton.id = 0
 	elseif phase == "did" then
 		-- create listeners
 		if backButton then
@@ -57,6 +66,38 @@ function scene:show( event )
 			end
 			createLevelButton:addEventListener( "touch", createLevelButton)
 		end
+		if hardmodeButton then
+			function hardmodeButton:touch ( event )
+				local phase = event.phase
+				if "ended" == phase then
+					if HARDMODE == 1 then
+						HARDMODE = 0
+					else
+						HARDMODE = 1
+					end
+					updatePlayer(0, nil)
+					composer.gotoScene( "scenes.welcomeScene" , { params = { } } )
+				end
+			end
+			hardmodeButton:addEventListener( "touch", hardmodeButton)
+		end
+		if restartButton then
+			function restartButton:touch ( event )
+				local phase = event.phase
+				if "ended" == phase then
+					if restartButton.id == 0 then
+						restartButton.id = 1
+						restartButton.text = "Are You Sure!?"
+						restartButton:setFillColor( 1, 1, 0 )
+					else
+						restartButton.id = 0
+						createPlayer()
+						composer.gotoScene( "scenes.welcomeScene" , { params = { } } )
+					end
+				end
+			end
+			restartButton:addEventListener( "touch", restartButton)
+		end
     end 
 end
 
@@ -75,6 +116,16 @@ function scene:hide( event )
 			createLevelButton:removeEventListener( "touch", createLevelButton)
 			createLevelButton:removeSelf()
 			createLevelButton = nil
+		end
+		if hardmodeButton then
+			hardmodeButton:removeEventListener( "touch", hardmodeButton)
+			hardmodeButton:removeSelf()
+			hardmodeButton = nil
+		end
+		if restartButton then
+			restartButton:removeEventListener( "touch", restartButton)
+			restartButton:removeSelf()
+			restartButton = nil
 		end
     end 
 end

@@ -87,7 +87,7 @@ function scene:show( event )
 
 	if phase == "will" then
 		-- BG may change
-		backGround		= event.params.bg or "images/testBG.png"
+		backGround		= event.params.bg or "images/BG.png"
 		pauseImg		= event.params.pauseImg or "images/pauseIcon.png"
 
 		self:initLevel(event)
@@ -245,7 +245,7 @@ end
 function scene:initLevel( event )
 	-- Create background
 	bg = display.newImage(backGround)
-	bg.rotation 		= 90
+	bg:scale(2,2)
 	sceneGroup:insert(bg)
 	-- LevelID
 	levelID = event.params.levelID
@@ -467,18 +467,26 @@ function placeItem(type, x, y)
 	elseif type == HealthUpgrade and levelID == 1 then
 		if p.levels[1].items == 0 then
 			item = type:new(x, y, Player.sprite)
+		else
+			item = Gem:new(x, y, Player.sprite.statusBar)
 		end
 	elseif type == ManaUpgrade and levelID == 2 then
 		if p.levels[2].items == 0 then
 			item = type:new(x, y, Player.sprite)
+		else
+			item = Gem:new(x, y, Player.sprite.statusBar)
 		end
 	elseif type == HealthUpgrade and levelID == 3 then
 		if p.levels[3].items == 0 then
 			item = type:new(x, y, Player.sprite)
+		else
+			item = Gem:new(x, y, Player.sprite.statusBar)
 		end
 	elseif type == ManaUpgrade and levelID == 4 then
 		if p.levels[4].items == 0 then
 			item = type:new(x, y, Player.sprite)
+		else
+			item = Gem:new(x, y, Player.sprite.statusBar)
 		end
 	else
 		item = type:new(x, y, Player.sprite.statusBar)

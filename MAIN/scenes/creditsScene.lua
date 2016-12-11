@@ -15,7 +15,7 @@ local scene = composer.newScene( sceneName )
 local titleImg = "images/gameTitle.png"
 
 -- private vars
-local credits = "Anna Schmedding\n  Anthony Austin\n  Michael Trupia" 
+local credits = "     Michael Trupia\n     Anthony Austin\n   Anna Schmedding" 
 
 -- buttons
 local backButton
@@ -26,11 +26,11 @@ function scene:create( event )
 	
 	-- create background and title image
 	local bg = display.newRect(sceneGroup, 0, 0, actualW, actualH)
-	bg:setFillColor( 0,0.5,0.5 )
+	bg:setFillColor( 0,0,0 )
 	local title = display.newImage(sceneGroup, titleImg, halfW, halfH - 100)
 	
 	-- create credits text
-	local creditsTxt = display.newText(sceneGroup, credits, halfW, halfH+50, native.systemFont, 32)
+	local creditsTxt = display.newText(sceneGroup, credits, halfW, halfH+20, native.systemFont, 32)
 end
 
 -- display credits scene, create buttons, add listeners
