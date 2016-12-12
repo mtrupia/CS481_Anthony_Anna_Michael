@@ -37,12 +37,13 @@ _G.StickLib 	 = require( "libs.Analog" )
 _G.tTarget = nil
 -- Hardmode variable
 _G.HARDMODE = nil
+_G.SAVEFILE = "MOLLYPLAYERSAVEFILE1337"
 
 -- read player save file
 function _G.loadPlayer()
 	local player = display.newGroup()
 	-- Path for the file to read
-	local path = system.pathForFile( "player.txt", system.DocumentsDirectory )
+	local path = system.pathForFile( SAVEFILE, system.DocumentsDirectory )
 
 	-- Open the file handle
 	local file, errorString = io.open( path, "r" )
@@ -52,7 +53,6 @@ function _G.loadPlayer()
 		file = nil
 		createPlayer()
 		loadPlayer()
-		return
 	else
 		player.level 		= file:read("*n")
 		player.HARDMODE		= file:read("*n")
@@ -154,7 +154,7 @@ function _G.updatePlayer(level, Player)
 		s = s .. p.levels[5].score .. "\n" .. p.levels[5].items .. "\n"
 	end
 
-	local path = system.pathForFile( "player.txt", system.DocumentsDirectory )
+	local path = system.pathForFile( SAVEFILE, system.DocumentsDirectory )
 
 	local file, errorString = io.open( path, "w" )
 
@@ -173,7 +173,7 @@ function _G.createPlayer()
 	local saveData = "1\n0\n100\n100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0"
 
 	-- Path for the file to write
-	local path = system.pathForFile( "player.txt", system.DocumentsDirectory )
+	local path = system.pathForFile( SAVEFILE, system.DocumentsDirectory )
 
 	-- Open the file handle
 	local file, errorString = io.open( path, "w" )

@@ -1,4 +1,4 @@
-``-- Variables
+-- Variables
 local HitSound = audio.loadSound("sounds/Hit.wav")
 local class = require 'libs.middleclass'
 require 'classes.Bars'

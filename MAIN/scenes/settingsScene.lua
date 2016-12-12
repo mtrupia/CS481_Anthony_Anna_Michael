@@ -92,6 +92,7 @@ function scene:show( event )
 					else
 						restartButton.id = 0
 						createPlayer()
+						HARDMODE = 0
 						composer.gotoScene( "scenes.welcomeScene" , { params = { } } )
 					end
 				end
