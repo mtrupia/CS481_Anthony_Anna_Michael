@@ -110,9 +110,9 @@ return {
 		{name = 'HP', x = 117, y = 342},
 		{name = 'HP', x = -89, y = -381},
 		{name = 'Mana', x = -23, y = -384},
-		{name = 'Spikes', x = 1062, y = 1035},
-		{name = 'Spikes', x = 1122, y = 1035},
-		{name = 'Spikes', x = 1182, y = 1035},
+		{name = 'IceBlock', x = 1062, y = 1035},
+		{name = 'IceBlock', x = 1122, y = 1035},
+		{name = 'IceBlock', x = 1182, y = 1035},
 		{name = 'HealthUpgrade', x = 1121, y = 1436}
 	},
 	walls = {

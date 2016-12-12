@@ -1,5 +1,4 @@
 local class = require 'libs.middleclass'
-local image = "images/brick.png"
 require 'classes.Enemies'
 -- sounds
 local ShootSound = audio.loadSound( "sounds/Shoot.wav" )
@@ -12,7 +11,7 @@ local alivePowers = {}
 local x = 0
 
 Ability = class('Ability')
-function Ability:initialize(target, mana, damage, name)
+function Ability:initialize(target, mana, damage, name, image)
   self.life     = 500    -- how long the power shall stay alive
   self.speed    = 300    -- how fast will this power move
   self.density  = 0.0000001    -- density of this power
@@ -22,6 +21,7 @@ function Ability:initialize(target, mana, damage, name)
   self.name		= name or 'reg'
   self.damage 	= damage or -30
   self.mana		= mana or 0
+  self.image 	= image or "images/brick.png"
 end
 
 function Ability:Shoot(event)
@@ -31,12 +31,15 @@ function Ability:Shoot(event)
       if event.target == tTarget then
         audio.play( PoofSound )
       end
+	  if target.mana < self.mana*-1 then
+			Ability.initialize(self, self.target)
+		end
     end
   end
   if event.phase == "began" and event.target == tTarget and target.mana >= (self.mana*-1) then
     audio.play( ShootSound )
     n = n + 1
-    powers[n] = display.newImage(image, target.x, target.y)
+    powers[n] = display.newImage(self.image, target.x, target.y)
     physics.addBody( powers[n], {density = self.density, friction = self.friction, bounce = self.bounce, filter = powerCollisionFilter})
     powers[n].name = "power"
     powers[n].spell = self.name
@@ -106,7 +109,7 @@ function Fireball:initialize(target)
   self.target = target
   self.mana = -10
   self.damage = -40
-  Ability.initialize(self, self.target, self.mana, self.damage, self.name)
+  Ability.initialize(self, self.target, self.mana, self.damage, self.name, "images/firebrick.png")
 end
 
 -- Iceball Subclass
@@ -116,5 +119,5 @@ function Iceball:initialize(target)
   self.target = target
   self.mana = -10
   self.damage = -40
-  Ability.initialize(self, self.target, self.mana, self.damage, self.name)
+  Ability.initialize(self, self.target, self.mana, self.damage, self.name, "images/icebrick.png")
 end

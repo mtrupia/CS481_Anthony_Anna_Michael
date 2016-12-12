@@ -88,8 +88,8 @@ return {
 		{name = 'BombP', x = 170, y = 198},
 		{name = 'BombP', x = 230, y = 195},
 		{name = 'HP', x = 11, y = 152},
-		{name = 'Spikes', x = 618, y = 544},
-		{name = 'Spikes', x = 618, y = 484},
+		{name = 'FireBlock', x = 618, y = 544},
+		{name = 'FireBlock', x = 618, y = 484},
 		{name = 'ManaUpgrade', x = 850, y = 515}
 	},
 	walls = {

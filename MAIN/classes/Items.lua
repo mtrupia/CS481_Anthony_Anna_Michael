@@ -324,6 +324,82 @@ function Rocks.spawn(self)
   return self.image
 end
 
+IceBlock = class('IceBlock', Item)
+function IceBlock:initialize(x, y, player)
+  self.exists = true
+  p = player
+  Item.initialize(self, x, y, "IceBlock")
+  return IceBlock.spawn(self)
+end
+function IceBlock.spawn(self)
+  local pot = self
+  pot.image = display.newImage("images/iceblock.png", pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = worldCollisionFilter} )
+  
+  pot.image.collision = function(self,event)
+    IceBlock.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  
+  return self.image
+end
+function IceBlock.collision(self, event)
+	if event.other.name == "power" then
+		if event.other.spell == "fireball" then
+			function melt(item)
+				if item then
+					display.remove(item)
+				end
+			end
+
+			timer.performWithDelay( 1000,
+			function()
+				melt(self.image)
+			end,
+			1)
+		end
+	end
+end
+
+FireBlock = class('FireBlock', Item)
+function FireBlock:initialize(x, y, player)
+  self.exists = true
+  p = player
+  Item.initialize(self, x, y, "FireBlock")
+  return FireBlock.spawn(self)
+end
+function FireBlock.spawn(self)
+  local pot = self
+  pot.image = display.newImage("images/fireblock.png", pot.x, pot.y)
+  pot.image.name = pot.name
+  physics.addBody(pot.image, "static", { filter = worldCollisionFilter} )
+  
+  pot.image.collision = function(self,event)
+    FireBlock.collision(pot,event)
+  end
+  self.image:addEventListener("collision")
+  
+  return self.image
+end
+function FireBlock.collision(self, event)
+	if event.other.name == "power" then
+		if event.other.spell == "iceball" then
+			function melt(item)
+				if item then
+					display.remove(item)
+				end
+			end
+
+			timer.performWithDelay( 1000,
+			function()
+				melt(self.image)
+			end,
+			1)
+		end
+	end
+end
+
 HealthUpgrade = class('HealthUpgrade', Item)
 function HealthUpgrade:initialize(x,y, player)
   self.exists = true

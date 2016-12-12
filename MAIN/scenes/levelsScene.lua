@@ -62,7 +62,7 @@ function scene:loadLevel()
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
 		crate.name = "wall"
-		physics.addBody(crate, "static", { filter = editFilter } )
+		physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 		walls:insert(crate)
 	end
 
@@ -78,6 +78,8 @@ function scene:loadLevel()
 		if(b.name == "healthupgrade" or b.name == "HealthUpgrade") then b.name = HealthUpgrade end
 		if(b.name == "manahupgrade" or b.name == "ManaUpgrade") then b.name = ManaUpgrade end
 		if(b.name == "rocks" or b.name == "Rocks") then b.name = Rocks end
+		if(b.name == "iceblock" or b.name == "IceBlock") then b.name = IceBlock end
+		if(b.name == "fireblock" or b.name == "FireBlock") then b.name = FireBlock end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -139,8 +141,12 @@ function scene:show( event )
 				if event.phase == "began" then
 					tTarget = firePlacer
 				elseif event.phase == "ended" and event.target == tTarget then
-					Player.power = Fireball:new(Player.sprite)
-
+					if Player.power.name == "fireball" then
+						Player.power = Ability:new(Player.sprite)
+					else
+						Player.power = Fireball:new(Player.sprite)
+					end
+					
 					tTarget = nil
 				end
 			end
@@ -151,7 +157,11 @@ function scene:show( event )
 				if event.phase == "began" then
 					tTarget = icePlacer
 				elseif event.phase == "ended" and event.target == tTarget then
-					Player.power = Iceball:new(Player.sprite)
+					if Player.power.name == "iceball" then
+						Player.power = Ability:new(Player.sprite)
+					else
+						Player.power = Iceball:new(Player.sprite)
+					end
 
 					tTarget = nil
 				end
