@@ -10,7 +10,6 @@ local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
-local bgImg = "images/blackBG.png"
 local titleImg = "images/gameTitle.png"
 
 local pauseState = "continue"
@@ -20,7 +19,8 @@ local continueButton
 
 function scene:create( event )
     local sceneGroup = self.view
-	local bg = display.newImage(bgImg)
+	local bg = display.newRect(sceneGroup, 0, 0, actualW, actualH)
+	bg:setFillColor( 0,0,0 )
 	bg.rotation = 90
 	bg.alpha = 0.7
 	local title = display.newImage(titleImg)

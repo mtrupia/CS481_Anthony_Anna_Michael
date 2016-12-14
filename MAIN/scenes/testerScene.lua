@@ -155,10 +155,9 @@ function scene:initLevel(event)
   walls = display.newGroup()
   sceneGroup:insert(walls)
 
-  crate = display.newImage("images/crate.png", 100, 100)
+  crate = display.newImage(walls, "images/crate.png", 100, 100)
   crate.name = "wall"
   physics.addBody(crate, "static", { filter = editFilter } )
-  walls:insert(crate)
   -------------------------------
   -- Unit Testing Begins
   -------------------------------
