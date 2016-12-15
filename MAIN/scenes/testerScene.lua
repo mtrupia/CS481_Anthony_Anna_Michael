@@ -78,7 +78,7 @@ end
 function scene:hide( event )
   sceneGroup = self.view
   local phase = event.phase
-
+    display.remove(crate)
   if phase == "will" then
     if pauseButton then
       pauseButton:removeEventListener("touch", pauseButton)
@@ -322,6 +322,7 @@ end
 
 function scene:leaveLvl()
   composer.gotoScene( "scenes.levelSelectionScene", { effect = "fade", time = 300 } )
+
 end
 
 function scene:restartLvl( id )

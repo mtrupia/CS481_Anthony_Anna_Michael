@@ -68,6 +68,7 @@ function scene:loadLevel()
 
 	for i = 1, #level.items do
 		local b = level.items[i]
+-- GET RID OF ALL THESE IF STATEMENTS
 		if(b.name == "hp" or b.name == "HP") then b.name = HP end
 		if(b.name == "mana" or b.name == "Mana") then b.name = Mana end
 		if(b.name == "key" or b.name == "Key") then b.name = Key end
@@ -146,7 +147,7 @@ function scene:show( event )
 					else
 						Player.power = Fireball:new(Player.sprite)
 					end
-					
+
 					tTarget = nil
 				end
 			end

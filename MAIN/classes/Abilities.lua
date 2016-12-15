@@ -69,20 +69,11 @@ function Ability:Shoot(event)
 	if target.mana < self.mana*-1 then
 		Ability.initialize(self, self.target)
 	end
-	
+
     tTarget = nil
   end
 end
 
-function Ability:use(enemy)
-  print("Use Basic Ability")
-  print(enemy.name)
-  audio.play(HitSound)
-  -- if enemy.attReady then
-  --   enemy.attReady = false
-  --   enemy:damage(-20)
-  -- end
-end
 -- Shield Subclass
 Shield = class('Shield', Ability)
 function Shield:initialize(props)
