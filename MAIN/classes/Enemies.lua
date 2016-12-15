@@ -286,7 +286,7 @@ Trapper = class('Trapper', Enemy)
 function Trapper:initialize(x,y, Player)
 	self.speed = 1.2
 	self.damage = 10
-	self.health = 75
+	self.health = 50
 	self.name = "Enemy"
 	player = Player
 	Enemy:initialize(x, y)

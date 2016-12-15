@@ -43,7 +43,11 @@ function scene:show( event )
 		loadPlayer()
 		--create buttons
 		local levels = loadPlayer().level
-		if levels > 5 then levels = 5 end
+		if levels then
+			if levels > 5 then levels = 5 end
+		else
+			levels = 1
+		end
 
 		levelsButton = display.newGroup()
 		for n = 1, levels, 1 do

@@ -70,10 +70,12 @@ function Bar:show()
   sprite.healthBar = display.newText(sprite,self.target.health .. " / " .. self.target.maxHealth, display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 24)
   sprite.healthBar.x = healthPos.x
   sprite.healthBar.y = healthPos.y
+  sprite.healthBar:setFillColor(1,0,0)
   -- Mana Bar
   sprite.manaBar = display.newText(sprite,self.target.mana .. " / " .. self.target.maxMana, display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 24)
   sprite.manaBar.x = manaPos.x
   sprite.manaBar.y = manaPos.y
+  sprite.manaBar:setFillColor(0,0,1)
 
   -- Score
   sprite.score = display.newText(self.target.score, screenW - 100, screenH - 305)

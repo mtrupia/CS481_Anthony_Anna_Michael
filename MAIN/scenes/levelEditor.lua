@@ -12,12 +12,13 @@ require( "classes.Items")
 require( "classes.Abilities")
 local scene = composer.newScene( sceneName )
 local BoomSound = audio.loadSound( "sounds/Boom.wav" )
-
+local GameOverSound = audio.loadSound( "sounds/GameOver.wav")
 ---------------------------------------------------------------------------------
 
 -- start phyics up
 physics.start()
 physics.setGravity(0, 0)
+physics.setDrawMode( "hybrid" )
 -- Vars
 local pauseImage
 local backGround
@@ -26,8 +27,8 @@ local walls
 local Player
 local Enemies
 local Items
-local Joystick
 
+local Joystick
 local pauseButton
 
 local editType
@@ -47,22 +48,23 @@ end
 
 function scene:loadLevel()
 	level = require('levels.edit')
-	
+
 	Player.sprite.x = level.player[1].x
 	Player.sprite.y = level.player[1].y
-	
+
 	for i = 1, #level.enemies do
 		local b = level.enemies[i]
 		placeEnemy(b.x, b.y)
 	end
-	
+
 	for i = 1, #level.walls do
 		local b = level.walls[i]
 		crate = display.newImage("images/crate.png", b.x, b.y)
+		crate.name = "wall"
 		physics.addBody(crate, "static", { filter = worldCollisionFilter } )
 		walls:insert(crate)
 	end
-	
+
 	for i = 1, #level.items do
 		local b = level.items[i]
 		if(b.name == "hp" or b.name == "HP") then b.name = HP end
@@ -72,6 +74,11 @@ function scene:loadLevel()
 		if(b.name == "fdoor" or b.name == "FDoor") then b.name = FDoor end
 		if(b.name == "bombP" or b.name == "BombP") then b.name = BombP end
 		if(b.name == "spikes" or b.name == "Spikes") then b.name = Spikes end
+		if(b.name == "healthupgrade" or b.name == "HealthUpgrade") then b.name = HealthUpgrade end
+		if(b.name == "manahupgrade" or b.name == "ManaUpgrade") then b.name = ManaUpgrade end
+		if(b.name == "rocks" or b.name == "Rocks") then b.name = Rocks end
+		if(b.name == "iceblock" or b.name == "IceBlock") then b.name = IceBlock end
+		if(b.name == "fireblock" or b.name == "FireBlock") then b.name = FireBlock end
 		placeItem(b.name, b.x, b.y)
 	end
 end
@@ -186,7 +193,8 @@ function scene:hide( event )
 			Runtime:removeEventListener("collision",  onGlobalCollision)
 			Runtime:removeEventListener("mouse", onMouseEvent)
 			Runtime:removeEventListener("key", onKeyEvent)
-			Player:destroy()
+			display.remove(Player.sprite.statusBar.sprite.score )
+			Player:kill()
 			Player = nil;
 		end
 		if Joystick then
@@ -204,7 +212,7 @@ function scene:hide( event )
 		if Enemies then
 			for n = 1, en, 1 do
 				if e[n] then
-					e[n]:destroy()
+					e[n]:kill()
 					e[n] = nil
 				end
 			end
@@ -219,14 +227,17 @@ function scene:hide( event )
 end
 
 function beginMovement( event )
-	if (Player.sprite.health <= 0) then
-		scene:leaveLvl()
-		return
-	end
 	Player.sprite.statusBar.sprite:toFront()
 	Joystick:toFront()
 	pauseButton:toFront()
 	Player:move(Joystick)
+	for n=1, en, 1 do
+		if e[n] then
+			if e[n].sprite.statusBar then
+				e[n].sprite.statusBar:move()
+			end
+		end
+	end
 
 	--move world if outside border
 	if Player.sprite.x < borders-80 then	-- moving left
@@ -484,31 +495,38 @@ function scene:initLevel( event )
 end
 
 function createBomb(x, y)
-	print("hi")
 	local bomb = Bomb:new(x, y, Player.sprite.statusBar)
 	Items:insert(bomb.image)
 
 	function boom(item)
 		audio.play(BoomSound)
-		print("boom")
 		if(item) then
 			if Enemies then
 				for n = 1, en, 1 do
 					if(e[n] and item) then
 						if e[n].sprite then
-							if e[n].sprite[1] then
-								local dis = item:getDistance(e[n].sprite, item)
-								if(dis < 100) then
-									e[n]:attack(100)
-									print("Hit Enemy: " .. n)
-								end
+							local dis = item:getDistance(e[n].sprite)
+							if(dis < 100) then
+								e[n]:Damage(-100)
+							end
+						end
+					end
+				end
+			end
+			if Items then
+				for n = 1, Items.numChildren, 1 do
+					if Items[n] and item then
+						if Items[n].name == "Rocks" then
+							local dis = item:getDistance(Items[n])
+							if(dis < 200) then
+								display.remove(Items[n])
 							end
 						end
 					end
 				end
 			end
 			if Player and item then
-				if(item:getDistance(Player.sprite,item) < 100) then
+				if(item:getDistance(Player.sprite) < 100) then
 					print("Hit Player")
 					if Player.sprite.hasShield then
 						Player.sprite.statusBar:setMana(-30)
