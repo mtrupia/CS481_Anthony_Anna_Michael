@@ -131,13 +131,35 @@ function eBar:show()
   sprite.healthBar:scale(self.scaleX, self.scaleY)
   sprite.healthBar:setSequence("10")
   sprite.healthBar:play()
+  sprite.fire = display.newImage(sprite, "images/Fire.png", target.x-25, target.y - 20)
+  sprite.fire:scale(0.25,0.25)
+  sprite.fire.isVisible = false
+  sprite.ice = display.newImage(sprite, "images/Ice.png", target.x-25, target.y - 20)
+  sprite.ice:scale(0.4,0.4)
+  sprite.ice.isVisible = false
 end
 
 function eBar:move()
 	if self.sprite then
 	  if self.sprite.x and self.target.x then
 		self.sprite.healthBar.x = self.target.x
-		self.sprite.healthBar.y = self.target.y - 10
+		self.sprite.healthBar.y = self.target.y - 20
+		self.sprite.fire.x = self.target.x-25
+		self.sprite.fire.y = self.target.y-20
+		self.sprite.ice.x = self.target.x-25
+		self.sprite.ice.y = self.target.y-20
+		
+		if self.target.onFire then
+			self.sprite.fire.isVisible = true
+		else
+			self.sprite.fire.isVisible = false
+		end
+		
+		if self.target.onIce then
+			self.sprite.ice.isVisible = true
+		else
+			self.sprite.ice.isVisible = false
+		end
 	  end
 	 end
 end
