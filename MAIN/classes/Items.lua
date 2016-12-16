@@ -184,7 +184,7 @@ function Door.spawn(self)
   local pot = self
   pot.image = display.newImage(doorImage, pot.x, pot.y)
   pot.image.name = pot.name
-  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  physics.addBody(pot.image, "static", { filter = doorCollisionFilter} )
   pot.image.collision = function(self,event)
     Door.collision(pot,event)
   end
@@ -222,7 +222,7 @@ function FDoor.spawn(self)
   local pot = self
   pot.image = display.newImage(fdoorImage, pot.x, pot.y)
   pot.image.name = pot.name
-  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  physics.addBody(pot.image, "static", { filter = doorCollisionFilter} )
   pot.image.collision = function(self,event)
     FDoor.collision(pot,event)
   end
@@ -272,7 +272,7 @@ end
 Spikes = class('Spikes', Item)
 function Spikes:initialize(x, y, player)
   self.exists = true
-  p = player
+  self.p = player
   Item.initialize(self, x, y, "Spikes")
   return Spikes.spawn(self)
 end
@@ -282,18 +282,17 @@ function Spikes.spawn(self)
   self.image.name = self.name
 
   local function spike( event )
-    self:active(p)
+    self:active()
   end
-
   Runtime:addEventListener("enterFrame", spike)
 
   return self.image
 end
 
-function Spikes:active(p)
+function Spikes:active()
   local ready = false
-  local x1 = p.x
-  local y1 = p.y
+  local x1 = self.p.x
+  local y1 = self.p.y
   local x2 = self.image.x
   local y2 = self.image.y
 
@@ -301,10 +300,9 @@ function Spikes:active(p)
     if math.sqrt(math.pow((x2-x1),2)+math.pow((y2-y1),2)) < 40 then
       ready = true
     end
-
     if ready then
-      if not p.hasShield then
-        p.statusBar:setHealth(-100)
+      if not self.p.hasShield then
+        self.p.statusBar:setHealth(-100)
       end
     end
   end

@@ -293,8 +293,9 @@ function Ranger:move()
 
 				n = n + 1
 				epowers[n] = display.newImage("images/brick.png", self.sprite.x, self.sprite.y)
+				epowers[n].name = "enemyPower"
 				physics.addBody( epowers[n], { density=0.0000001, friction=0.00000001, bounce=0.00000001, filter=enemyPowerCollisionFilter } )
-
+ 		
 				local edeltaX=player.sprite.x - self.sprite.x
 				local edeltaY=player.sprite.y - self.sprite.y
 				local enormDeltaX = edeltaX / math.sqrt(math.pow(edeltaX,2) + math.pow(edeltaY,2))
