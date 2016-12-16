@@ -76,7 +76,7 @@ function _G.updatePlayer(level, Player)
 	local p = loadPlayer()
 
 	--save new player data
-	if level+1 > p.level then
+	if (level+1 > p.level) then
 		s = s .. level+1 .. '\n'
 	else
 		s = s .. p.level .. '\n'

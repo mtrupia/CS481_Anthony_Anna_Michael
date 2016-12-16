@@ -311,28 +311,28 @@ sceneGroup:insert(pauseButton)
 -- bomb bombPlacer
 playerLevel = loadPlayer().level
 
-if playerLevel >= 2 then
+if playerLevel >= 2 or levelID >= 6 then
 	shieldPlacer = display.newCircle( display.contentWidth - 50, display.contentHeight - 40, 20)
 	sceneGroup:insert(shieldPlacer)
 	shieldPlacer.img = display.newImage("images/shield.png", display.contentWidth - 50, display.contentHeight - 40)
 	shieldPlacer.img:scale(0.5,0.5)
 	sceneGroup:insert(shieldPlacer.img)
 end
-if playerLevel >= 3 then
+if playerLevel >= 3 or levelID >= 6 then
 	bombPlacer = display.newCircle( display.contentWidth, display.contentHeight - 40, 20)
 	sceneGroup:insert(bombPlacer)
 	bombPlacer.img = display.newImage("images/Bomb.png", display.contentWidth, display.contentHeight - 40)
 	bombPlacer.img:scale(0.5,0.5)
 	sceneGroup:insert(bombPlacer.img)
 end
-if playerLevel >= 4 then
+if playerLevel >= 4 or levelID >= 6 then
 	firePlacer = display.newCircle( display.contentWidth - 100, display.contentHeight - 40 , 20)
 	sceneGroup:insert(firePlacer)
 	firePlacer.img = display.newImage("images/Fire.png", display.contentWidth - 100, display.contentHeight - 40, 20)
 	firePlacer.img:scale(0.5,0.5)
 	sceneGroup:insert(firePlacer.img)
 end
-if playerLevel >= 5 then
+if playerLevel >= 5 or levelID >= 6 then
 	icePlacer = display.newCircle( display.contentWidth - 150, display.contentHeight - 40 , 20)
 	sceneGroup:insert( icePlacer)
 	icePlacer.img = display.newImage("images/Ice.png", display.contentWidth - 150, display.contentHeight - 40, 20)
