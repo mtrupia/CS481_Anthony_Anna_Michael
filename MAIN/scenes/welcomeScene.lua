@@ -42,7 +42,7 @@ function scene:show( event )
 		settingsButton = display.newText(sceneGroup, "Settings", levelSelectionButton.x, levelSelectionButton.y+40, native.systemFont, 32)
 		creditsButton = display.newText(sceneGroup, "Credits", settingsButton.x, settingsButton.y+40, native.systemFont, 32)
 		exitButton = display.newText(sceneGroup, "Exit", creditsButton.x, creditsButton.y+40, native.systemFont, 32)
-		testerButton = display.newText(sceneGroup, "Unit Tests", 460, 10, native.systemFont, 20)
+		--testerButton = display.newText(sceneGroup, "Unit Tests", 460, 10, native.systemFont, 20)
 	elseif phase == "did" then
 		-- create listeners
 		if levelSelectionButton then

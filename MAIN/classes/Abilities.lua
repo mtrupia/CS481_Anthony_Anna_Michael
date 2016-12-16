@@ -2,7 +2,6 @@ local class = require 'libs.middleclass'
 require 'classes.Enemies'
 -- sounds
 local ShootSound = audio.loadSound( "sounds/Shoot.wav" )
-local PoofSound = audio.loadSound( "sounds/Poof.wav" )
 local HitSound = audio.loadSound("sounds/Hit.wav")
 -- controls creation and deletion of powers
 local powers = {}
@@ -28,9 +27,6 @@ function Ability:Shoot(event)
   local target = self.target
   if event.phase == "began" then
     if target.mana <= 0 then
-      if event.target == tTarget then
-        audio.play( PoofSound )
-      end
 	  if target.mana < self.mana*-1 then
 			Ability.initialize(self, self.target)
 		end

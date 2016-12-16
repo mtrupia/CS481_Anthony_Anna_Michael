@@ -37,7 +37,7 @@ _G.StickLib 	 = require( "libs.Analog" )
 _G.tTarget = nil
 -- Hardmode variable
 _G.HARDMODE = nil
-_G.SAVEFILE = "MOLLYPLAYERSAVEFILE1337"
+_G.SAVEFILE = "MOLLYPLAYERSAVEFILE1337.txt"
 
 -- read player save file
 function _G.loadPlayer()

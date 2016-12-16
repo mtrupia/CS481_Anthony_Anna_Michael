@@ -70,6 +70,11 @@ function scene:show( event )
 				displayStars(n)
 			end
 		end
+		--tut = display.newText(levelsButton, "Tutorial", (3-1)*120, display.contentHeight/2+50, native.systemFont, 32)
+		--tut.id = 6
+		--if HARDMODE == 1 then
+		--	tut:setFillColor( 1,0,0 )
+		--end
 		sceneGroup:insert(levelsButton)
 		backButton = display.newText(sceneGroup, "Back", display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 32)
 	elseif phase == "did" then
