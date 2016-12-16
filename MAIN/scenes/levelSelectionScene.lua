@@ -75,7 +75,6 @@ function scene:show( event )
 	elseif phase == "did" then
 		-- create listeners
 		if levelsButton then
-			print(levelsButton.numChildren)
 			for i = 1, levelsButton.numChildren, 1 do
 				local level = levelsButton[i]
 				function level:touch ( event )
