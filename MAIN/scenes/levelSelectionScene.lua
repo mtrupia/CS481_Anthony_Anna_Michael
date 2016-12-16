@@ -23,12 +23,13 @@ local fullStar = "images/FullStar.png"
 -- buttons
 local levelsButton
 local backButton
+local sceneGroup
 
 local sceneGroup
 
 -- create selection scene
 function scene:create( event )
-	local sceneGroup = self.view
+	sceneGroup = self.view
 
 	-- create background and title image
 	local bg = display.newRect(sceneGroup, 0, 0, actualW, actualH)
@@ -74,6 +75,7 @@ function scene:show( event )
 	elseif phase == "did" then
 		-- create listeners
 		if levelsButton then
+			print(levelsButton.numChildren)
 			for i = 1, levelsButton.numChildren, 1 do
 				local level = levelsButton[i]
 				function level:touch ( event )
@@ -99,7 +101,7 @@ end
 
 -- hide selection scene once user chooses button.  Clean up listeners and buttons
 function scene:hide( event )
-	local sceneGroup = self.view
+	sceneGroup = self.view
 	local phase = event.phase
 
 	if event.phase == "will" then
