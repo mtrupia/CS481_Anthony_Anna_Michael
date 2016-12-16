@@ -112,6 +112,8 @@ function Mollie.collision(self, event)
 			if event.other.dmgReady then
 				damagePlayer(self, event.other)
 			end
+		elseif (event.other.name == "enemyPower") then
+			self.statusBar:setHealth(-5)
 		end
 	end
 end
