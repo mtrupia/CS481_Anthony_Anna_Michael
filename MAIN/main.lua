@@ -60,7 +60,7 @@ function _G.loadPlayer()
 		player.health 		= file:read("*n")
 		player.mana			= file:read("*n")
 		player.levels		= {}
-		for i = 1, 5, 1 do
+		for i = 1, 6, 1 do
 			player.levels[i]= {score = file:read("*n"), items = file:read("*n")}
 		end
 		-- Close the file handle
@@ -171,7 +171,7 @@ end
 -- create starting player save file
 function _G.createPlayer()
 	-- Data (string) to write
-	local saveData = "1\n0\n100\n100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0"
+	local saveData = "1\n0\n100\n100\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0"
 
 	-- Path for the file to write
 	local path = system.pathForFile( SAVEFILE, system.DocumentsDirectory )
