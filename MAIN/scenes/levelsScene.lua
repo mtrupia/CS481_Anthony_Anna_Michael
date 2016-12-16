@@ -132,10 +132,6 @@ function scene:show( event )
 					tTarget = shieldPlacer
 				elseif event.phase == "ended" and event.target == tTarget then
 					Player:useAbility( Shield )
-					shieldPlacer:setFillColor(1, 1, 0)
-					bombPlacer:setFillColor(1,1,1)
-					firePlacer:setFillColor(1,1,1)
-					icePlacer:setFillColor(1,1,1)
 					tTarget = nil
 				end
 			end
@@ -148,13 +144,8 @@ function scene:show( event )
 				elseif event.phase == "ended" and event.target == tTarget then
 					if Player.power.name == "fireball" then
 						Player.power = Ability:new(Player.sprite)
-						firePlacer:setFillColor(1,1,1)
 					else
 						Player.power = Fireball:new(Player.sprite)
-						firePlacer:setFillColor(1, 1, 0)
-						bombPlacer:setFillColor(1,1,1)
-						shieldPlacer:setFillColor(1,1,1)
-						icePlacer:setFillColor(1,1,1)
 					end
 
 					tTarget = nil
@@ -169,14 +160,10 @@ function scene:show( event )
 				elseif event.phase == "ended" and event.target == tTarget then
 					if Player.power.name == "iceball" then
 						Player.power = Ability:new(Player.sprite)
-						icePlacer:setFillColor(1,1,1)
 					else
 						Player.power = Iceball:new(Player.sprite)
 					end
-					icePlacer:setFillColor(1, 1, 0)
-					bombPlacer:setFillColor(1,1,1)
-					shieldPlacer:setFillColor(1,1,1)
-					firePlacer:setFillColor(1,1,1)
+
 					tTarget = nil
 				end
 			end
@@ -371,11 +358,7 @@ function beginMovement( event )
 			end
 		end
 	end
-	if Player.sprite.mana == 0 then
-		firePlacer:setFillColor(1,1,1)
-		icePlacer:setFillColor(1,1,1)
-		shieldPlacer:setFillColor(1,1,1)
-	end
+
 	--move world if outside border
 	if Player.sprite.x < borders-80 then	-- moving left
 		Player.sprite.x = borders-80
