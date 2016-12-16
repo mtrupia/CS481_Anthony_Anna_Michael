@@ -17,6 +17,8 @@ local enemySpriteOptions = {
 	numFrames = 8
 }
 local enemySpriteSheet = graphics.newImageSheet("images/enemySprite.png", enemySpriteOptions)
+local rangerSpriteSheet = graphics.newImageSheet("images/rangerSprite.png", enemySpriteOptions)
+local tankSpriteSheet = graphics.newImageSheet("images/tankSprite.png", enemySpriteOptions)
 local enemySpriteData = {
 	{ name = "walk", start = 1, count = 8, time = 1000, loopCount = 1 }
 }
@@ -131,9 +133,9 @@ function Enemy:visibility(player)
 	end
 end
 
-function Enemy:spawn()
+function Enemy:spawn(spritesheet)
 	self.sprite = display.newGroup()
-	enemySprite = display.newSprite(self.sprite, enemySpriteSheet, enemySpriteData)
+	enemySprite = display.newSprite(self.sprite, spritesheet, enemySpriteData)
 	self.sprite.x = self.x
 	self.sprite.y = self.y
 	self.sprite.health = self.health
@@ -193,7 +195,7 @@ function Chaser:initialize(x,y, Player)
 	player = Player
 	Enemy:initialize(x, y)
 
-	return Chaser.spawn(self)
+	return Chaser.spawn(self, enemySpriteSheet)
 end
 
 
@@ -242,7 +244,7 @@ function Ranger:initialize(x,y,Player)
 	self.name = "Enemy"
 	player = Player
 	Enemy:initialize(x, y)
-	return Ranger.spawn(self)
+	return Ranger.spawn(self, rangerSpriteSheet)
 end
 
 function Ranger:setup()
@@ -285,22 +287,22 @@ function Ranger:move()
 			-- move away from player
 			self.sprite.x = self.sprite.x - ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
 			self.sprite.y = self.sprite.y - ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
-		
+
 			if enemyShootCount < enemyShootMax then
 				enemyShootCount=enemyShootCount + 1
- 		
+
 				n = n + 1
 				epowers[n] = display.newImage("images/brick.png", self.sprite.x, self.sprite.y)
-				physics.addBody( epowers[n], { density=0.0000001, friction=0.00000001, bounce=0.00000001, filter=enemyPowerCollisionFilter } )		      
- 		
+				physics.addBody( epowers[n], { density=0.0000001, friction=0.00000001, bounce=0.00000001, filter=enemyPowerCollisionFilter } )
+
 				local edeltaX=player.sprite.x - self.sprite.x
 				local edeltaY=player.sprite.y - self.sprite.y
 				local enormDeltaX = edeltaX / math.sqrt(math.pow(edeltaX,2) + math.pow(edeltaY,2))
 				local enormDeltaY = edeltaY / math.sqrt(math.pow(edeltaX,2) + math.pow(edeltaY,2))
-				
+
 				epowers[n]:setLinearVelocity( enormDeltaX * 200, enormDeltaY * 200 )
 				ealivePowers[n] = n
-  		  
+
 				function delete()
 					x = x + 1
 					if (epowers[ealivePowers[x]]) then
@@ -309,8 +311,8 @@ function Ranger:move()
 					end
 				end
 				timer.performWithDelay(500, delete)
-			end	
-		
+			end
+
 		end
 	end
 end
@@ -324,7 +326,7 @@ function Trapper:initialize(x,y, Player)
 	self.name = "Enemy"
 	player = Player
 	Enemy:initialize(x, y)
-	return Trapper.spawn(self)
+	return Trapper.spawn(self, enemySpriteSheet)
 end
 
 function Trapper:setup()
@@ -381,7 +383,7 @@ function Tank:initialize(x,y, Player)
 	self.name = "Enemy"
 	player = Player
 	Enemy:initialize(x, y)
-	return Tank.spawn(self)
+	return Tank.spawn(self, tankSpriteSheet)
 end
 
 function Tank:setup()
