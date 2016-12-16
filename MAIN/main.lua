@@ -24,12 +24,12 @@ _G.borders = 140
 -- Physics and filters
 _G.physics = require("physics")
 _G.worldCollisionFilter 		 = {	categoryBits = 1, maskBits = 30 }
---_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 57 }
-_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 56 }
+_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 57 }
+--_G.playerCollisionFilter 		 = { categoryBits = 2, maskBits = 56 }
 _G.powerCollisionFilter 		 = { categoryBits = 4, maskBits = 9 }
-_G.enemyCollisionFilter 		 = { categoryBits = 8, maskBits = 47 }
+_G.enemyCollisionFilter 		 = { categoryBits = 8, maskBits = 47 } --15
 _G.enemyPowerCollisionFilter = { categoryBits = 16, maskBits = 35 }
-_G.itemCollisionFilter			 = { categoryBits = 32, maskBits = 30 }
+_G.itemCollisionFilter			 = { categoryBits = 32, maskBits = 30 } --2
 _G.score  = {}
 -- Classes
 _G.StickLib 	 = require( "libs.Analog" )

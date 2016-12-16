@@ -2,6 +2,14 @@ local class = require 'libs.middleclass'
 require 'classes.Bars'
 local obj
 local player
+
+local enemyShootCount = 0
+local enemyShootMax = 1
+local epowers = {}
+local n=0
+local x=0
+local ealivePowers = {}
+
 -- Enemy
 local enemySpriteOptions = {
 	width = 29,
@@ -264,7 +272,7 @@ function Ranger:move()
 
 		self.sprite.rotation = 0
 		local hyp = math.sqrt((player.sprite.x - self.sprite.x)^2 + (player.sprite.y - self.sprite.y)^2)
-		local dist = 200
+		local dist = 150
 		if self.sprite.statusBar then
 			self.sprite.statusBar.x = self.sprite.x
 			self.sprite.statusBar.y = self.sprite.y - 10
@@ -275,8 +283,34 @@ function Ranger:move()
 			self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
 		else
 			-- move away from player
-			self.sprite.x = self.sprite.x + ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
-			self.sprite.y = self.sprite.y + ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
+			self.sprite.x = self.sprite.x - ((player.sprite.x-self.sprite.x)/hyp)*self.sprite.speed
+			self.sprite.y = self.sprite.y - ((player.sprite.y-self.sprite.y)/hyp)*self.sprite.speed
+		
+			if enemyShootCount < enemyShootMax then
+				enemyShootCount=enemyShootCount + 1
+ 		
+				n = n + 1
+				epowers[n] = display.newImage("images/brick.png", self.sprite.x, self.sprite.y)
+				physics.addBody( epowers[n], { density=0.0000001, friction=0.00000001, bounce=0.00000001, filter=enemyPowerCollisionFilter } )		      
+ 		
+				local edeltaX=player.sprite.x - self.sprite.x
+				local edeltaY=player.sprite.y - self.sprite.y
+				local enormDeltaX = edeltaX / math.sqrt(math.pow(edeltaX,2) + math.pow(edeltaY,2))
+				local enormDeltaY = edeltaY / math.sqrt(math.pow(edeltaX,2) + math.pow(edeltaY,2))
+				
+				epowers[n]:setLinearVelocity( enormDeltaX * 200, enormDeltaY * 200 )
+				ealivePowers[n] = n
+  		  
+				function delete()
+					x = x + 1
+					if (epowers[ealivePowers[x]]) then
+						epowers[ealivePowers[x]]:removeSelf()
+						enemyShootCount=enemyShootCount-1
+					end
+				end
+				timer.performWithDelay(500, delete)
+			end	
+		
 		end
 	end
 end
@@ -319,7 +353,7 @@ function Trapper:move()
 
 		self.sprite.rotation = 0
 		local hyp 	= math.sqrt((player.sprite.x - self.sprite.x)^2 + (player.sprite.y - self.sprite.y)^2)
-		local dist 	= 200
+		local dist 	= 150
 		if self.sprite.statusBar then
 			self.sprite.statusBar.x = self.sprite.x
 			self.sprite.statusBar.y = self.sprite.y - 10
