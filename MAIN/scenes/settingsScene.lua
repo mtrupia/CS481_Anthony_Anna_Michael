@@ -38,7 +38,7 @@ function scene:show( event )
     if phase == "will" then
 		-- create buttons
         backButton = display.newText(sceneGroup, "Back", display.contentWidth/2, display.contentHeight/2+110, native.systemFont, 32)
-		--createLevelButton = display.newText(sceneGroup, "Create a Level", display.contentWidth/2, display.contentHeight/2+75, native.systemFont, 32)
+		createLevelButton = display.newText(sceneGroup, "Create a Level", display.contentWidth/2, display.contentHeight/2+75, native.systemFont, 32)
 		hardmodeButton = display.newText(sceneGroup, "Enable Hard Mode", display.contentWidth/2, display.contentHeight/2, native.systemFont, 32)
 		if HARDMODE == 1 then
 			hardmodeButton.text = "Disable Hard Mode"
