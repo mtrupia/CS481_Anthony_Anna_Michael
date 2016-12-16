@@ -284,7 +284,6 @@ function Spikes.spawn(self)
   local function spike( event )
     self:active()
   end
-   
   Runtime:addEventListener("enterFrame", spike)
 
   return self.image
@@ -302,7 +301,7 @@ function Spikes:active()
       ready = true
     end
     if ready then
-      if not p.hasShield then
+      if not self.p.hasShield then
         self.p.statusBar:setHealth(-100)
       end
     end
