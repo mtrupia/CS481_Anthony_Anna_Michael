@@ -184,7 +184,7 @@ function Door.spawn(self)
   local pot = self
   pot.image = display.newImage(doorImage, pot.x, pot.y)
   pot.image.name = pot.name
-  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  physics.addBody(pot.image, "static", { filter = doorCollisionFilter} )
   pot.image.collision = function(self,event)
     Door.collision(pot,event)
   end
@@ -222,7 +222,7 @@ function FDoor.spawn(self)
   local pot = self
   pot.image = display.newImage(fdoorImage, pot.x, pot.y)
   pot.image.name = pot.name
-  physics.addBody(pot.image, "static", { filter = itemCollisionFilter} )
+  physics.addBody(pot.image, "static", { filter = doorCollisionFilter} )
   pot.image.collision = function(self,event)
     FDoor.collision(pot,event)
   end
